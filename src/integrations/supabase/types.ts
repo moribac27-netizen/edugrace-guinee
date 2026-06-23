@@ -14,16 +14,359 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      announcements: {
+        Row: {
+          audience: string
+          author_id: string | null
+          content: string
+          created_at: string
+          id: string
+          title: string
+        }
+        Insert: {
+          audience?: string
+          author_id?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          title: string
+        }
+        Update: {
+          audience?: string
+          author_id?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      classes: {
+        Row: {
+          annual_fee: number
+          created_at: string
+          id: string
+          level: string
+          name: string
+          teacher_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          annual_fee?: number
+          created_at?: string
+          id?: string
+          level: string
+          name: string
+          teacher_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          annual_fee?: number
+          created_at?: string
+          id?: string
+          level?: string
+          name?: string
+          teacher_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      grades: {
+        Row: {
+          created_at: string
+          evaluation_type: string | null
+          id: string
+          max_score: number
+          period: string
+          recorded_by: string | null
+          score: number
+          student_id: string
+          subject_id: string
+        }
+        Insert: {
+          created_at?: string
+          evaluation_type?: string | null
+          id?: string
+          max_score?: number
+          period: string
+          recorded_by?: string | null
+          score: number
+          student_id: string
+          subject_id: string
+        }
+        Update: {
+          created_at?: string
+          evaluation_type?: string | null
+          id?: string
+          max_score?: number
+          period?: string
+          recorded_by?: string | null
+          score?: number
+          student_id?: string
+          subject_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "grades_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "grades_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          notes: string | null
+          paid_at: string
+          payment_method: string | null
+          payment_type: string
+          period: string | null
+          receipt_number: string | null
+          recorded_by: string | null
+          status: string
+          student_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string
+          payment_method?: string | null
+          payment_type: string
+          period?: string | null
+          receipt_number?: string | null
+          recorded_by?: string | null
+          status?: string
+          student_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string
+          payment_method?: string | null
+          payment_type?: string
+          period?: string | null
+          receipt_number?: string | null
+          recorded_by?: string | null
+          status?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name: string
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      students: {
+        Row: {
+          address: string | null
+          birth_date: string | null
+          birth_place: string | null
+          class_id: string | null
+          created_at: string
+          enrollment_date: string | null
+          full_name: string
+          gender: string | null
+          id: string
+          matricule: string
+          parent_name: string | null
+          parent_phone: string | null
+          parent_user_id: string | null
+          photo_url: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          birth_date?: string | null
+          birth_place?: string | null
+          class_id?: string | null
+          created_at?: string
+          enrollment_date?: string | null
+          full_name: string
+          gender?: string | null
+          id?: string
+          matricule: string
+          parent_name?: string | null
+          parent_phone?: string | null
+          parent_user_id?: string | null
+          photo_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          birth_date?: string | null
+          birth_place?: string | null
+          class_id?: string | null
+          created_at?: string
+          enrollment_date?: string | null
+          full_name?: string
+          gender?: string | null
+          id?: string
+          matricule?: string
+          parent_name?: string | null
+          parent_phone?: string | null
+          parent_user_id?: string | null
+          photo_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "students_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subjects: {
+        Row: {
+          coefficient: number
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          coefficient?: number
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          coefficient?: number
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      teachers: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string
+          hire_date: string | null
+          id: string
+          matricule: string
+          monthly_salary: number | null
+          phone: string | null
+          subjects: string[] | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name: string
+          hire_date?: string | null
+          id?: string
+          matricule: string
+          monthly_salary?: number | null
+          phone?: string | null
+          subjects?: string[] | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          hire_date?: string | null
+          id?: string
+          matricule?: string
+          monthly_salary?: number | null
+          phone?: string | null
+          subjects?: string[] | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_staff: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "directeur" | "enseignant" | "parent" | "eleve"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +493,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "directeur", "enseignant", "parent", "eleve"],
+    },
   },
 } as const
