@@ -2,7 +2,7 @@ import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import {
   LayoutDashboard, Users, GraduationCap, BookOpen, ClipboardList,
-  CreditCard, Megaphone, LogOut, Menu, X, School,
+  CreditCard, Megaphone, LogOut, Menu, X, School, FileText,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ const NAV = [
   { to: "/classes", label: "Classes", icon: BookOpen },
   { to: "/enseignants", label: "Enseignants", icon: GraduationCap },
   { to: "/notes", label: "Notes", icon: ClipboardList },
+  { to: "/bulletins", label: "Bulletins", icon: FileText },
   { to: "/paiements", label: "Paiements", icon: CreditCard },
   { to: "/annonces", label: "Annonces", icon: Megaphone },
 ] as const;

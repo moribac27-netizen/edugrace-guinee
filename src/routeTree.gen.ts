@@ -18,6 +18,7 @@ import { Route as AuthenticatedEnseignantsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedElevesRouteImport } from './routes/_authenticated/eleves'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedClassesRouteImport } from './routes/_authenticated/classes'
+import { Route as AuthenticatedBulletinsRouteImport } from './routes/_authenticated/bulletins'
 import { Route as AuthenticatedAnnoncesRouteImport } from './routes/_authenticated/annonces'
 
 const AuthRoute = AuthRouteImport.update({
@@ -65,6 +66,11 @@ const AuthenticatedClassesRoute = AuthenticatedClassesRouteImport.update({
   path: '/classes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedBulletinsRoute = AuthenticatedBulletinsRouteImport.update({
+  id: '/bulletins',
+  path: '/bulletins',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAnnoncesRoute = AuthenticatedAnnoncesRouteImport.update({
   id: '/annonces',
   path: '/annonces',
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/annonces': typeof AuthenticatedAnnoncesRoute
+  '/bulletins': typeof AuthenticatedBulletinsRoute
   '/classes': typeof AuthenticatedClassesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/eleves': typeof AuthenticatedElevesRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/annonces': typeof AuthenticatedAnnoncesRoute
+  '/bulletins': typeof AuthenticatedBulletinsRoute
   '/classes': typeof AuthenticatedClassesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/eleves': typeof AuthenticatedElevesRoute
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/annonces': typeof AuthenticatedAnnoncesRoute
+  '/_authenticated/bulletins': typeof AuthenticatedBulletinsRoute
   '/_authenticated/classes': typeof AuthenticatedClassesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/eleves': typeof AuthenticatedElevesRoute
@@ -112,6 +121,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/annonces'
+    | '/bulletins'
     | '/classes'
     | '/dashboard'
     | '/eleves'
@@ -123,6 +133,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/annonces'
+    | '/bulletins'
     | '/classes'
     | '/dashboard'
     | '/eleves'
@@ -135,6 +146,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/annonces'
+    | '/_authenticated/bulletins'
     | '/_authenticated/classes'
     | '/_authenticated/dashboard'
     | '/_authenticated/eleves'
@@ -214,6 +226,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClassesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/bulletins': {
+      id: '/_authenticated/bulletins'
+      path: '/bulletins'
+      fullPath: '/bulletins'
+      preLoaderRoute: typeof AuthenticatedBulletinsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/annonces': {
       id: '/_authenticated/annonces'
       path: '/annonces'
@@ -226,6 +245,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAnnoncesRoute: typeof AuthenticatedAnnoncesRoute
+  AuthenticatedBulletinsRoute: typeof AuthenticatedBulletinsRoute
   AuthenticatedClassesRoute: typeof AuthenticatedClassesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedElevesRoute: typeof AuthenticatedElevesRoute
@@ -236,6 +256,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAnnoncesRoute: AuthenticatedAnnoncesRoute,
+  AuthenticatedBulletinsRoute: AuthenticatedBulletinsRoute,
   AuthenticatedClassesRoute: AuthenticatedClassesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedElevesRoute: AuthenticatedElevesRoute,
