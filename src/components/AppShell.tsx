@@ -2,7 +2,7 @@ import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import {
   LayoutDashboard, Users, GraduationCap, BookOpen, ClipboardList,
-  CreditCard, Megaphone, LogOut, Menu, X, School, FileText,
+  CreditCard, Megaphone, LogOut, Menu, X, School, FileText, CalendarDays, UserCheck,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -14,11 +14,14 @@ const NAV = [
   { to: "/eleves", label: "Élèves", icon: Users },
   { to: "/classes", label: "Classes", icon: BookOpen },
   { to: "/enseignants", label: "Enseignants", icon: GraduationCap },
+  { to: "/emploi-du-temps", label: "Emploi du temps", icon: CalendarDays },
+  { to: "/presences", label: "Présences", icon: UserCheck },
   { to: "/notes", label: "Notes", icon: ClipboardList },
   { to: "/bulletins", label: "Bulletins", icon: FileText },
   { to: "/paiements", label: "Paiements", icon: CreditCard },
   { to: "/annonces", label: "Annonces", icon: Megaphone },
 ] as const;
+
 
 export function AppShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);

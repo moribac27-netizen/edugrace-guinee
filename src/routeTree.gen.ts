@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedPresencesRouteImport } from './routes/_authenticated/presences'
 import { Route as AuthenticatedPaiementsRouteImport } from './routes/_authenticated/paiements'
 import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
 import { Route as AuthenticatedEnseignantsRouteImport } from './routes/_authenticated/enseignants'
@@ -35,6 +36,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedPresencesRoute = AuthenticatedPresencesRouteImport.update({
+  id: '/presences',
+  path: '/presences',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPaiementsRoute = AuthenticatedPaiementsRouteImport.update({
   id: '/paiements',
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/enseignants': typeof AuthenticatedEnseignantsRoute
   '/notes': typeof AuthenticatedNotesRoute
   '/paiements': typeof AuthenticatedPaiementsRoute
+  '/presences': typeof AuthenticatedPresencesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/enseignants': typeof AuthenticatedEnseignantsRoute
   '/notes': typeof AuthenticatedNotesRoute
   '/paiements': typeof AuthenticatedPaiementsRoute
+  '/presences': typeof AuthenticatedPresencesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/_authenticated/enseignants': typeof AuthenticatedEnseignantsRoute
   '/_authenticated/notes': typeof AuthenticatedNotesRoute
   '/_authenticated/paiements': typeof AuthenticatedPaiementsRoute
+  '/_authenticated/presences': typeof AuthenticatedPresencesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/enseignants'
     | '/notes'
     | '/paiements'
+    | '/presences'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -152,6 +162,7 @@ export interface FileRouteTypes {
     | '/enseignants'
     | '/notes'
     | '/paiements'
+    | '/presences'
   id:
     | '__root__'
     | '/'
@@ -166,6 +177,7 @@ export interface FileRouteTypes {
     | '/_authenticated/enseignants'
     | '/_authenticated/notes'
     | '/_authenticated/paiements'
+    | '/_authenticated/presences'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -196,6 +208,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/presences': {
+      id: '/_authenticated/presences'
+      path: '/presences'
+      fullPath: '/presences'
+      preLoaderRoute: typeof AuthenticatedPresencesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/paiements': {
       id: '/_authenticated/paiements'
@@ -273,6 +292,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedEnseignantsRoute: typeof AuthenticatedEnseignantsRoute
   AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
   AuthenticatedPaiementsRoute: typeof AuthenticatedPaiementsRoute
+  AuthenticatedPresencesRoute: typeof AuthenticatedPresencesRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -285,6 +305,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedEnseignantsRoute: AuthenticatedEnseignantsRoute,
   AuthenticatedNotesRoute: AuthenticatedNotesRoute,
   AuthenticatedPaiementsRoute: AuthenticatedPaiementsRoute,
+  AuthenticatedPresencesRoute: AuthenticatedPresencesRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
