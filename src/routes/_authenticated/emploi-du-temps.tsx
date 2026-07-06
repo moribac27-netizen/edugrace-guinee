@@ -251,7 +251,8 @@ function SchedulePage() {
                   <div key={d} className="border-b p-2 text-xs font-medium text-center bg-muted/40">{d}</div>
                 ))}
                 {HOURS.map((h) => (
-                  <>
+                  <Fragment key={`row-${h}`}>
+
                     <div key={`h-${h}`} className="border-r border-b p-2 text-xs text-muted-foreground text-right">{String(h).padStart(2, "0")}h</div>
                     {DAYS.map((_, di) => {
                       const day = di + 1;
