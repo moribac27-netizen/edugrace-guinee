@@ -276,7 +276,7 @@ function SchedulePage() {
                         </div>
                       );
                     })}
-                  </>
+                  </Fragment>
                 ))}
               </div>
             </CardContent>
