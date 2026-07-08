@@ -15,7 +15,7 @@ import { Printer, Check, X, Clock, FileCheck2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/presences")({
-  head: () => ({ meta: [{ title: "Présences — EduGuinée" }] }),
+  head: () => ({ meta: [{ title: "Présences — MBGEduGuinée" }] }),
   component: AttendancePage,
 });
 

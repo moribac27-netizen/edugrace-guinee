@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Printer, FileDown, School } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/bulletins")({
-  head: () => ({ meta: [{ title: "Bulletins scolaires — EduGuinée" }] }),
+  head: () => ({ meta: [{ title: "Bulletins scolaires — MBGEduGuinée" }] }),
   component: BulletinsPage,
 });
 
@@ -253,7 +253,7 @@ function BulletinsPage() {
             </div>
 
             <div className="text-[10px] text-center mt-6 text-gray-600">
-              Bulletin généré par EduGuinée — {new Date().toLocaleDateString("fr-FR")}
+              Bulletin généré par MBGEduGuinée — {new Date().toLocaleDateString("fr-FR")}
             </div>
           </div>
         </>

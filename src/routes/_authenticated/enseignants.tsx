@@ -12,7 +12,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/enseignants")({
-  head: () => ({ meta: [{ title: "Enseignants — EduGuinée" }] }),
+  head: () => ({ meta: [{ title: "Enseignants — MBGEduGuinée" }] }),
   component: TeachersPage,
 });
 

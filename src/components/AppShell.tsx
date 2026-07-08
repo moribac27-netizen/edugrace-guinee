@@ -53,7 +53,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <School className="size-5" />
             </div>
             <div>
-              <div className="font-display font-bold text-lg leading-none">EduGuinée</div>
+              <div className="font-display font-bold text-lg leading-none">MBGEduGuinée</div>
               <div className="text-xs text-sidebar-foreground/60 mt-1">Gestion scolaire</div>
             </div>
           </Link>

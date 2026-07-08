@@ -16,7 +16,7 @@ export const Route = createFileRoute("/auth")({
     const { data } = await supabase.auth.getUser();
     if (data.user) throw redirect({ to: "/dashboard" });
   },
-  head: () => ({ meta: [{ title: "Connexion — EduGuinée" }] }),
+  head: () => ({ meta: [{ title: "Connexion — MBGEduGuinée" }] }),
   component: AuthPage,
 });
 
@@ -70,7 +70,7 @@ function AuthPage() {
             <School className="size-6" />
           </div>
           <div>
-            <div className="font-display font-bold text-2xl leading-none">EduGuinée</div>
+            <div className="font-display font-bold text-2xl leading-none">MBGEduGuinée</div>
             <div className="text-xs text-muted-foreground mt-1">Gestion scolaire numérique</div>
           </div>
         </Link>
