@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/_authenticated/annonces")({
-  head: () => ({ meta: [{ title: "Annonces — EduGuinée" }] }),
+  head: () => ({ meta: [{ title: "Annonces — MBGEduGuinée" }] }),
   component: AnnouncementsPage,
 });
 

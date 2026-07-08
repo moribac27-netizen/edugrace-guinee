@@ -15,7 +15,7 @@ import { Plus, Trash2, Printer, DoorOpen, CalendarDays, AlertTriangle } from "lu
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/emploi-du-temps")({
-  head: () => ({ meta: [{ title: "Emploi du temps — EduGuinée" }] }),
+  head: () => ({ meta: [{ title: "Emploi du temps — MBGEduGuinée" }] }),
   component: SchedulePage,
 });
 

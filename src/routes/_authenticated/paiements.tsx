@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/paiements")({
-  head: () => ({ meta: [{ title: "Paiements — EduGuinée" }] }),
+  head: () => ({ meta: [{ title: "Paiements — MBGEduGuinée" }] }),
   component: PaymentsPage,
 });
 
@@ -170,7 +170,7 @@ function printReceipt(p: any) {
     <html><head><title>Reçu ${p.receipt_number}</title>
     <style>body{font-family:system-ui;padding:40px;color:#222}h1{margin:0;color:#2a5a3e}.box{border:2px solid #2a5a3e;padding:24px;border-radius:12px;margin-top:20px}.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee}strong{color:#444}</style>
     </head><body>
-    <h1>EduGuinée</h1><div style="color:#666">Reçu de paiement</div>
+    <h1>MBGEduGuinée</h1><div style="color:#666">Reçu de paiement</div>
     <div class="box">
     <div class="row"><strong>N° reçu</strong><span>${p.receipt_number ?? "-"}</span></div>
     <div class="row"><strong>Date</strong><span>${new Date(p.paid_at).toLocaleDateString("fr-FR")}</span></div>
@@ -181,7 +181,7 @@ function printReceipt(p: any) {
     <div class="row"><strong>Méthode</strong><span>${p.payment_method}</span></div>
     <div class="row" style="font-size:1.4em;border:none;margin-top:16px"><strong>Total payé</strong><strong style="color:#2a5a3e">${fmt(p.amount)} GNF</strong></div>
     </div>
-    <p style="margin-top:40px;color:#666;font-size:.85em">Merci pour votre confiance. — EduGuinée, Conakry.</p>
+    <p style="margin-top:40px;color:#666;font-size:.85em">Merci pour votre confiance. — MBGEduGuinée, Conakry.</p>
     <script>window.print()</script>
     </body></html>
   `);

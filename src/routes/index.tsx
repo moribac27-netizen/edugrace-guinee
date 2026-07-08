@@ -8,9 +8,9 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "EduGuinée — Gestion scolaire numérique en Guinée" },
+      { title: "MBGEduGuinée — Gestion scolaire numérique en Guinée" },
       { name: "description", content: "Plateforme complète pour écoles primaires, collèges, lycées et centres de formation. Élèves, notes, paiements, communication." },
-      { property: "og:title", content: "EduGuinée — Gestion scolaire numérique" },
+      { property: "og:title", content: "MBGEduGuinée — Gestion scolaire numérique" },
       { property: "og:description", content: "Digitalisez votre établissement scolaire en Guinée." },
     ],
   }),
@@ -42,7 +42,7 @@ function Landing() {
               <School className="size-5" />
             </div>
             <div>
-              <div className="font-display font-bold text-lg leading-none">EduGuinée</div>
+              <div className="font-display font-bold text-lg leading-none">MBGEduGuinée</div>
               <div className="text-xs text-muted-foreground mt-1">Gestion scolaire</div>
             </div>
           </Link>
@@ -70,7 +70,7 @@ function Landing() {
               La gestion scolaire qui simplifie le quotidien de votre établissement.
             </h1>
             <p className="mt-6 text-lg text-muted-foreground max-w-2xl">
-              EduGuinée digitalise inscriptions, notes, paiements, comptabilité et communication.
+              MBGEduGuinée digitalise inscriptions, notes, paiements, comptabilité et communication.
               Écoles primaires, collèges, lycées et centres de formation.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -135,7 +135,7 @@ function Landing() {
 
       <footer className="border-t py-8">
         <div className="max-w-6xl mx-auto px-4 lg:px-6 flex flex-col sm:flex-row justify-between gap-4 text-sm text-muted-foreground">
-          <div>© 2026 EduGuinée. Conçu en Guinée pour les écoles guinéennes.</div>
+          <div>© 2026 MBGEduGuinée. Conçu en Guinée pour les écoles guinéennes.</div>
           <div>Conakry · contact@eduguinee.gn</div>
         </div>
       </footer>

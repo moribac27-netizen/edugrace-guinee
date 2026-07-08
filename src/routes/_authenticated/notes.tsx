@@ -13,7 +13,7 @@ import { Plus, Award } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/notes")({
-  head: () => ({ meta: [{ title: "Notes — EduGuinée" }] }),
+  head: () => ({ meta: [{ title: "Notes — MBGEduGuinée" }] }),
   component: NotesPage,
 });
 

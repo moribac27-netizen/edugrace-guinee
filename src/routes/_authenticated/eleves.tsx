@@ -14,7 +14,7 @@ import { Plus, Search, Trash2, Pencil } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/eleves")({
-  head: () => ({ meta: [{ title: "Élèves — EduGuinée" }] }),
+  head: () => ({ meta: [{ title: "Élèves — MBGEduGuinée" }] }),
   component: ElevesPage,
 });
 

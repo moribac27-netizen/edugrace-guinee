@@ -6,7 +6,7 @@ import { Users, GraduationCap, CreditCard, AlertTriangle, ArrowRight } from "luc
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Tableau de bord — EduGuinée" }] }),
+  head: () => ({ meta: [{ title: "Tableau de bord — MBGEduGuinée" }] }),
   component: Dashboard,
 });
 
