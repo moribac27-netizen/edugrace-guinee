@@ -45,9 +45,8 @@ function LibraryPage() {
     const today = new Date().toISOString().slice(0, 10);
     const days = Math.max(0, Math.round((new Date(today).getTime() - new Date(loan.due_date).getTime()) / 86400000));
     const penalty = days * 5000;
-    const { error } = await supabase.from("library_loans").update({ return_date: today, penalty }).eq("id", loan.id);
-    if (error) return toast.error(error.message);
-    if (error) return toast.error(error.message);
+    const { error } = await (supabase.from("library_loans") as any).update({ return_date: today, penalty }).eq("id", loan.id);
+    if (error) return toast.error((error as any).message);
     const book = (books as any[]).find((b) => b.id === loan.book_id);
     if (book) await supabase.from("library_books").update({ available_copies: book.available_copies + 1 }).eq("id", book.id);
     toast.success(penalty > 0 ? `Retour enregistré. Pénalité : ${penalty} GNF` : "Retour enregistré");
