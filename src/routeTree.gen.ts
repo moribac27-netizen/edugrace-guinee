@@ -24,6 +24,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedComptabiliteRouteImport } from './routes/_authenticated/comptabilite'
 import { Route as AuthenticatedClassesRouteImport } from './routes/_authenticated/classes'
 import { Route as AuthenticatedBulletinsRouteImport } from './routes/_authenticated/bulletins'
+import { Route as AuthenticatedBibliothequeRouteImport } from './routes/_authenticated/bibliotheque'
 import { Route as AuthenticatedAnnoncesRouteImport } from './routes/_authenticated/annonces'
 
 const AuthRoute = AuthRouteImport.update({
@@ -103,6 +104,12 @@ const AuthenticatedBulletinsRoute = AuthenticatedBulletinsRouteImport.update({
   path: '/bulletins',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedBibliothequeRoute =
+  AuthenticatedBibliothequeRouteImport.update({
+    id: '/bibliotheque',
+    path: '/bibliotheque',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAnnoncesRoute = AuthenticatedAnnoncesRouteImport.update({
   id: '/annonces',
   path: '/annonces',
@@ -113,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/annonces': typeof AuthenticatedAnnoncesRoute
+  '/bibliotheque': typeof AuthenticatedBibliothequeRoute
   '/bulletins': typeof AuthenticatedBulletinsRoute
   '/classes': typeof AuthenticatedClassesRoute
   '/comptabilite': typeof AuthenticatedComptabiliteRoute
@@ -130,6 +138,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/annonces': typeof AuthenticatedAnnoncesRoute
+  '/bibliotheque': typeof AuthenticatedBibliothequeRoute
   '/bulletins': typeof AuthenticatedBulletinsRoute
   '/classes': typeof AuthenticatedClassesRoute
   '/comptabilite': typeof AuthenticatedComptabiliteRoute
@@ -149,6 +158,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/annonces': typeof AuthenticatedAnnoncesRoute
+  '/_authenticated/bibliotheque': typeof AuthenticatedBibliothequeRoute
   '/_authenticated/bulletins': typeof AuthenticatedBulletinsRoute
   '/_authenticated/classes': typeof AuthenticatedClassesRoute
   '/_authenticated/comptabilite': typeof AuthenticatedComptabiliteRoute
@@ -168,6 +178,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/annonces'
+    | '/bibliotheque'
     | '/bulletins'
     | '/classes'
     | '/comptabilite'
@@ -185,6 +196,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/annonces'
+    | '/bibliotheque'
     | '/bulletins'
     | '/classes'
     | '/comptabilite'
@@ -203,6 +215,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/annonces'
+    | '/_authenticated/bibliotheque'
     | '/_authenticated/bulletins'
     | '/_authenticated/classes'
     | '/_authenticated/comptabilite'
@@ -330,6 +343,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBulletinsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/bibliotheque': {
+      id: '/_authenticated/bibliotheque'
+      path: '/bibliotheque'
+      fullPath: '/bibliotheque'
+      preLoaderRoute: typeof AuthenticatedBibliothequeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/annonces': {
       id: '/_authenticated/annonces'
       path: '/annonces'
@@ -342,6 +362,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAnnoncesRoute: typeof AuthenticatedAnnoncesRoute
+  AuthenticatedBibliothequeRoute: typeof AuthenticatedBibliothequeRoute
   AuthenticatedBulletinsRoute: typeof AuthenticatedBulletinsRoute
   AuthenticatedClassesRoute: typeof AuthenticatedClassesRoute
   AuthenticatedComptabiliteRoute: typeof AuthenticatedComptabiliteRoute
@@ -358,6 +379,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAnnoncesRoute: AuthenticatedAnnoncesRoute,
+  AuthenticatedBibliothequeRoute: AuthenticatedBibliothequeRoute,
   AuthenticatedBulletinsRoute: AuthenticatedBulletinsRoute,
   AuthenticatedClassesRoute: AuthenticatedClassesRoute,
   AuthenticatedComptabiliteRoute: AuthenticatedComptabiliteRoute,
