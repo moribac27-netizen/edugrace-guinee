@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedSalairesRouteImport } from './routes/_authenticated/salaires'
 import { Route as AuthenticatedPresencesRouteImport } from './routes/_authenticated/presences'
 import { Route as AuthenticatedPaiementsRouteImport } from './routes/_authenticated/paiements'
 import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
@@ -37,6 +38,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedSalairesRoute = AuthenticatedSalairesRouteImport.update({
+  id: '/salaires',
+  path: '/salaires',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPresencesRoute = AuthenticatedPresencesRouteImport.update({
   id: '/presences',
@@ -111,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/notes': typeof AuthenticatedNotesRoute
   '/paiements': typeof AuthenticatedPaiementsRoute
   '/presences': typeof AuthenticatedPresencesRoute
+  '/salaires': typeof AuthenticatedSalairesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -126,6 +133,7 @@ export interface FileRoutesByTo {
   '/notes': typeof AuthenticatedNotesRoute
   '/paiements': typeof AuthenticatedPaiementsRoute
   '/presences': typeof AuthenticatedPresencesRoute
+  '/salaires': typeof AuthenticatedSalairesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/_authenticated/notes': typeof AuthenticatedNotesRoute
   '/_authenticated/paiements': typeof AuthenticatedPaiementsRoute
   '/_authenticated/presences': typeof AuthenticatedPresencesRoute
+  '/_authenticated/salaires': typeof AuthenticatedSalairesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -160,6 +169,7 @@ export interface FileRouteTypes {
     | '/notes'
     | '/paiements'
     | '/presences'
+    | '/salaires'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -175,6 +185,7 @@ export interface FileRouteTypes {
     | '/notes'
     | '/paiements'
     | '/presences'
+    | '/salaires'
   id:
     | '__root__'
     | '/'
@@ -191,6 +202,7 @@ export interface FileRouteTypes {
     | '/_authenticated/notes'
     | '/_authenticated/paiements'
     | '/_authenticated/presences'
+    | '/_authenticated/salaires'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -221,6 +233,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/salaires': {
+      id: '/_authenticated/salaires'
+      path: '/salaires'
+      fullPath: '/salaires'
+      preLoaderRoute: typeof AuthenticatedSalairesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/presences': {
       id: '/_authenticated/presences'
@@ -314,6 +333,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
   AuthenticatedPaiementsRoute: typeof AuthenticatedPaiementsRoute
   AuthenticatedPresencesRoute: typeof AuthenticatedPresencesRoute
+  AuthenticatedSalairesRoute: typeof AuthenticatedSalairesRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -328,6 +348,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedNotesRoute: AuthenticatedNotesRoute,
   AuthenticatedPaiementsRoute: AuthenticatedPaiementsRoute,
   AuthenticatedPresencesRoute: AuthenticatedPresencesRoute,
+  AuthenticatedSalairesRoute: AuthenticatedSalairesRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
