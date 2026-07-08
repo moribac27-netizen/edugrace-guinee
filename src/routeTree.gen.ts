@@ -19,6 +19,7 @@ import { Route as AuthenticatedEnseignantsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedEmploiDuTempsRouteImport } from './routes/_authenticated/emploi-du-temps'
 import { Route as AuthenticatedElevesRouteImport } from './routes/_authenticated/eleves'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedComptabiliteRouteImport } from './routes/_authenticated/comptabilite'
 import { Route as AuthenticatedClassesRouteImport } from './routes/_authenticated/classes'
 import { Route as AuthenticatedBulletinsRouteImport } from './routes/_authenticated/bulletins'
 import { Route as AuthenticatedAnnoncesRouteImport } from './routes/_authenticated/annonces'
@@ -74,6 +75,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedComptabiliteRoute =
+  AuthenticatedComptabiliteRouteImport.update({
+    id: '/comptabilite',
+    path: '/comptabilite',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedClassesRoute = AuthenticatedClassesRouteImport.update({
   id: '/classes',
   path: '/classes',
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/annonces': typeof AuthenticatedAnnoncesRoute
   '/bulletins': typeof AuthenticatedBulletinsRoute
   '/classes': typeof AuthenticatedClassesRoute
+  '/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/eleves': typeof AuthenticatedElevesRoute
   '/emploi-du-temps': typeof AuthenticatedEmploiDuTempsRoute
@@ -110,6 +118,7 @@ export interface FileRoutesByTo {
   '/annonces': typeof AuthenticatedAnnoncesRoute
   '/bulletins': typeof AuthenticatedBulletinsRoute
   '/classes': typeof AuthenticatedClassesRoute
+  '/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/eleves': typeof AuthenticatedElevesRoute
   '/emploi-du-temps': typeof AuthenticatedEmploiDuTempsRoute
@@ -126,6 +135,7 @@ export interface FileRoutesById {
   '/_authenticated/annonces': typeof AuthenticatedAnnoncesRoute
   '/_authenticated/bulletins': typeof AuthenticatedBulletinsRoute
   '/_authenticated/classes': typeof AuthenticatedClassesRoute
+  '/_authenticated/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/eleves': typeof AuthenticatedElevesRoute
   '/_authenticated/emploi-du-temps': typeof AuthenticatedEmploiDuTempsRoute
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/annonces'
     | '/bulletins'
     | '/classes'
+    | '/comptabilite'
     | '/dashboard'
     | '/eleves'
     | '/emploi-du-temps'
@@ -156,6 +167,7 @@ export interface FileRouteTypes {
     | '/annonces'
     | '/bulletins'
     | '/classes'
+    | '/comptabilite'
     | '/dashboard'
     | '/eleves'
     | '/emploi-du-temps'
@@ -171,6 +183,7 @@ export interface FileRouteTypes {
     | '/_authenticated/annonces'
     | '/_authenticated/bulletins'
     | '/_authenticated/classes'
+    | '/_authenticated/comptabilite'
     | '/_authenticated/dashboard'
     | '/_authenticated/eleves'
     | '/_authenticated/emploi-du-temps'
@@ -258,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/comptabilite': {
+      id: '/_authenticated/comptabilite'
+      path: '/comptabilite'
+      fullPath: '/comptabilite'
+      preLoaderRoute: typeof AuthenticatedComptabiliteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/classes': {
       id: '/_authenticated/classes'
       path: '/classes'
@@ -286,6 +306,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAnnoncesRoute: typeof AuthenticatedAnnoncesRoute
   AuthenticatedBulletinsRoute: typeof AuthenticatedBulletinsRoute
   AuthenticatedClassesRoute: typeof AuthenticatedClassesRoute
+  AuthenticatedComptabiliteRoute: typeof AuthenticatedComptabiliteRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedElevesRoute: typeof AuthenticatedElevesRoute
   AuthenticatedEmploiDuTempsRoute: typeof AuthenticatedEmploiDuTempsRoute
@@ -299,6 +320,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAnnoncesRoute: AuthenticatedAnnoncesRoute,
   AuthenticatedBulletinsRoute: AuthenticatedBulletinsRoute,
   AuthenticatedClassesRoute: AuthenticatedClassesRoute,
+  AuthenticatedComptabiliteRoute: AuthenticatedComptabiliteRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedElevesRoute: AuthenticatedElevesRoute,
   AuthenticatedEmploiDuTempsRoute: AuthenticatedEmploiDuTempsRoute,
