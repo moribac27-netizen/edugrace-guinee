@@ -71,6 +71,266 @@ export type Database = {
         }
         Relationships: []
       }
+      employee_contracts: {
+        Row: {
+          base_salary: number
+          created_at: string
+          end_date: string | null
+          full_name: string
+          id: string
+          notes: string | null
+          position: string
+          start_date: string
+          status: Database["public"]["Enums"]["contract_status"]
+          teacher_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          base_salary?: number
+          created_at?: string
+          end_date?: string | null
+          full_name: string
+          id?: string
+          notes?: string | null
+          position: string
+          start_date?: string
+          status?: Database["public"]["Enums"]["contract_status"]
+          teacher_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          base_salary?: number
+          created_at?: string
+          end_date?: string | null
+          full_name?: string
+          id?: string
+          notes?: string | null
+          position?: string
+          start_date?: string
+          status?: Database["public"]["Enums"]["contract_status"]
+          teacher_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_contracts_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employee_leaves: {
+        Row: {
+          contract_id: string
+          created_at: string
+          end_date: string
+          id: string
+          reason: string | null
+          start_date: string
+          status: Database["public"]["Enums"]["leave_status"]
+          type: Database["public"]["Enums"]["leave_type"]
+          updated_at: string
+        }
+        Insert: {
+          contract_id: string
+          created_at?: string
+          end_date: string
+          id?: string
+          reason?: string | null
+          start_date: string
+          status?: Database["public"]["Enums"]["leave_status"]
+          type: Database["public"]["Enums"]["leave_type"]
+          updated_at?: string
+        }
+        Update: {
+          contract_id?: string
+          created_at?: string
+          end_date?: string
+          id?: string
+          reason?: string | null
+          start_date?: string
+          status?: Database["public"]["Enums"]["leave_status"]
+          type?: Database["public"]["Enums"]["leave_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_leaves_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "employee_contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exams: {
+        Row: {
+          class_id: string
+          coefficient: number
+          created_at: string
+          duration_minutes: number
+          exam_date: string
+          id: string
+          notes: string | null
+          room_id: string | null
+          start_time: string | null
+          subject_id: string
+          supervisor_id: string | null
+          title: string
+          type: Database["public"]["Enums"]["exam_type"]
+          updated_at: string
+        }
+        Insert: {
+          class_id: string
+          coefficient?: number
+          created_at?: string
+          duration_minutes?: number
+          exam_date: string
+          id?: string
+          notes?: string | null
+          room_id?: string | null
+          start_time?: string | null
+          subject_id: string
+          supervisor_id?: string | null
+          title: string
+          type?: Database["public"]["Enums"]["exam_type"]
+          updated_at?: string
+        }
+        Update: {
+          class_id?: string
+          coefficient?: number
+          created_at?: string
+          duration_minutes?: number
+          exam_date?: string
+          id?: string
+          notes?: string | null
+          room_id?: string | null
+          start_time?: string | null
+          subject_id?: string
+          supervisor_id?: string | null
+          title?: string
+          type?: Database["public"]["Enums"]["exam_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exams_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exams_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exams_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exams_supervisor_id_fkey"
+            columns: ["supervisor_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expenses: {
+        Row: {
+          account_id: string
+          amount: number
+          beneficiary: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          method: Database["public"]["Enums"]["payment_method"]
+          occurred_at: string
+          reference: string | null
+          type: Database["public"]["Enums"]["expense_type"]
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          amount: number
+          beneficiary?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          method?: Database["public"]["Enums"]["payment_method"]
+          occurred_at?: string
+          reference?: string | null
+          type: Database["public"]["Enums"]["expense_type"]
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          amount?: number
+          beneficiary?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          method?: Database["public"]["Enums"]["payment_method"]
+          occurred_at?: string
+          reference?: string | null
+          type?: Database["public"]["Enums"]["expense_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expenses_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "financial_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financial_accounts: {
+        Row: {
+          created_at: string
+          currency: string
+          id: string
+          initial_balance: number
+          name: string
+          notes: string | null
+          type: Database["public"]["Enums"]["account_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          id?: string
+          initial_balance?: number
+          name: string
+          notes?: string | null
+          type: Database["public"]["Enums"]["account_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          id?: string
+          initial_balance?: number
+          name?: string
+          notes?: string | null
+          type?: Database["public"]["Enums"]["account_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       grades: {
         Row: {
           created_at: string
@@ -118,6 +378,138 @@ export type Database = {
             columns: ["subject_id"]
             isOneToOne: false
             referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      library_books: {
+        Row: {
+          author: string | null
+          available_copies: number
+          category_id: string | null
+          created_at: string
+          id: string
+          isbn: string | null
+          notes: string | null
+          title: string
+          total_copies: number
+          updated_at: string
+        }
+        Insert: {
+          author?: string | null
+          available_copies?: number
+          category_id?: string | null
+          created_at?: string
+          id?: string
+          isbn?: string | null
+          notes?: string | null
+          title: string
+          total_copies?: number
+          updated_at?: string
+        }
+        Update: {
+          author?: string | null
+          available_copies?: number
+          category_id?: string | null
+          created_at?: string
+          id?: string
+          isbn?: string | null
+          notes?: string | null
+          title?: string
+          total_copies?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "library_books_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "library_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      library_categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      library_loans: {
+        Row: {
+          book_id: string
+          borrower_name: string
+          created_at: string
+          due_date: string
+          id: string
+          loan_date: string
+          notes: string | null
+          penalty: number
+          return_date: string | null
+          student_id: string | null
+          teacher_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          book_id: string
+          borrower_name: string
+          created_at?: string
+          due_date: string
+          id?: string
+          loan_date?: string
+          notes?: string | null
+          penalty?: number
+          return_date?: string | null
+          student_id?: string | null
+          teacher_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          book_id?: string
+          borrower_name?: string
+          created_at?: string
+          due_date?: string
+          id?: string
+          loan_date?: string
+          notes?: string | null
+          penalty?: number
+          return_date?: string | null
+          student_id?: string | null
+          teacher_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "library_loans_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "library_books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "library_loans_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "library_loans_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
             referencedColumns: ["id"]
           },
         ]
@@ -175,6 +567,71 @@ export type Database = {
           },
         ]
       }
+      payslips: {
+        Row: {
+          advances: number
+          base_salary: number
+          bonuses: number
+          contract_id: string
+          created_at: string
+          deductions: number
+          id: string
+          net_pay: number
+          notes: string | null
+          overtime_amount: number
+          overtime_hours: number
+          paid: boolean
+          paid_at: string | null
+          period_month: number
+          period_year: number
+          updated_at: string
+        }
+        Insert: {
+          advances?: number
+          base_salary?: number
+          bonuses?: number
+          contract_id: string
+          created_at?: string
+          deductions?: number
+          id?: string
+          net_pay?: number
+          notes?: string | null
+          overtime_amount?: number
+          overtime_hours?: number
+          paid?: boolean
+          paid_at?: string | null
+          period_month: number
+          period_year: number
+          updated_at?: string
+        }
+        Update: {
+          advances?: number
+          base_salary?: number
+          bonuses?: number
+          contract_id?: string
+          created_at?: string
+          deductions?: number
+          id?: string
+          net_pay?: number
+          notes?: string | null
+          overtime_amount?: number
+          overtime_hours?: number
+          paid?: boolean
+          paid_at?: string | null
+          period_month?: number
+          period_year?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payslips_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "employee_contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -201,6 +658,66 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      revenues: {
+        Row: {
+          account_id: string
+          amount: number
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          method: Database["public"]["Enums"]["payment_method"]
+          occurred_at: string
+          reference: string | null
+          student_id: string | null
+          type: Database["public"]["Enums"]["revenue_type"]
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          amount: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          method?: Database["public"]["Enums"]["payment_method"]
+          occurred_at?: string
+          reference?: string | null
+          student_id?: string | null
+          type: Database["public"]["Enums"]["revenue_type"]
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          method?: Database["public"]["Enums"]["payment_method"]
+          occurred_at?: string
+          reference?: string | null
+          student_id?: string | null
+          type?: Database["public"]["Enums"]["revenue_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "revenues_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "financial_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "revenues_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       rooms: {
         Row: {
@@ -565,7 +1082,42 @@ export type Database = {
       is_staff: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
+      account_type:
+        | "caisse"
+        | "banque"
+        | "mobile_money"
+        | "orange_money"
+        | "autre"
       app_role: "admin" | "directeur" | "enseignant" | "parent" | "eleve"
+      contract_status: "actif" | "suspendu" | "termine"
+      exam_type: "composition" | "devoir" | "controle" | "examen"
+      expense_type:
+        | "salaires"
+        | "fournitures"
+        | "eau"
+        | "electricite"
+        | "internet"
+        | "entretien"
+        | "carburant"
+        | "autres"
+      leave_status: "en_attente" | "approuve" | "refuse"
+      leave_type: "annuel" | "maladie" | "maternite" | "sans_solde" | "autre"
+      payment_method:
+        | "especes"
+        | "cheque"
+        | "virement"
+        | "mobile_money"
+        | "orange_money"
+        | "autre"
+      revenue_type:
+        | "inscription"
+        | "reinscription"
+        | "scolarite"
+        | "transport"
+        | "cantine"
+        | "uniforme"
+        | "examens"
+        | "autres"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -693,7 +1245,46 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      account_type: [
+        "caisse",
+        "banque",
+        "mobile_money",
+        "orange_money",
+        "autre",
+      ],
       app_role: ["admin", "directeur", "enseignant", "parent", "eleve"],
+      contract_status: ["actif", "suspendu", "termine"],
+      exam_type: ["composition", "devoir", "controle", "examen"],
+      expense_type: [
+        "salaires",
+        "fournitures",
+        "eau",
+        "electricite",
+        "internet",
+        "entretien",
+        "carburant",
+        "autres",
+      ],
+      leave_status: ["en_attente", "approuve", "refuse"],
+      leave_type: ["annuel", "maladie", "maternite", "sans_solde", "autre"],
+      payment_method: [
+        "especes",
+        "cheque",
+        "virement",
+        "mobile_money",
+        "orange_money",
+        "autre",
+      ],
+      revenue_type: [
+        "inscription",
+        "reinscription",
+        "scolarite",
+        "transport",
+        "cantine",
+        "uniforme",
+        "examens",
+        "autres",
+      ],
     },
   },
 } as const
