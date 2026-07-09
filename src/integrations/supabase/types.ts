@@ -1079,6 +1079,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_finance: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
@@ -1088,7 +1089,13 @@ export type Database = {
         | "mobile_money"
         | "orange_money"
         | "autre"
-      app_role: "admin" | "directeur" | "enseignant" | "parent" | "eleve"
+      app_role:
+        | "admin"
+        | "directeur"
+        | "enseignant"
+        | "parent"
+        | "eleve"
+        | "comptable"
       contract_status: "actif" | "suspendu" | "termine"
       exam_type: "composition" | "devoir" | "controle" | "examen"
       expense_type:
@@ -1252,7 +1259,14 @@ export const Constants = {
         "orange_money",
         "autre",
       ],
-      app_role: ["admin", "directeur", "enseignant", "parent", "eleve"],
+      app_role: [
+        "admin",
+        "directeur",
+        "enseignant",
+        "parent",
+        "eleve",
+        "comptable",
+      ],
       contract_status: ["actif", "suspendu", "termine"],
       exam_type: ["composition", "devoir", "controle", "examen"],
       expense_type: [
