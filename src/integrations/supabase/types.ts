@@ -30,7 +30,7 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
-          school_id: string
+          school_id?: string
           title: string
         }
         Update: {
@@ -69,7 +69,7 @@ export type Database = {
           id?: string
           level: string
           name: string
-          school_id: string
+          school_id?: string
           teacher_id?: string | null
           updated_at?: string
         }
@@ -116,7 +116,7 @@ export type Database = {
           id?: string
           notes?: string | null
           position: string
-          school_id: string
+          school_id?: string
           start_date?: string
           status?: Database["public"]["Enums"]["contract_status"]
           teacher_id?: string | null
@@ -172,7 +172,7 @@ export type Database = {
           end_date: string
           id?: string
           reason?: string | null
-          school_id: string
+          school_id?: string
           start_date: string
           status?: Database["public"]["Enums"]["leave_status"]
           type: Database["public"]["Enums"]["leave_type"]
@@ -234,7 +234,7 @@ export type Database = {
           id?: string
           notes?: string | null
           room_id?: string | null
-          school_id: string
+          school_id?: string
           start_time?: string | null
           subject_id: string
           supervisor_id?: string | null
@@ -324,7 +324,7 @@ export type Database = {
           method?: Database["public"]["Enums"]["payment_method"]
           occurred_at?: string
           reference?: string | null
-          school_id: string
+          school_id?: string
           type: Database["public"]["Enums"]["expense_type"]
           updated_at?: string
         }
@@ -379,7 +379,7 @@ export type Database = {
           initial_balance?: number
           name: string
           notes?: string | null
-          school_id: string
+          school_id?: string
           type: Database["public"]["Enums"]["account_type"]
           updated_at?: string
         }
@@ -424,7 +424,7 @@ export type Database = {
           max_score?: number
           period: string
           recorded_by?: string | null
-          school_id: string
+          school_id?: string
           score: number
           student_id: string
           subject_id: string
@@ -487,7 +487,7 @@ export type Database = {
           id?: string
           isbn?: string | null
           notes?: string | null
-          school_id: string
+          school_id?: string
           title: string
           total_copies?: number
           updated_at?: string
@@ -533,7 +533,7 @@ export type Database = {
           created_at?: string
           id?: string
           name: string
-          school_id: string
+          school_id?: string
         }
         Update: {
           created_at?: string
@@ -577,7 +577,7 @@ export type Database = {
           notes?: string | null
           penalty?: number
           return_date?: string | null
-          school_id: string
+          school_id?: string
           student_id?: string | null
           teacher_id?: string | null
           updated_at?: string
@@ -655,7 +655,7 @@ export type Database = {
           period?: string | null
           receipt_number?: string | null
           recorded_by?: string | null
-          school_id: string
+          school_id?: string
           status?: string
           student_id: string
         }
@@ -727,7 +727,7 @@ export type Database = {
           paid_at?: string | null
           period_month: number
           period_year: number
-          school_id: string
+          school_id?: string
           updated_at?: string
         }
         Update: {
@@ -782,7 +782,7 @@ export type Database = {
           full_name: string
           id: string
           phone?: string | null
-          school_id: string
+          school_id?: string
           updated_at?: string
         }
         Update: {
@@ -830,7 +830,7 @@ export type Database = {
           method?: Database["public"]["Enums"]["payment_method"]
           occurred_at?: string
           reference?: string | null
-          school_id: string
+          school_id?: string
           student_id?: string | null
           type: Database["public"]["Enums"]["revenue_type"]
           updated_at?: string
@@ -890,7 +890,7 @@ export type Database = {
           created_at?: string
           id?: string
           name: string
-          school_id: string
+          school_id?: string
           updated_at?: string
         }
         Update: {
@@ -933,7 +933,7 @@ export type Database = {
           end_time: string
           id?: string
           room_id?: string | null
-          school_id: string
+          school_id?: string
           start_time: string
           subject_id?: string | null
           teacher_id?: string | null
@@ -1050,7 +1050,7 @@ export type Database = {
           justified?: boolean
           minutes_late?: number | null
           recorded_by?: string | null
-          school_id: string
+          school_id?: string
           status: string
           student_id: string
           updated_at?: string
@@ -1129,7 +1129,7 @@ export type Database = {
           parent_phone?: string | null
           parent_user_id?: string | null
           photo_url?: string | null
-          school_id: string
+          school_id?: string
           status?: string
           student_user_id?: string | null
           updated_at?: string
@@ -1184,7 +1184,7 @@ export type Database = {
           created_at?: string
           id?: string
           name: string
-          school_id: string
+          school_id?: string
         }
         Update: {
           coefficient?: number
@@ -1240,7 +1240,7 @@ export type Database = {
           justified?: boolean
           minutes_late?: number | null
           recorded_by?: string | null
-          school_id: string
+          school_id?: string
           status: string
           teacher_id: string
           updated_at?: string
@@ -1289,7 +1289,7 @@ export type Database = {
           class_id: string
           created_at?: string
           id?: string
-          school_id: string
+          school_id?: string
           subject_id?: string | null
           teacher_id: string
           updated_at?: string
@@ -1358,7 +1358,7 @@ export type Database = {
           matricule: string
           monthly_salary?: number | null
           phone?: string | null
-          school_id: string
+          school_id?: string
           subjects?: string[] | null
           updated_at?: string
           user_id?: string | null
