@@ -1,15 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import QRCode from "qrcode";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { Plus, Printer, AlertTriangle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Plus, Printer, AlertTriangle, CheckCircle2, XCircle, Clock, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
@@ -19,71 +21,137 @@ export const Route = createFileRoute("/_authenticated/paiements")({
 });
 
 const fmt = (n: number) => new Intl.NumberFormat("fr-FR").format(n);
+const METHODS = ["espèces", "Orange Money", "MTN MoMo", "PayPal", "Stripe", "virement", "chèque"] as const;
+const METHOD_NEEDS_REF = new Set(["Orange Money", "MTN MoMo", "PayPal", "Stripe", "virement"]);
+
+type PaymentRow = any;
 
 function PaymentsPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [tab, setTab] = useState<"all" | "late">("all");
+  const [tab, setTab] = useState<"pending" | "validated" | "late">("pending");
+  const [search, setSearch] = useState("");
 
   const { data: payments = [] } = useQuery({
     queryKey: ["payments"],
-    queryFn: async () => (await supabase.from("payments").select("*, students(full_name, matricule, class_id, classes(name, annual_fee))").order("paid_at", { ascending: false })).data ?? [],
+    queryFn: async () =>
+      (await supabase
+        .from("payments")
+        .select("*, students(full_name, matricule, class_id, classes(name, annual_fee))")
+        .order("paid_at", { ascending: false })).data ?? [],
   });
   const { data: students = [] } = useQuery({
     queryKey: ["students-payments"],
-    queryFn: async () => (await supabase.from("students").select("id, full_name, matricule, classes(name, annual_fee), payments(amount)")).data ?? [],
+    queryFn: async () =>
+      (await supabase.from("students").select("id, full_name, matricule, classes(name, annual_fee), payments(amount, validation_status)")).data ?? [],
+  });
+  const { data: school } = useQuery({
+    queryKey: ["current-school-full"],
+    queryFn: async () => {
+      const { data: uid } = await supabase.auth.getUser();
+      const { data: profile } = await supabase.from("profiles").select("school_id").eq("id", uid.user!.id).maybeSingle();
+      if (!profile?.school_id) return null;
+      return (await supabase.from("schools").select("*").eq("id", profile.school_id).maybeSingle()).data;
+    },
   });
 
-  const totalRevenue = payments.reduce((s: number, p: any) => s + Number(p.amount), 0);
-  const lateStudents = students
-    .map((s: any) => {
-      const paid = (s.payments ?? []).reduce((sum: number, p: any) => sum + Number(p.amount), 0);
-      const due = Number(s.classes?.annual_fee ?? 0);
-      return { ...s, paid, due, remaining: due - paid, pct: due > 0 ? (paid / due) * 100 : 0 };
-    })
-    .filter((s: any) => s.due > 0 && s.pct < 50);
+  const pending = payments.filter((p: PaymentRow) => p.validation_status === "en_attente");
+  const validated = payments.filter((p: PaymentRow) => p.validation_status === "validé");
+  const totalRevenue = validated.reduce((s: number, p: PaymentRow) => s + Number(p.amount), 0);
+  const pendingTotal = pending.reduce((s: number, p: PaymentRow) => s + Number(p.amount), 0);
+
+  const lateStudents = useMemo(
+    () =>
+      students
+        .map((s: any) => {
+          const paid = (s.payments ?? []).filter((p: any) => p.validation_status === "validé").reduce((sum: number, p: any) => sum + Number(p.amount), 0);
+          const due = Number(s.classes?.annual_fee ?? 0);
+          return { ...s, paid, due, remaining: due - paid, pct: due > 0 ? (paid / due) * 100 : 0 };
+        })
+        .filter((s: any) => s.due > 0 && s.pct < 50),
+    [students],
+  );
+
+  const rows = (tab === "pending" ? pending : validated).filter((p: PaymentRow) => {
+    if (!search) return true;
+    const q = search.toLowerCase();
+    return (
+      (p.receipt_number ?? "").toLowerCase().includes(q) ||
+      (p.students?.full_name ?? "").toLowerCase().includes(q) ||
+      (p.transaction_reference ?? "").toLowerCase().includes(q)
+    );
+  });
+
+  async function validatePayment(p: PaymentRow) {
+    const { data: uid } = await supabase.auth.getUser();
+    const patch: any = { validation_status: "validé", validated_by: uid.user?.id, validated_at: new Date().toISOString() };
+    if (!p.receipt_number) {
+      const { data: rn, error: rnErr } = await supabase.rpc("next_receipt_number", { _school_id: p.school_id });
+      if (rnErr) return toast.error(rnErr.message);
+      patch.receipt_number = rn;
+    }
+    const { error } = await supabase.from("payments").update(patch).eq("id", p.id);
+    if (error) return toast.error(error.message);
+    toast.success("Paiement validé");
+    qc.invalidateQueries({ queryKey: ["payments"] });
+  }
+
+  async function rejectPayment(p: PaymentRow) {
+    const reason = window.prompt("Motif du rejet ?");
+    if (!reason) return;
+    const { data: uid } = await supabase.auth.getUser();
+    const { error } = await supabase
+      .from("payments")
+      .update({ validation_status: "rejeté", rejection_reason: reason, validated_by: uid.user?.id, validated_at: new Date().toISOString() })
+      .eq("id", p.id);
+    if (error) return toast.error(error.message);
+    toast.success("Paiement rejeté");
+    qc.invalidateQueries({ queryKey: ["payments"] });
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl font-bold">Paiements</h1>
-          <p className="text-muted-foreground mt-1">Revenus totaux : <span className="font-semibold text-foreground">{fmt(totalRevenue)} GNF</span></p>
+          <p className="text-muted-foreground mt-1">
+            Revenus validés : <span className="font-semibold text-foreground">{fmt(totalRevenue)} GNF</span>
+            {pending.length > 0 && (
+              <span className="ml-3 text-amber-600">
+                • En attente : <span className="font-semibold">{fmt(pendingTotal)} GNF</span> ({pending.length})
+              </span>
+            )}
+          </p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button className="gap-2"><Plus className="size-4" />Nouveau paiement</Button></DialogTrigger>
+          <DialogTrigger asChild>
+            <Button className="gap-2">
+              <Plus className="size-4" />
+              Nouveau paiement
+            </Button>
+          </DialogTrigger>
           <PaymentDialog students={students} onClose={() => { setOpen(false); qc.invalidateQueries(); }} />
         </Dialog>
       </div>
 
       <div className="flex gap-2 border-b">
-        <button onClick={() => setTab("all")} className={"px-4 py-2 text-sm border-b-2 -mb-px " + (tab === "all" ? "border-primary text-foreground font-medium" : "border-transparent text-muted-foreground")}>Historique ({payments.length})</button>
-        <button onClick={() => setTab("late")} className={"px-4 py-2 text-sm border-b-2 -mb-px " + (tab === "late" ? "border-primary text-foreground font-medium" : "border-transparent text-muted-foreground")}>Retards ({lateStudents.length})</button>
+        <TabBtn active={tab === "pending"} onClick={() => setTab("pending")} label={`En attente (${pending.length})`} icon={<Clock className="size-4" />} />
+        <TabBtn active={tab === "validated"} onClick={() => setTab("validated")} label={`Validés (${validated.length})`} icon={<CheckCircle2 className="size-4" />} />
+        <TabBtn active={tab === "late"} onClick={() => setTab("late")} label={`Retards (${lateStudents.length})`} icon={<AlertTriangle className="size-4" />} />
       </div>
+
+      {tab !== "late" && (
+        <div className="relative max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+          <Input placeholder="Rechercher (reçu, élève, référence)…" className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
+        </div>
+      )}
 
       <Card>
         <CardContent className="p-4 overflow-x-auto">
-          {tab === "all" ? (
+          {tab === "late" ? (
             <Table>
-              <TableHeader><TableRow><TableHead>Date</TableHead><TableHead>Reçu</TableHead><TableHead>Élève</TableHead><TableHead>Type</TableHead><TableHead>Montant</TableHead><TableHead>Statut</TableHead><TableHead></TableHead></TableRow></TableHeader>
-              <TableBody>
-                {payments.length === 0 && <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Aucun paiement</TableCell></TableRow>}
-                {payments.map((p: any) => (
-                  <TableRow key={p.id}>
-                    <TableCell className="text-sm">{new Date(p.paid_at).toLocaleDateString("fr-FR")}</TableCell>
-                    <TableCell className="font-mono text-xs">{p.receipt_number ?? "—"}</TableCell>
-                    <TableCell><div className="font-medium">{p.students?.full_name}</div><div className="text-xs text-muted-foreground">{p.students?.classes?.name}</div></TableCell>
-                    <TableCell><Badge variant="outline" className="capitalize">{p.payment_type}</Badge></TableCell>
-                    <TableCell className="font-semibold">{fmt(p.amount)} GNF</TableCell>
-                    <TableCell><Badge variant={p.status === "payé" ? "default" : "secondary"}>{p.status}</Badge></TableCell>
-                    <TableCell><Button variant="ghost" size="icon" onClick={() => printReceipt(p)}><Printer className="size-4" /></Button></TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          ) : (
-            <Table>
-              <TableHeader><TableRow><TableHead>Élève</TableHead><TableHead>Classe</TableHead><TableHead>Payé</TableHead><TableHead>Reste à payer</TableHead><TableHead>Progression</TableHead></TableRow></TableHeader>
+              <TableHeader><TableRow><TableHead>Élève</TableHead><TableHead>Classe</TableHead><TableHead>Payé</TableHead><TableHead>Reste</TableHead><TableHead>Progression</TableHead></TableRow></TableHeader>
               <TableBody>
                 {lateStudents.length === 0 && <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Aucun retard</TableCell></TableRow>}
                 {lateStudents.map((s: any) => (
@@ -102,10 +170,58 @@ function PaymentsPage() {
                 ))}
               </TableBody>
             </Table>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Reçu</TableHead>
+                  <TableHead>Élève</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Méthode</TableHead>
+                  <TableHead>Référence</TableHead>
+                  <TableHead>Montant</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {rows.length === 0 && <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">Aucun paiement</TableCell></TableRow>}
+                {rows.map((p: PaymentRow) => (
+                  <TableRow key={p.id}>
+                    <TableCell className="text-sm">{new Date(p.paid_at).toLocaleDateString("fr-FR")}</TableCell>
+                    <TableCell className="font-mono text-xs">{p.receipt_number ?? <span className="text-muted-foreground italic">à générer</span>}</TableCell>
+                    <TableCell><div className="font-medium">{p.students?.full_name}</div><div className="text-xs text-muted-foreground">{p.students?.classes?.name}</div></TableCell>
+                    <TableCell><Badge variant="outline" className="capitalize">{p.payment_type}</Badge></TableCell>
+                    <TableCell className="text-sm">{p.payment_method}</TableCell>
+                    <TableCell className="font-mono text-xs">{p.transaction_reference ?? "—"}</TableCell>
+                    <TableCell className="font-semibold">{fmt(p.amount)} GNF</TableCell>
+                    <TableCell className="text-right space-x-1">
+                      {p.validation_status === "en_attente" ? (
+                        <>
+                          <Button size="sm" variant="default" className="gap-1" onClick={() => validatePayment(p)}><CheckCircle2 className="size-3.5" />Valider</Button>
+                          <Button size="sm" variant="outline" className="gap-1 text-destructive" onClick={() => rejectPayment(p)}><XCircle className="size-3.5" />Rejeter</Button>
+                        </>
+                      ) : (
+                        <Button variant="ghost" size="icon" onClick={() => printReceipt(p, school)}><Printer className="size-4" /></Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )}
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+function TabBtn({ active, onClick, label, icon }: { active: boolean; onClick: () => void; label: string; icon: React.ReactNode }) {
+  return (
+    <button onClick={onClick} className={"flex items-center gap-2 px-4 py-2 text-sm border-b-2 -mb-px transition " + (active ? "border-primary text-foreground font-medium" : "border-transparent text-muted-foreground hover:text-foreground")}>
+      {icon}
+      {label}
+    </button>
   );
 }
 
@@ -116,74 +232,224 @@ function PaymentDialog({ students, onClose }: any) {
     payment_type: "scolarite",
     period: "",
     payment_method: "espèces",
-    receipt_number: "REC-" + Date.now().toString().slice(-6),
+    transaction_reference: "",
     notes: "",
+    validation_status: "validé" as "validé" | "en_attente",
   });
+  const [saving, setSaving] = useState(false);
+  const needsRef = METHOD_NEEDS_REF.has(form.payment_method);
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.student_id) return;
-    const { error } = await supabase.from("payments").insert(form);
-    if (error) return toast.error(error.message);
-    toast.success("Paiement enregistré");
-    onClose();
+    if (!form.student_id || form.amount <= 0) return toast.error("Élève et montant obligatoires");
+    if (needsRef && !form.transaction_reference.trim()) return toast.error("Référence de transaction requise pour ce moyen de paiement");
+    setSaving(true);
+    try {
+      const { data: uid } = await supabase.auth.getUser();
+      const { data: profile } = await supabase.from("profiles").select("school_id").eq("id", uid.user!.id).maybeSingle();
+      const school_id = profile?.school_id;
+      if (!school_id) return toast.error("École introuvable");
+
+      const payload: any = {
+        student_id: form.student_id,
+        amount: form.amount,
+        payment_type: form.payment_type,
+        period: form.period || null,
+        payment_method: form.payment_method,
+        transaction_reference: form.transaction_reference || null,
+        notes: form.notes || null,
+        validation_status: form.validation_status,
+        status: form.validation_status === "validé" ? "payé" : "en_attente",
+      };
+      if (form.validation_status === "validé") {
+        const { data: rn, error: rnErr } = await supabase.rpc("next_receipt_number", { _school_id: school_id });
+        if (rnErr) throw rnErr;
+        payload.receipt_number = rn;
+        payload.validated_by = uid.user?.id;
+        payload.validated_at = new Date().toISOString();
+      }
+      const { error } = await supabase.from("payments").insert(payload);
+      if (error) throw error;
+      toast.success(form.validation_status === "validé" ? "Paiement enregistré et validé" : "Paiement soumis pour validation");
+      onClose();
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setSaving(false);
+    }
   }
+
   return (
-    <DialogContent>
-      <DialogHeader><DialogTitle>Enregistrer un paiement</DialogTitle></DialogHeader>
+    <DialogContent className="max-w-lg">
+      <DialogHeader>
+        <DialogTitle>Enregistrer un paiement</DialogTitle>
+        <DialogDescription>Le numéro de reçu est généré automatiquement à la validation.</DialogDescription>
+      </DialogHeader>
       <form onSubmit={submit} className="space-y-3">
         <div>
-          <Label>Élève</Label>
+          <Label>Élève *</Label>
           <Select value={form.student_id} onValueChange={(v) => setForm({ ...form, student_id: v })}>
             <SelectTrigger><SelectValue placeholder="Choisir" /></SelectTrigger>
             <SelectContent>{students.map((s: any) => <SelectItem key={s.id} value={s.id}>{s.full_name} — {s.matricule}</SelectItem>)}</SelectContent>
           </Select>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <div><Label>Montant (GNF)</Label><Input type="number" required value={form.amount} onChange={(e) => setForm({ ...form, amount: Number(e.target.value) })} /></div>
+          <div><Label>Montant (GNF) *</Label><Input type="number" required min={1} value={form.amount || ""} onChange={(e) => setForm({ ...form, amount: Number(e.target.value) })} /></div>
           <div>
             <Label>Type</Label>
             <Select value={form.payment_type} onValueChange={(v) => setForm({ ...form, payment_type: v })}>
               <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>{["inscription","scolarite","cantine","transport","autre"].map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+              <SelectContent>{["inscription", "scolarite", "cantine", "transport", "autre"].map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
             </Select>
           </div>
           <div><Label>Période</Label><Input value={form.period} onChange={(e) => setForm({ ...form, period: e.target.value })} placeholder="ex. Octobre 2025" /></div>
           <div>
-            <Label>Méthode</Label>
-            <Select value={form.payment_method} onValueChange={(v) => setForm({ ...form, payment_method: v })}>
+            <Label>Moyen de paiement</Label>
+            <Select value={form.payment_method} onValueChange={(v) => setForm({ ...form, payment_method: v, transaction_reference: METHOD_NEEDS_REF.has(v) ? form.transaction_reference : "" })}>
               <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>{["espèces","Orange Money","MTN MoMo","virement","chèque"].map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
+              <SelectContent>{METHODS.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
             </Select>
           </div>
         </div>
-        <div><Label>N° de reçu</Label><Input value={form.receipt_number} onChange={(e) => setForm({ ...form, receipt_number: e.target.value })} /></div>
-        <DialogFooter><Button type="submit">Enregistrer</Button></DialogFooter>
+        {needsRef && (
+          <div>
+            <Label>Référence de transaction *</Label>
+            <Input required value={form.transaction_reference} onChange={(e) => setForm({ ...form, transaction_reference: e.target.value })} placeholder="ex. OM-8734512 ou ID PayPal" />
+            <p className="text-xs text-muted-foreground mt-1">Numéro fourni par {form.payment_method} pour vérification.</p>
+          </div>
+        )}
+        <div>
+          <Label>Notes</Label>
+          <Textarea rows={2} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+        </div>
+        <div>
+          <Label>Statut initial</Label>
+          <Select value={form.validation_status} onValueChange={(v: any) => setForm({ ...form, validation_status: v })}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="validé">Validé immédiatement (paiement confirmé)</SelectItem>
+              <SelectItem value="en_attente">En attente de validation par le comptable</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <DialogFooter>
+          <Button type="submit" disabled={saving}>{saving ? "Enregistrement…" : "Enregistrer"}</Button>
+        </DialogFooter>
       </form>
     </DialogContent>
   );
 }
 
-function printReceipt(p: any) {
-  const w = window.open("", "_blank", "width=600,height=800");
+async function printReceipt(p: any, school: any) {
+  if (!p.receipt_number) return toast.error("Le reçu n'est pas encore validé");
+  const verifyUrl = `${window.location.origin}/verifier-recu/${encodeURIComponent(p.receipt_number)}`;
+  let qrDataUrl = "";
+  try {
+    qrDataUrl = await QRCode.toDataURL(verifyUrl, { width: 140, margin: 1 });
+  } catch { /* ignore */ }
+
+  // Validator name
+  let validatorName = "—";
+  if (p.validated_by) {
+    const { data } = await supabase.from("profiles").select("full_name").eq("id", p.validated_by).maybeSingle();
+    validatorName = data?.full_name ?? "—";
+  }
+
+  const w = window.open("", "_blank", "width=800,height=900");
   if (!w) return;
+  const schoolName = school?.name ?? "MBGEduGuinée";
+  const schoolAddress = school?.address ?? "";
+  const schoolPhone = school?.phone ?? "";
+  const schoolEmail = school?.email ?? "";
+  const logo = school?.logo_url ?? "";
+  const stamp = school?.school_stamp_url ?? "";
+  const signature = school?.director_signature_url ?? "";
+  const directorName = school?.director_name ?? "Le Directeur";
+
   w.document.write(`
-    <html><head><title>Reçu ${p.receipt_number}</title>
-    <style>body{font-family:system-ui;padding:40px;color:#222}h1{margin:0;color:#2a5a3e}.box{border:2px solid #2a5a3e;padding:24px;border-radius:12px;margin-top:20px}.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee}strong{color:#444}</style>
-    </head><body>
-    <h1>MBGEduGuinée</h1><div style="color:#666">Reçu de paiement</div>
-    <div class="box">
-    <div class="row"><strong>N° reçu</strong><span>${p.receipt_number ?? "-"}</span></div>
-    <div class="row"><strong>Date</strong><span>${new Date(p.paid_at).toLocaleDateString("fr-FR")}</span></div>
-    <div class="row"><strong>Élève</strong><span>${p.students?.full_name ?? ""}</span></div>
-    <div class="row"><strong>Classe</strong><span>${p.students?.classes?.name ?? "-"}</span></div>
-    <div class="row"><strong>Type</strong><span>${p.payment_type}</span></div>
-    <div class="row"><strong>Période</strong><span>${p.period ?? "-"}</span></div>
-    <div class="row"><strong>Méthode</strong><span>${p.payment_method}</span></div>
-    <div class="row" style="font-size:1.4em;border:none;margin-top:16px"><strong>Total payé</strong><strong style="color:#2a5a3e">${fmt(p.amount)} GNF</strong></div>
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Reçu ${p.receipt_number}</title>
+<style>
+  @page { size: A5; margin: 12mm; }
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, sans-serif; color: #1f2937; margin: 0; padding: 24px; }
+  .header { display: flex; align-items: center; gap: 16px; border-bottom: 3px double #2a5a3e; padding-bottom: 12px; }
+  .header img.logo { height: 64px; width: 64px; object-fit: contain; }
+  .header .school { flex: 1; }
+  .header h1 { margin: 0; color: #2a5a3e; font-size: 20px; }
+  .header .addr { font-size: 11px; color: #555; margin-top: 2px; }
+  .title { text-align: center; margin: 18px 0 8px; font-weight: 700; font-size: 15px; letter-spacing: 3px; color: #2a5a3e; }
+  .subtitle { text-align: center; font-family: monospace; font-size: 13px; margin-bottom: 12px; color: #555; }
+  .box { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 18px; }
+  .row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #e5e7eb; font-size: 13px; }
+  .row:last-child { border: none; }
+  .row strong { color: #444; }
+  .total { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 12px 18px; background: #f0f9f4; border-radius: 8px; }
+  .total .label { font-weight: 600; }
+  .total .value { font-size: 20px; font-weight: 700; color: #2a5a3e; }
+  .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 26px; gap: 16px; }
+  .sig { text-align: center; flex: 1; }
+  .sig .name { font-size: 11px; color: #555; }
+  .sig img { max-height: 55px; max-width: 140px; object-fit: contain; margin-bottom: 4px; }
+  .sig .line { border-top: 1px solid #333; margin-top: 40px; padding-top: 3px; font-size: 11px; font-weight: 600; }
+  .qr { text-align: center; }
+  .qr img { width: 90px; height: 90px; }
+  .qr .cap { font-size: 9px; color: #666; margin-top: 3px; max-width: 100px; }
+  .stamp { position: absolute; opacity: .55; }
+  .note { margin-top: 14px; font-size: 10px; color: #888; text-align: center; font-style: italic; }
+  @media print { .no-print { display: none; } }
+</style>
+</head><body>
+  <div class="header">
+    ${logo ? `<img class="logo" src="${logo}" alt="Logo" />` : ""}
+    <div class="school">
+      <h1>${escapeHtml(schoolName)}</h1>
+      ${schoolAddress ? `<div class="addr">${escapeHtml(schoolAddress)}</div>` : ""}
+      <div class="addr">${[schoolPhone, schoolEmail].filter(Boolean).map(escapeHtml).join(" • ")}</div>
     </div>
-    <p style="margin-top:40px;color:#666;font-size:.85em">Merci pour votre confiance. — MBGEduGuinée, Conakry.</p>
-    <script>window.print()</script>
-    </body></html>
+  </div>
+
+  <div class="title">REÇU DE PAIEMENT</div>
+  <div class="subtitle">N° ${escapeHtml(p.receipt_number)}</div>
+
+  <div class="box">
+    <div class="row"><strong>Date</strong><span>${new Date(p.paid_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</span></div>
+    <div class="row"><strong>Élève</strong><span>${escapeHtml(p.students?.full_name ?? "")}</span></div>
+    <div class="row"><strong>Matricule</strong><span>${escapeHtml(p.students?.matricule ?? "—")}</span></div>
+    <div class="row"><strong>Classe</strong><span>${escapeHtml(p.students?.classes?.name ?? "—")}</span></div>
+    <div class="row"><strong>Type de paiement</strong><span style="text-transform:capitalize">${escapeHtml(p.payment_type)}</span></div>
+    ${p.period ? `<div class="row"><strong>Période</strong><span>${escapeHtml(p.period)}</span></div>` : ""}
+    <div class="row"><strong>Moyen de paiement</strong><span>${escapeHtml(p.payment_method ?? "—")}</span></div>
+    ${p.transaction_reference ? `<div class="row"><strong>Référence transaction</strong><span style="font-family:monospace">${escapeHtml(p.transaction_reference)}</span></div>` : ""}
+  </div>
+
+  <div class="total">
+    <span class="label">Montant total payé</span>
+    <span class="value">${fmt(Number(p.amount))} GNF</span>
+  </div>
+
+  <div class="footer">
+    <div class="sig">
+      ${qrDataUrl ? `<div class="qr"><img src="${qrDataUrl}" alt="QR" /><div class="cap">Scannez pour vérifier l'authenticité</div></div>` : ""}
+    </div>
+    <div class="sig">
+      ${stamp ? `<img src="${stamp}" alt="Cachet" />` : ""}
+      <div class="line">Cachet de l'école</div>
+    </div>
+    <div class="sig">
+      ${signature ? `<img src="${signature}" alt="Signature" />` : ""}
+      <div class="line">${escapeHtml(directorName)}</div>
+      <div class="name">Validé par : ${escapeHtml(validatorName)}</div>
+    </div>
+  </div>
+
+  <div class="note">Reçu généré électroniquement — vérifiable en ligne via QR code.</div>
+
+  <script>setTimeout(() => window.print(), 300);</script>
+</body></html>
   `);
   w.document.close();
+}
+
+function escapeHtml(s: string): string {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 }
