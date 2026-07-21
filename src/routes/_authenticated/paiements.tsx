@@ -125,10 +125,10 @@ function PaymentsPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" className="gap-2" onClick={() => exportExcel(rows, tab)} disabled={tab === "late" ? lateStudents.length === 0 : rows.length === 0}>
+          <Button variant="outline" className="gap-2" onClick={() => exportExcel(tab === "late" ? lateStudents : rows, tab)} disabled={(tab === "late" ? lateStudents.length : rows.length) === 0}>
             <FileSpreadsheet className="size-4" /> Excel
           </Button>
-          <Button variant="outline" className="gap-2" onClick={() => exportPdf(rows, tab, school, lateStudents)} disabled={tab === "late" ? lateStudents.length === 0 : rows.length === 0}>
+          <Button variant="outline" className="gap-2" onClick={() => exportPdf(rows, tab, school, lateStudents)} disabled={(tab === "late" ? lateStudents.length : rows.length) === 0}>
             <FileText className="size-4" /> PDF
           </Button>
           <Dialog open={open} onOpenChange={setOpen}>
