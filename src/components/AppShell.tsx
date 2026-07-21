@@ -26,6 +26,7 @@ const NAV = [
   { to: "/salaires", label: "Salaires", icon: Wallet },
   { to: "/bibliotheque", label: "Bibliothèque", icon: Library },
   { to: "/annonces", label: "Annonces", icon: Megaphone },
+  { to: "/parametres", label: "Paramètres", icon: Settings },
 ] as const;
 
 
