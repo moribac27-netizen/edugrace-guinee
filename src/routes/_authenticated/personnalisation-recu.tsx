@@ -104,6 +104,7 @@ function ReceiptCustomizationPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={reset} className="gap-2"><RotateCcw className="size-4" /> Réinitialiser</Button>
+          <Button variant="outline" onClick={() => printTest(form)} className="gap-2"><Printer className="size-4" /> Imprimer un reçu test</Button>
           <Button onClick={save} disabled={saving} className="gap-2">
             {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
             Enregistrer
