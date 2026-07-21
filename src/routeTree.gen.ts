@@ -19,6 +19,7 @@ import { Route as AuthenticatedSalairesRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedRapportsRouteImport } from './routes/_authenticated/rapports'
 import { Route as AuthenticatedPresencesRouteImport } from './routes/_authenticated/presences'
 import { Route as AuthenticatedPlansRouteImport } from './routes/_authenticated/plans'
+import { Route as AuthenticatedPersonnalisationRecuRouteImport } from './routes/_authenticated/personnalisation-recu'
 import { Route as AuthenticatedParametresRouteImport } from './routes/_authenticated/parametres'
 import { Route as AuthenticatedPaiementsRouteImport } from './routes/_authenticated/paiements'
 import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
@@ -86,6 +87,12 @@ const AuthenticatedPlansRoute = AuthenticatedPlansRouteImport.update({
   path: '/plans',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPersonnalisationRecuRoute =
+  AuthenticatedPersonnalisationRecuRouteImport.update({
+    id: '/personnalisation-recu',
+    path: '/personnalisation-recu',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedParametresRoute = AuthenticatedParametresRouteImport.update({
   id: '/parametres',
   path: '/parametres',
@@ -191,6 +198,7 @@ export interface FileRoutesByFullPath {
   '/notes': typeof AuthenticatedNotesRoute
   '/paiements': typeof AuthenticatedPaiementsRoute
   '/parametres': typeof AuthenticatedParametresRoute
+  '/personnalisation-recu': typeof AuthenticatedPersonnalisationRecuRoute
   '/plans': typeof AuthenticatedPlansRoute
   '/presences': typeof AuthenticatedPresencesRoute
   '/rapports': typeof AuthenticatedRapportsRoute
@@ -218,6 +226,7 @@ export interface FileRoutesByTo {
   '/notes': typeof AuthenticatedNotesRoute
   '/paiements': typeof AuthenticatedPaiementsRoute
   '/parametres': typeof AuthenticatedParametresRoute
+  '/personnalisation-recu': typeof AuthenticatedPersonnalisationRecuRoute
   '/plans': typeof AuthenticatedPlansRoute
   '/presences': typeof AuthenticatedPresencesRoute
   '/rapports': typeof AuthenticatedRapportsRoute
@@ -247,6 +256,7 @@ export interface FileRoutesById {
   '/_authenticated/notes': typeof AuthenticatedNotesRoute
   '/_authenticated/paiements': typeof AuthenticatedPaiementsRoute
   '/_authenticated/parametres': typeof AuthenticatedParametresRoute
+  '/_authenticated/personnalisation-recu': typeof AuthenticatedPersonnalisationRecuRoute
   '/_authenticated/plans': typeof AuthenticatedPlansRoute
   '/_authenticated/presences': typeof AuthenticatedPresencesRoute
   '/_authenticated/rapports': typeof AuthenticatedRapportsRoute
@@ -276,6 +286,7 @@ export interface FileRouteTypes {
     | '/notes'
     | '/paiements'
     | '/parametres'
+    | '/personnalisation-recu'
     | '/plans'
     | '/presences'
     | '/rapports'
@@ -303,6 +314,7 @@ export interface FileRouteTypes {
     | '/notes'
     | '/paiements'
     | '/parametres'
+    | '/personnalisation-recu'
     | '/plans'
     | '/presences'
     | '/rapports'
@@ -331,6 +343,7 @@ export interface FileRouteTypes {
     | '/_authenticated/notes'
     | '/_authenticated/paiements'
     | '/_authenticated/parametres'
+    | '/_authenticated/personnalisation-recu'
     | '/_authenticated/plans'
     | '/_authenticated/presences'
     | '/_authenticated/rapports'
@@ -417,6 +430,13 @@ declare module '@tanstack/react-router' {
       path: '/plans'
       fullPath: '/plans'
       preLoaderRoute: typeof AuthenticatedPlansRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/personnalisation-recu': {
+      id: '/_authenticated/personnalisation-recu'
+      path: '/personnalisation-recu'
+      fullPath: '/personnalisation-recu'
+      preLoaderRoute: typeof AuthenticatedPersonnalisationRecuRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/parametres': {
@@ -551,6 +571,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
   AuthenticatedPaiementsRoute: typeof AuthenticatedPaiementsRoute
   AuthenticatedParametresRoute: typeof AuthenticatedParametresRoute
+  AuthenticatedPersonnalisationRecuRoute: typeof AuthenticatedPersonnalisationRecuRoute
   AuthenticatedPlansRoute: typeof AuthenticatedPlansRoute
   AuthenticatedPresencesRoute: typeof AuthenticatedPresencesRoute
   AuthenticatedRapportsRoute: typeof AuthenticatedRapportsRoute
@@ -576,6 +597,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedNotesRoute: AuthenticatedNotesRoute,
   AuthenticatedPaiementsRoute: AuthenticatedPaiementsRoute,
   AuthenticatedParametresRoute: AuthenticatedParametresRoute,
+  AuthenticatedPersonnalisationRecuRoute:
+    AuthenticatedPersonnalisationRecuRoute,
   AuthenticatedPlansRoute: AuthenticatedPlansRoute,
   AuthenticatedPresencesRoute: AuthenticatedPresencesRoute,
   AuthenticatedRapportsRoute: AuthenticatedRapportsRoute,
