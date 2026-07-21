@@ -433,9 +433,9 @@ async function printReceipt(p: any, school: any) {
   .row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #e5e7eb; font-size: 13px; }
   .row:last-child { border: none; }
   .row strong { color: #444; }
-  .total { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 12px 18px; background: #f0f9f4; border-radius: 8px; }
+  .total { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 12px 18px; background: ${accent}14; border-radius: 8px; }
   .total .label { font-weight: 600; }
-  .total .value { font-size: 20px; font-weight: 700; color: #2a5a3e; }
+  .total .value { font-size: 20px; font-weight: 700; color: ${accent}; }
   .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 26px; gap: 16px; }
   .sig { text-align: center; flex: 1; }
   .sig .name { font-size: 11px; color: #555; }
