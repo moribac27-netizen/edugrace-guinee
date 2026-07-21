@@ -185,10 +185,10 @@ function PaymentsPage() {
             <Table>
               <TableHeader><TableRow>
                 <TableHead className="w-10"><input type="checkbox" checked={lateStudents.length > 0 && lateStudents.every((s: any) => selected.has(s.id))} onChange={(e) => setSelected(e.target.checked ? new Set(lateStudents.map((s: any) => s.id)) : new Set())} /></TableHead>
-                <TableHead>Élève</TableHead><TableHead>Classe</TableHead><TableHead>Payé</TableHead><TableHead>Reste</TableHead><TableHead>Progression</TableHead>
+                <TableHead>Élève</TableHead><TableHead>Classe</TableHead><TableHead>Payé</TableHead><TableHead>Reste</TableHead><TableHead>Progression</TableHead><TableHead className="text-right">Actions</TableHead>
               </TableRow></TableHeader>
               <TableBody>
-                {lateStudents.length === 0 && <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Aucun retard</TableCell></TableRow>}
+                {lateStudents.length === 0 && <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Aucun retard</TableCell></TableRow>}
                 {lateStudents.map((s: any) => (
                   <TableRow key={s.id} data-state={selected.has(s.id) ? "selected" : undefined}>
                     <TableCell><input type="checkbox" checked={selected.has(s.id)} onChange={(e) => { const n = new Set(selected); e.target.checked ? n.add(s.id) : n.delete(s.id); setSelected(n); }} /></TableCell>
@@ -201,6 +201,10 @@ function PaymentsPage() {
                         <div className="h-full bg-destructive" style={{ width: `${Math.min(100, s.pct)}%` }} />
                       </div>
                       <div className="text-xs text-muted-foreground mt-1">{s.pct.toFixed(0)}%</div>
+                    </TableCell>
+                    <TableCell className="text-right space-x-1 whitespace-nowrap">
+                      <Button variant="ghost" size="icon" title="Télécharger Excel" onClick={() => exportExcel([s], "late")}><FileSpreadsheet className="size-4" /></Button>
+                      <Button variant="ghost" size="icon" title="Télécharger PDF" onClick={() => exportPdf([], "late", school, [s])}><FileText className="size-4" /></Button>
                     </TableCell>
                   </TableRow>
                 ))}
