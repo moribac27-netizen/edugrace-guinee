@@ -131,19 +131,23 @@ function NotesPage() {
   );
 }
 
-function GradeDialog({ students, subjects, period, onClose }: any) {
-  const [form, setForm] = useState({ student_id: "", subject_id: "", score: 10 });
+function GradeDialog({ students, subjects, period, maxScore, onClose }: any) {
+  const [form, setForm] = useState({ student_id: "", subject_id: "", score: Math.min(10, maxScore) });
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.student_id || !form.subject_id) return;
-    const { error } = await supabase.from("grades").insert({ ...form, period });
+    const score = Number(form.score);
+    if (Number.isNaN(score) || score < 0 || score > maxScore) {
+      return toast.error(`La note doit être comprise entre 0 et ${maxScore}.`);
+    }
+    const { error } = await supabase.from("grades").insert({ ...form, score, period });
     if (error) return toast.error(error.message);
     toast.success("Note enregistrée");
     onClose();
   }
   return (
     <DialogContent>
-      <DialogHeader><DialogTitle>Nouvelle note ({period})</DialogTitle></DialogHeader>
+      <DialogHeader><DialogTitle>Nouvelle note ({period}) — sur {maxScore}</DialogTitle></DialogHeader>
       <form onSubmit={submit} className="space-y-3">
         <div>
           <Label>Élève</Label>
@@ -159,7 +163,18 @@ function GradeDialog({ students, subjects, period, onClose }: any) {
             <SelectContent>{subjects.map((s: any) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
           </Select>
         </div>
-        <div><Label>Note / 20</Label><Input type="number" step="0.5" min="0" max="20" value={form.score} onChange={(e) => setForm({ ...form, score: Number(e.target.value) })} /></div>
+        <div>
+          <Label>Note / {maxScore}</Label>
+          <Input
+            type="number"
+            step="0.25"
+            min="0"
+            max={maxScore}
+            value={form.score}
+            placeholder={`Entrer une note sur ${maxScore}`}
+            onChange={(e) => setForm({ ...form, score: Number(e.target.value) })}
+          />
+        </div>
         <DialogFooter><Button type="submit">Enregistrer</Button></DialogFooter>
       </form>
     </DialogContent>
