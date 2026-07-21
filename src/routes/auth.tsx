@@ -86,6 +86,12 @@ function AuthPage() {
           </div>
         </Link>
 
+        {plan && (
+          <div className="mb-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/20 text-sm font-medium">
+            <Sparkles className="size-4 text-accent" />
+            Essai gratuit de 30 jours — offre <span className="uppercase">{plan}</span>
+          </div>
+        )}
         <Card>
           <CardHeader>
             <CardTitle>Bienvenue</CardTitle>
