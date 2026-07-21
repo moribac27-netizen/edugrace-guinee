@@ -136,11 +136,18 @@ function AuthPage() {
               </TabsContent>
               <TabsContent value="signup">
                 <form onSubmit={handleSignUp} className="space-y-3">
-                  <div><Label>Nom complet</Label><Input required value={signUp.fullName} onChange={(e) => setSignUp({ ...signUp, fullName: e.target.value })} /></div>
+                  <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Établissement</div>
+                  <div><Label>Nom de l'établissement *</Label><Input required value={signUp.schoolName} onChange={(e) => setSignUp({ ...signUp, schoolName: e.target.value })} placeholder="Ex : École Les Palmiers" /></div>
+                  <div><Label>Adresse</Label><Input value={signUp.schoolAddress} onChange={(e) => setSignUp({ ...signUp, schoolAddress: e.target.value })} placeholder="Ville, quartier" /></div>
+                  <div><Label>Téléphone de l'établissement</Label><Input value={signUp.schoolPhone} onChange={(e) => setSignUp({ ...signUp, schoolPhone: e.target.value })} placeholder="+224..." /></div>
+                  <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground pt-2">Administrateur</div>
+                  <div><Label>Nom complet *</Label><Input required value={signUp.fullName} onChange={(e) => setSignUp({ ...signUp, fullName: e.target.value })} /></div>
                   <div><Label>Téléphone</Label><Input value={signUp.phone} onChange={(e) => setSignUp({ ...signUp, phone: e.target.value })} placeholder="+224..." /></div>
-                  <div><Label>Email</Label><Input type="email" required value={signUp.email} onChange={(e) => setSignUp({ ...signUp, email: e.target.value })} /></div>
-                  <div><Label>Mot de passe</Label><Input type="password" required minLength={6} value={signUp.password} onChange={(e) => setSignUp({ ...signUp, password: e.target.value })} /></div>
-                  <Button type="submit" className="w-full" disabled={loading}>Créer le compte</Button>
+                  <div><Label>Email *</Label><Input type="email" required value={signUp.email} onChange={(e) => setSignUp({ ...signUp, email: e.target.value })} /></div>
+                  <div><Label>Mot de passe * (6 caractères min.)</Label><Input type="password" required minLength={6} value={signUp.password} onChange={(e) => setSignUp({ ...signUp, password: e.target.value })} /></div>
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "Création en cours..." : "Créer mon établissement"}
+                  </Button>
                 </form>
               </TabsContent>
             </Tabs>
@@ -149,11 +156,11 @@ function AuthPage() {
               <span className="text-xs text-muted-foreground">ou</span>
               <div className="h-px bg-border flex-1" />
             </div>
-            <Button variant="outline" className="w-full" onClick={handleGoogle}>Continuer avec Google</Button>
+            <Button variant="outline" className="w-full" onClick={handleGoogle} disabled={loading}>Continuer avec Google</Button>
           </CardContent>
         </Card>
         <p className="text-center text-xs text-muted-foreground mt-4">
-          Premier utilisateur ? Vous serez créé comme <span className="font-medium">parent</span>. Demandez à un admin de modifier votre rôle.
+          En créant un compte, vous devenez <span className="font-medium">administrateur</span> de votre établissement avec 30 jours d'essai gratuit.
         </p>
       </div>
     </div>
