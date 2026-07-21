@@ -600,3 +600,13 @@ function exportPdf(rows: any[], tab: "pending" | "validated" | "late", school: a
 </body></html>`);
   w.document.close();
 }
+
+async function printSelectedReceipts(payments: any[], school: any) {
+  const printable = payments.filter((p) => p.receipt_number);
+  if (printable.length === 0) return toast.error("Aucun reçu validé à imprimer");
+  if (printable.length < payments.length) toast.warning(`${payments.length - printable.length} paiement(s) sans numéro de reçu ignoré(s)`);
+  for (const p of printable) {
+    await printReceipt(p, school);
+    await new Promise((r) => setTimeout(r, 400));
+  }
+}
