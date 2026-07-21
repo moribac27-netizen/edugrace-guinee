@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VerifierRecuNumberRouteImport } from './routes/verifier-recu.$number'
 import { Route as AuthenticatedSouscriptionRouteImport } from './routes/_authenticated/souscription'
 import { Route as AuthenticatedSauvegardeRouteImport } from './routes/_authenticated/sauvegarde'
 import { Route as AuthenticatedSalairesRouteImport } from './routes/_authenticated/salaires'
@@ -47,6 +48,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifierRecuNumberRoute = VerifierRecuNumberRouteImport.update({
+  id: '/verifier-recu/$number',
+  path: '/verifier-recu/$number',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedSouscriptionRoute =
@@ -191,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/salaires': typeof AuthenticatedSalairesRoute
   '/sauvegarde': typeof AuthenticatedSauvegardeRoute
   '/souscription': typeof AuthenticatedSouscriptionRoute
+  '/verifier-recu/$number': typeof VerifierRecuNumberRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -217,6 +224,7 @@ export interface FileRoutesByTo {
   '/salaires': typeof AuthenticatedSalairesRoute
   '/sauvegarde': typeof AuthenticatedSauvegardeRoute
   '/souscription': typeof AuthenticatedSouscriptionRoute
+  '/verifier-recu/$number': typeof VerifierRecuNumberRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -245,6 +253,7 @@ export interface FileRoutesById {
   '/_authenticated/salaires': typeof AuthenticatedSalairesRoute
   '/_authenticated/sauvegarde': typeof AuthenticatedSauvegardeRoute
   '/_authenticated/souscription': typeof AuthenticatedSouscriptionRoute
+  '/verifier-recu/$number': typeof VerifierRecuNumberRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -273,6 +282,7 @@ export interface FileRouteTypes {
     | '/salaires'
     | '/sauvegarde'
     | '/souscription'
+    | '/verifier-recu/$number'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -299,6 +309,7 @@ export interface FileRouteTypes {
     | '/salaires'
     | '/sauvegarde'
     | '/souscription'
+    | '/verifier-recu/$number'
   id:
     | '__root__'
     | '/'
@@ -326,12 +337,14 @@ export interface FileRouteTypes {
     | '/_authenticated/salaires'
     | '/_authenticated/sauvegarde'
     | '/_authenticated/souscription'
+    | '/verifier-recu/$number'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  VerifierRecuNumberRoute: typeof VerifierRecuNumberRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -355,6 +368,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verifier-recu/$number': {
+      id: '/verifier-recu/$number'
+      path: '/verifier-recu/$number'
+      fullPath: '/verifier-recu/$number'
+      preLoaderRoute: typeof VerifierRecuNumberRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/souscription': {
@@ -571,6 +591,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  VerifierRecuNumberRoute: VerifierRecuNumberRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
