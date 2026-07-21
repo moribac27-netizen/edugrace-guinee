@@ -3,7 +3,7 @@ import { useState, type ReactNode } from "react";
 import {
   LayoutDashboard, Users, GraduationCap, BookOpen, ClipboardList,
   CreditCard, Megaphone, LogOut, Menu, X, School, FileText, CalendarDays, UserCheck,
-  Calculator, Wallet, ScrollText, Library, Link2, Settings,
+  Calculator, Wallet, ScrollText, Library, Link2, Settings, MessageSquare,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,8 @@ const NAV = [
   { to: "/salaires", label: "Salaires", icon: Wallet },
   { to: "/bibliotheque", label: "Bibliothèque", icon: Library },
   { to: "/annonces", label: "Annonces", icon: Megaphone },
+  { to: "/messagerie", label: "Messagerie", icon: MessageSquare },
+
   { to: "/parametres", label: "Paramètres", icon: Settings },
 ] as const;
 

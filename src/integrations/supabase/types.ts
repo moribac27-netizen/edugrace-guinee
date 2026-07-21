@@ -628,6 +628,98 @@ export type Database = {
           },
         ]
       }
+      message_broadcasts: {
+        Row: {
+          author_id: string
+          body: string
+          channel: string
+          created_at: string
+          id: string
+          school_id: string
+          subject: string
+          target_class_id: string | null
+          target_role: Database["public"]["Enums"]["app_role"] | null
+        }
+        Insert: {
+          author_id: string
+          body: string
+          channel?: string
+          created_at?: string
+          id?: string
+          school_id?: string
+          subject: string
+          target_class_id?: string | null
+          target_role?: Database["public"]["Enums"]["app_role"] | null
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          channel?: string
+          created_at?: string
+          id?: string
+          school_id?: string
+          subject?: string
+          target_class_id?: string | null
+          target_role?: Database["public"]["Enums"]["app_role"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_broadcasts_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_broadcasts_target_class_id_fkey"
+            columns: ["target_class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          read_at: string | null
+          recipient_id: string
+          school_id: string
+          sender_id: string
+          subject: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id: string
+          school_id?: string
+          sender_id: string
+          subject: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id?: string
+          school_id?: string
+          sender_id?: string
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
