@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedSouscriptionRouteImport } from './routes/_authenticated/souscription'
 import { Route as AuthenticatedSauvegardeRouteImport } from './routes/_authenticated/sauvegarde'
 import { Route as AuthenticatedSalairesRouteImport } from './routes/_authenticated/salaires'
 import { Route as AuthenticatedRapportsRouteImport } from './routes/_authenticated/rapports'
@@ -47,6 +48,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedSouscriptionRoute =
+  AuthenticatedSouscriptionRouteImport.update({
+    id: '/souscription',
+    path: '/souscription',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSauvegardeRoute = AuthenticatedSauvegardeRouteImport.update({
   id: '/sauvegarde',
   path: '/sauvegarde',
@@ -176,6 +183,7 @@ export interface FileRoutesByFullPath {
   '/rapports': typeof AuthenticatedRapportsRoute
   '/salaires': typeof AuthenticatedSalairesRoute
   '/sauvegarde': typeof AuthenticatedSauvegardeRoute
+  '/souscription': typeof AuthenticatedSouscriptionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -200,6 +208,7 @@ export interface FileRoutesByTo {
   '/rapports': typeof AuthenticatedRapportsRoute
   '/salaires': typeof AuthenticatedSalairesRoute
   '/sauvegarde': typeof AuthenticatedSauvegardeRoute
+  '/souscription': typeof AuthenticatedSouscriptionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -226,6 +235,7 @@ export interface FileRoutesById {
   '/_authenticated/rapports': typeof AuthenticatedRapportsRoute
   '/_authenticated/salaires': typeof AuthenticatedSalairesRoute
   '/_authenticated/sauvegarde': typeof AuthenticatedSauvegardeRoute
+  '/_authenticated/souscription': typeof AuthenticatedSouscriptionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -252,6 +262,7 @@ export interface FileRouteTypes {
     | '/rapports'
     | '/salaires'
     | '/sauvegarde'
+    | '/souscription'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -276,6 +287,7 @@ export interface FileRouteTypes {
     | '/rapports'
     | '/salaires'
     | '/sauvegarde'
+    | '/souscription'
   id:
     | '__root__'
     | '/'
@@ -301,6 +313,7 @@ export interface FileRouteTypes {
     | '/_authenticated/rapports'
     | '/_authenticated/salaires'
     | '/_authenticated/sauvegarde'
+    | '/_authenticated/souscription'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -331,6 +344,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/souscription': {
+      id: '/_authenticated/souscription'
+      path: '/souscription'
+      fullPath: '/souscription'
+      preLoaderRoute: typeof AuthenticatedSouscriptionRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/sauvegarde': {
       id: '/_authenticated/sauvegarde'
@@ -496,6 +516,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedRapportsRoute: typeof AuthenticatedRapportsRoute
   AuthenticatedSalairesRoute: typeof AuthenticatedSalairesRoute
   AuthenticatedSauvegardeRoute: typeof AuthenticatedSauvegardeRoute
+  AuthenticatedSouscriptionRoute: typeof AuthenticatedSouscriptionRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -519,6 +540,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedRapportsRoute: AuthenticatedRapportsRoute,
   AuthenticatedSalairesRoute: AuthenticatedSalairesRoute,
   AuthenticatedSauvegardeRoute: AuthenticatedSauvegardeRoute,
+  AuthenticatedSouscriptionRoute: AuthenticatedSouscriptionRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
