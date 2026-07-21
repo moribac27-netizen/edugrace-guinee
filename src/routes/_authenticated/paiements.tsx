@@ -127,11 +127,30 @@ function PaymentsPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" className="gap-2" onClick={() => exportExcel(tab === "late" ? lateStudents : rows, tab)} disabled={(tab === "late" ? lateStudents.length : rows.length) === 0}>
-            <FileSpreadsheet className="size-4" /> Excel
+          {selected.size > 0 && (
+            <>
+              <Badge variant="secondary" className="self-center">{selected.size} sélectionné(s)</Badge>
+              <Button variant="ghost" size="sm" onClick={() => setSelected(new Set())}>Effacer</Button>
+              {tab === "validated" && (
+                <Button variant="outline" className="gap-2" onClick={() => printSelectedReceipts(rows.filter((p: PaymentRow) => selected.has(p.id)), school)}>
+                  <Printer className="size-4" /> Imprimer reçus
+                </Button>
+              )}
+            </>
+          )}
+          <Button variant="outline" className="gap-2" onClick={() => {
+            const src = tab === "late" ? lateStudents : rows;
+            const subset = selected.size > 0 ? src.filter((r: any) => selected.has(r.id)) : src;
+            exportExcel(subset, tab);
+          }} disabled={(tab === "late" ? lateStudents.length : rows.length) === 0}>
+            <FileSpreadsheet className="size-4" /> Excel{selected.size > 0 ? ` (${selected.size})` : ""}
           </Button>
-          <Button variant="outline" className="gap-2" onClick={() => exportPdf(rows, tab, school, lateStudents)} disabled={(tab === "late" ? lateStudents.length : rows.length) === 0}>
-            <FileText className="size-4" /> PDF
+          <Button variant="outline" className="gap-2" onClick={() => {
+            const subset = selected.size > 0 ? rows.filter((p: PaymentRow) => selected.has(p.id)) : rows;
+            const lateSubset = selected.size > 0 ? lateStudents.filter((s: any) => selected.has(s.id)) : lateStudents;
+            exportPdf(subset, tab, school, lateSubset);
+          }} disabled={(tab === "late" ? lateStudents.length : rows.length) === 0}>
+            <FileText className="size-4" /> PDF{selected.size > 0 ? ` (${selected.size})` : ""}
           </Button>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -144,6 +163,7 @@ function PaymentsPage() {
           </Dialog>
         </div>
       </div>
+
 
       <div className="flex gap-2 border-b">
         <TabBtn active={tab === "pending"} onClick={() => setTab("pending")} label={`En attente (${pending.length})`} icon={<Clock className="size-4" />} />
