@@ -32,6 +32,8 @@ function PaymentsPage() {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<"pending" | "validated" | "late">("pending");
   const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+
 
   const { data: payments = [] } = useQuery({
     queryKey: ["payments"],
@@ -125,11 +127,30 @@ function PaymentsPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" className="gap-2" onClick={() => exportExcel(tab === "late" ? lateStudents : rows, tab)} disabled={(tab === "late" ? lateStudents.length : rows.length) === 0}>
-            <FileSpreadsheet className="size-4" /> Excel
+          {selected.size > 0 && (
+            <>
+              <Badge variant="secondary" className="self-center">{selected.size} sélectionné(s)</Badge>
+              <Button variant="ghost" size="sm" onClick={() => setSelected(new Set())}>Effacer</Button>
+              {tab === "validated" && (
+                <Button variant="outline" className="gap-2" onClick={() => printSelectedReceipts(rows.filter((p: PaymentRow) => selected.has(p.id)), school)}>
+                  <Printer className="size-4" /> Imprimer reçus
+                </Button>
+              )}
+            </>
+          )}
+          <Button variant="outline" className="gap-2" onClick={() => {
+            const src = tab === "late" ? lateStudents : rows;
+            const subset = selected.size > 0 ? src.filter((r: any) => selected.has(r.id)) : src;
+            exportExcel(subset, tab);
+          }} disabled={(tab === "late" ? lateStudents.length : rows.length) === 0}>
+            <FileSpreadsheet className="size-4" /> Excel{selected.size > 0 ? ` (${selected.size})` : ""}
           </Button>
-          <Button variant="outline" className="gap-2" onClick={() => exportPdf(rows, tab, school, lateStudents)} disabled={(tab === "late" ? lateStudents.length : rows.length) === 0}>
-            <FileText className="size-4" /> PDF
+          <Button variant="outline" className="gap-2" onClick={() => {
+            const subset = selected.size > 0 ? rows.filter((p: PaymentRow) => selected.has(p.id)) : rows;
+            const lateSubset = selected.size > 0 ? lateStudents.filter((s: any) => selected.has(s.id)) : lateStudents;
+            exportPdf(subset, tab, school, lateSubset);
+          }} disabled={(tab === "late" ? lateStudents.length : rows.length) === 0}>
+            <FileText className="size-4" /> PDF{selected.size > 0 ? ` (${selected.size})` : ""}
           </Button>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -143,11 +164,13 @@ function PaymentsPage() {
         </div>
       </div>
 
+
       <div className="flex gap-2 border-b">
-        <TabBtn active={tab === "pending"} onClick={() => setTab("pending")} label={`En attente (${pending.length})`} icon={<Clock className="size-4" />} />
-        <TabBtn active={tab === "validated"} onClick={() => setTab("validated")} label={`Validés (${validated.length})`} icon={<CheckCircle2 className="size-4" />} />
-        <TabBtn active={tab === "late"} onClick={() => setTab("late")} label={`Retards (${lateStudents.length})`} icon={<AlertTriangle className="size-4" />} />
+        <TabBtn active={tab === "pending"} onClick={() => { setTab("pending"); setSelected(new Set()); }} label={`En attente (${pending.length})`} icon={<Clock className="size-4" />} />
+        <TabBtn active={tab === "validated"} onClick={() => { setTab("validated"); setSelected(new Set()); }} label={`Validés (${validated.length})`} icon={<CheckCircle2 className="size-4" />} />
+        <TabBtn active={tab === "late"} onClick={() => { setTab("late"); setSelected(new Set()); }} label={`Retards (${lateStudents.length})`} icon={<AlertTriangle className="size-4" />} />
       </div>
+
 
       {tab !== "late" && (
         <div className="relative max-w-sm">
@@ -160,11 +183,15 @@ function PaymentsPage() {
         <CardContent className="p-4 overflow-x-auto">
           {tab === "late" ? (
             <Table>
-              <TableHeader><TableRow><TableHead>Élève</TableHead><TableHead>Classe</TableHead><TableHead>Payé</TableHead><TableHead>Reste</TableHead><TableHead>Progression</TableHead></TableRow></TableHeader>
+              <TableHeader><TableRow>
+                <TableHead className="w-10"><input type="checkbox" checked={lateStudents.length > 0 && lateStudents.every((s: any) => selected.has(s.id))} onChange={(e) => setSelected(e.target.checked ? new Set(lateStudents.map((s: any) => s.id)) : new Set())} /></TableHead>
+                <TableHead>Élève</TableHead><TableHead>Classe</TableHead><TableHead>Payé</TableHead><TableHead>Reste</TableHead><TableHead>Progression</TableHead>
+              </TableRow></TableHeader>
               <TableBody>
-                {lateStudents.length === 0 && <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Aucun retard</TableCell></TableRow>}
+                {lateStudents.length === 0 && <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Aucun retard</TableCell></TableRow>}
                 {lateStudents.map((s: any) => (
-                  <TableRow key={s.id}>
+                  <TableRow key={s.id} data-state={selected.has(s.id) ? "selected" : undefined}>
+                    <TableCell><input type="checkbox" checked={selected.has(s.id)} onChange={(e) => { const n = new Set(selected); e.target.checked ? n.add(s.id) : n.delete(s.id); setSelected(n); }} /></TableCell>
                     <TableCell><div className="flex items-center gap-2"><AlertTriangle className="size-4 text-destructive" /><span className="font-medium">{s.full_name}</span></div></TableCell>
                     <TableCell>{s.classes?.name ?? "—"}</TableCell>
                     <TableCell>{fmt(s.paid)} GNF</TableCell>
@@ -183,6 +210,7 @@ function PaymentsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10"><input type="checkbox" checked={rows.length > 0 && rows.every((p: PaymentRow) => selected.has(p.id))} onChange={(e) => setSelected(e.target.checked ? new Set(rows.map((p: PaymentRow) => p.id)) : new Set())} /></TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Reçu</TableHead>
                   <TableHead>Élève</TableHead>
@@ -194,9 +222,10 @@ function PaymentsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rows.length === 0 && <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">Aucun paiement</TableCell></TableRow>}
+                {rows.length === 0 && <TableRow><TableCell colSpan={9} className="text-center py-8 text-muted-foreground">Aucun paiement</TableCell></TableRow>}
                 {rows.map((p: PaymentRow) => (
-                  <TableRow key={p.id}>
+                  <TableRow key={p.id} data-state={selected.has(p.id) ? "selected" : undefined}>
+                    <TableCell><input type="checkbox" checked={selected.has(p.id)} onChange={(e) => { const n = new Set(selected); e.target.checked ? n.add(p.id) : n.delete(p.id); setSelected(n); }} /></TableCell>
                     <TableCell className="text-sm">{new Date(p.paid_at).toLocaleDateString("fr-FR")}</TableCell>
                     <TableCell className="font-mono text-xs">{p.receipt_number ?? <span className="text-muted-foreground italic">à générer</span>}</TableCell>
                     <TableCell><div className="font-medium">{p.students?.full_name}</div><div className="text-xs text-muted-foreground">{p.students?.classes?.name}</div></TableCell>
@@ -219,6 +248,7 @@ function PaymentsPage() {
               </TableBody>
             </Table>
           )}
+
         </CardContent>
       </Card>
     </div>
@@ -569,4 +599,14 @@ function exportPdf(rows: any[], tab: "pending" | "validated" | "late", school: a
   <script>setTimeout(() => window.print(), 300);</script>
 </body></html>`);
   w.document.close();
+}
+
+async function printSelectedReceipts(payments: any[], school: any) {
+  const printable = payments.filter((p) => p.receipt_number);
+  if (printable.length === 0) return toast.error("Aucun reçu validé à imprimer");
+  if (printable.length < payments.length) toast.warning(`${payments.length - printable.length} paiement(s) sans numéro de reçu ignoré(s)`);
+  for (const p of printable) {
+    await printReceipt(p, school);
+    await new Promise((r) => setTimeout(r, 400));
+  }
 }
