@@ -124,15 +124,23 @@ function PaymentsPage() {
             )}
           </p>
         </div>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus className="size-4" />
-              Nouveau paiement
-            </Button>
-          </DialogTrigger>
-          <PaymentDialog students={students} onClose={() => { setOpen(false); qc.invalidateQueries(); }} />
-        </Dialog>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => exportExcel(rows, tab)} disabled={tab === "late" ? lateStudents.length === 0 : rows.length === 0}>
+            <FileSpreadsheet className="size-4" /> Excel
+          </Button>
+          <Button variant="outline" className="gap-2" onClick={() => exportPdf(rows, tab, school, lateStudents)} disabled={tab === "late" ? lateStudents.length === 0 : rows.length === 0}>
+            <FileText className="size-4" /> PDF
+          </Button>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button className="gap-2">
+                <Plus className="size-4" />
+                Nouveau paiement
+              </Button>
+            </DialogTrigger>
+            <PaymentDialog students={students} onClose={() => { setOpen(false); qc.invalidateQueries(); }} />
+          </Dialog>
+        </div>
       </div>
 
       <div className="flex gap-2 border-b">
