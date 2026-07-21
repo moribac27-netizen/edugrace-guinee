@@ -32,6 +32,7 @@ const NAV = [
   { to: "/sauvegarde", label: "Sauvegarde", icon: DatabaseBackup },
   { to: "/souscription", label: "Abonnement", icon: Sparkles },
   { to: "/plans", label: "Offres (admin)", icon: Package },
+  { to: "/super-admin", label: "Super Admin", icon: ShieldCheck },
 
   { to: "/personnalisation-recu", label: "Personnalisation reçu", icon: FileText },
   { to: "/parametres", label: "Paramètres", icon: Settings },
