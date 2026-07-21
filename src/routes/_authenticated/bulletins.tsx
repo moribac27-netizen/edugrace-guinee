@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Printer, FileDown, School } from "lucide-react";
+import { maxScoreForLevel } from "@/lib/grading";
 
 export const Route = createFileRoute("/_authenticated/bulletins")({
   head: () => ({ meta: [{ title: "Bulletins scolaires — MBGEduGuinée" }] }),
@@ -24,24 +25,26 @@ const PERIODS = [
 
 const SCHOOL_YEAR = "2025-2026";
 
-function appreciation(note: number | null): string {
+function appreciation(note: number | null, max: 10 | 20 = 20): string {
   if (note == null) return "—";
-  if (note >= 18) return "Excellent";
-  if (note >= 16) return "Très Bien";
-  if (note >= 14) return "Bien";
-  if (note >= 12) return "Assez Bien";
-  if (note >= 10) return "Passable";
-  if (note >= 8) return "Insuffisant";
-  if (note >= 5) return "Médiocre";
+  const n = max === 10 ? note * 2 : note; // normalise sur 20
+  if (n >= 18) return "Excellent";
+  if (n >= 16) return "Très Bien";
+  if (n >= 14) return "Bien";
+  if (n >= 12) return "Assez Bien";
+  if (n >= 10) return "Passable";
+  if (n >= 8) return "Insuffisant";
+  if (n >= 5) return "Médiocre";
   return "Très faible";
 }
 
-function decision(avg: number | null, level: string): string {
+function decision(avg: number | null, level: string, max: 10 | 20 = 20): string {
   if (avg == null) return "—";
+  const n = max === 10 ? avg * 2 : avg;
   const isExam = /terminale|3ème|3eme|cm2/i.test(level);
-  if (avg >= 10) return "Admis(e) en classe supérieure";
-  if (avg >= 8.5) return isExam ? "Autorisé(e) à composer" : "Passage conditionnel";
-  if (avg >= 6) return "Redoublement";
+  if (n >= 10) return "Admis(e) en classe supérieure";
+  if (n >= 8.5) return isExam ? "Autorisé(e) à composer" : "Passage conditionnel";
+  if (n >= 6) return "Redoublement";
   return "Exclusion / Réorientation";
 }
 
@@ -81,6 +84,7 @@ function BulletinsPage() {
   });
 
   const cls = classes.find((c: any) => c.id === classId);
+  const maxScore = maxScoreForLevel(cls?.level);
 
   const computed = useMemo(() => {
     return students.map((s: any) => {
@@ -90,7 +94,7 @@ function BulletinsPage() {
         const gs = sg.filter((x: any) => x.subject_id === sub.id);
         const avg = gs.length ? gs.reduce((a: number, g: any) => a + Number(g.score), 0) / gs.length : null;
         if (avg != null) { totalW += avg * Number(sub.coefficient); totalC += Number(sub.coefficient); }
-        return { subject: sub, avg, appreciation: appreciation(avg) };
+        return { subject: sub, avg, appreciation: appreciation(avg, maxScore) };
       });
       const avg = totalC > 0 ? totalW / totalC : null;
       return { student: s, perSubject, avg, totalW, totalC };
@@ -218,9 +222,9 @@ function BulletinsPage() {
             {/* Summary */}
             <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
               <div className="border border-black p-3 space-y-1">
-                <div className="flex justify-between"><span className="font-semibold">Moyenne générale :</span> <span className="font-bold text-base">{selected.avg != null ? selected.avg.toFixed(2) : "—"} / 20</span></div>
+                <div className="flex justify-between"><span className="font-semibold">Moyenne générale :</span> <span className="font-bold text-base">{selected.avg != null ? selected.avg.toFixed(2) : "—"} / {maxScore}</span></div>
                 <div className="flex justify-between"><span className="font-semibold">Rang :</span> <span>{selected.rank ?? "—"} / {withRank.length}</span></div>
-                <div className="flex justify-between"><span className="font-semibold">Appréciation :</span> <span>{appreciation(selected.avg)}</span></div>
+                <div className="flex justify-between"><span className="font-semibold">Appréciation :</span> <span>{appreciation(selected.avg, maxScore)}</span></div>
               </div>
               <div className="border border-black p-3 space-y-1">
                 <div className="flex justify-between"><span className="font-semibold">Moyenne de classe :</span> <span>{classAvg ? classAvg.toFixed(2) : "—"}</span></div>
@@ -231,7 +235,7 @@ function BulletinsPage() {
 
             <div className="border border-black p-3 text-sm mb-6">
               <span className="font-semibold">Décision du conseil de classe : </span>
-              <span className="font-bold">{decision(selected.avg, cls.level)}</span>
+              <span className="font-bold">{decision(selected.avg, cls.level, maxScore)}</span>
             </div>
 
             {/* Signatures */}

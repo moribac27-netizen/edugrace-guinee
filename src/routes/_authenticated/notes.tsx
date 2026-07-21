@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Plus, Award } from "lucide-react";
 import { toast } from "sonner";
+import { maxScoreForLevel } from "@/lib/grading";
 
 export const Route = createFileRoute("/_authenticated/notes")({
   head: () => ({ meta: [{ title: "Notes — MBGEduGuinée" }] }),
@@ -43,6 +44,9 @@ function NotesPage() {
     queryFn: async () => (await supabase.from("grades").select("*").in("student_id", studentIds).eq("period", period)).data ?? [],
   });
 
+  const cls = classes.find((c: any) => c.id === classId);
+  const maxScore = maxScoreForLevel(cls?.level);
+
   const rows = useMemo(() => {
     return students.map((s: any) => {
       const sg = grades.filter((g: any) => g.student_id === s.id);
@@ -65,7 +69,7 @@ function NotesPage() {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button className="gap-2" disabled={!classId}><Plus className="size-4" />Saisir une note</Button></DialogTrigger>
-          <GradeDialog students={students} subjects={subjects} period={period} onClose={() => { setOpen(false); qc.invalidateQueries({ queryKey: ["grades"] }); }} />
+          <GradeDialog students={students} subjects={subjects} period={period} maxScore={maxScore} onClose={() => { setOpen(false); qc.invalidateQueries({ queryKey: ["grades"] }); }} />
         </Dialog>
       </div>
 
@@ -115,7 +119,7 @@ function NotesPage() {
                       const g = r.grades.find((x: any) => x.subject_id === s.id);
                       return <TableCell key={s.id} className="text-center text-sm">{g ? Number(g.score).toFixed(1) : <span className="text-muted-foreground">—</span>}</TableCell>;
                     })}
-                    <TableCell className="text-center font-bold">{r.avg != null ? r.avg.toFixed(2) : "—"} / 20</TableCell>
+                    <TableCell className="text-center font-bold">{r.avg != null ? r.avg.toFixed(2) : "—"} / {maxScore}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -127,19 +131,23 @@ function NotesPage() {
   );
 }
 
-function GradeDialog({ students, subjects, period, onClose }: any) {
-  const [form, setForm] = useState({ student_id: "", subject_id: "", score: 10 });
+function GradeDialog({ students, subjects, period, maxScore, onClose }: any) {
+  const [form, setForm] = useState({ student_id: "", subject_id: "", score: Math.min(10, maxScore) });
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.student_id || !form.subject_id) return;
-    const { error } = await supabase.from("grades").insert({ ...form, period });
+    const score = Number(form.score);
+    if (Number.isNaN(score) || score < 0 || score > maxScore) {
+      return toast.error(`La note doit être comprise entre 0 et ${maxScore}.`);
+    }
+    const { error } = await supabase.from("grades").insert({ ...form, score, period });
     if (error) return toast.error(error.message);
     toast.success("Note enregistrée");
     onClose();
   }
   return (
     <DialogContent>
-      <DialogHeader><DialogTitle>Nouvelle note ({period})</DialogTitle></DialogHeader>
+      <DialogHeader><DialogTitle>Nouvelle note ({period}) — sur {maxScore}</DialogTitle></DialogHeader>
       <form onSubmit={submit} className="space-y-3">
         <div>
           <Label>Élève</Label>
@@ -155,7 +163,18 @@ function GradeDialog({ students, subjects, period, onClose }: any) {
             <SelectContent>{subjects.map((s: any) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
           </Select>
         </div>
-        <div><Label>Note / 20</Label><Input type="number" step="0.5" min="0" max="20" value={form.score} onChange={(e) => setForm({ ...form, score: Number(e.target.value) })} /></div>
+        <div>
+          <Label>Note / {maxScore}</Label>
+          <Input
+            type="number"
+            step="0.25"
+            min="0"
+            max={maxScore}
+            value={form.score}
+            placeholder={`Entrer une note sur ${maxScore}`}
+            onChange={(e) => setForm({ ...form, score: Number(e.target.value) })}
+          />
+        </div>
         <DialogFooter><Button type="submit">Enregistrer</Button></DialogFooter>
       </form>
     </DialogContent>
