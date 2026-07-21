@@ -69,7 +69,7 @@ function NotesPage() {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button className="gap-2" disabled={!classId}><Plus className="size-4" />Saisir une note</Button></DialogTrigger>
-          <GradeDialog students={students} subjects={subjects} period={period} onClose={() => { setOpen(false); qc.invalidateQueries({ queryKey: ["grades"] }); }} />
+          <GradeDialog students={students} subjects={subjects} period={period} maxScore={maxScore} onClose={() => { setOpen(false); qc.invalidateQueries({ queryKey: ["grades"] }); }} />
         </Dialog>
       </div>
 
