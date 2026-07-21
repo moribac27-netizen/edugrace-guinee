@@ -465,6 +465,7 @@ async function printReceipt(p: any, school: any) {
       <button onclick="window.print()">🖨️ Imprimer</button>
     </div>
   </div>
+  ${receiptHeader ? `<div class="rheader">${escapeHtml(receiptHeader)}</div>` : ""}
   <div class="header">
     ${logo ? `<img class="logo" src="${logo}" alt="Logo" />` : ""}
     <div class="school">
@@ -474,8 +475,9 @@ async function printReceipt(p: any, school: any) {
     </div>
   </div>
 
-  <div class="title">REÇU DE PAIEMENT</div>
+  <div class="title">${escapeHtml(receiptTitle)}</div>
   <div class="subtitle">N° ${escapeHtml(p.receipt_number)}</div>
+
 
   <div class="box">
     <div class="row"><strong>Date</strong><span>${new Date(p.paid_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</span></div>
