@@ -119,7 +119,7 @@ function NotesPage() {
                       const g = r.grades.find((x: any) => x.subject_id === s.id);
                       return <TableCell key={s.id} className="text-center text-sm">{g ? Number(g.score).toFixed(1) : <span className="text-muted-foreground">—</span>}</TableCell>;
                     })}
-                    <TableCell className="text-center font-bold">{r.avg != null ? r.avg.toFixed(2) : "—"} / 20</TableCell>
+                    <TableCell className="text-center font-bold">{r.avg != null ? r.avg.toFixed(2) : "—"} / {maxScore}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
