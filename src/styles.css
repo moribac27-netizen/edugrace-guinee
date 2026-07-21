@@ -166,3 +166,26 @@
     letter-spacing: -0.02em;
   }
 }
+
+@layer utilities {
+  .page-fade-in {
+    animation: page-fade-in 0.25s ease-out both;
+  }
+  @keyframes page-fade-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -12px color-mix(in oklab, var(--color-primary) 25%, transparent);
+  }
+}
+
+@media print {
+  aside, header, nav, .no-print { display: none !important; }
+  main { padding: 0 !important; max-width: none !important; }
+  body { background: white !important; }
+}
