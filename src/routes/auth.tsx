@@ -43,7 +43,7 @@ function AuthPage() {
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Connexion réussie");
-    navigate({ to: "/dashboard" });
+    afterAuth();
   }
 
   async function handleSignUp(e: React.FormEvent) {
