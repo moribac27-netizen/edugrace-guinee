@@ -26,6 +26,7 @@ import { Route as AuthenticatedClassesRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedBulletinsRouteImport } from './routes/_authenticated/bulletins'
 import { Route as AuthenticatedBibliothequeRouteImport } from './routes/_authenticated/bibliotheque'
 import { Route as AuthenticatedAnnoncesRouteImport } from './routes/_authenticated/annonces'
+import { Route as AuthenticatedAffectationsRouteImport } from './routes/_authenticated/affectations'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -115,10 +116,17 @@ const AuthenticatedAnnoncesRoute = AuthenticatedAnnoncesRouteImport.update({
   path: '/annonces',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAffectationsRoute =
+  AuthenticatedAffectationsRouteImport.update({
+    id: '/affectations',
+    path: '/affectations',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/affectations': typeof AuthenticatedAffectationsRoute
   '/annonces': typeof AuthenticatedAnnoncesRoute
   '/bibliotheque': typeof AuthenticatedBibliothequeRoute
   '/bulletins': typeof AuthenticatedBulletinsRoute
@@ -137,6 +145,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/affectations': typeof AuthenticatedAffectationsRoute
   '/annonces': typeof AuthenticatedAnnoncesRoute
   '/bibliotheque': typeof AuthenticatedBibliothequeRoute
   '/bulletins': typeof AuthenticatedBulletinsRoute
@@ -157,6 +166,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/affectations': typeof AuthenticatedAffectationsRoute
   '/_authenticated/annonces': typeof AuthenticatedAnnoncesRoute
   '/_authenticated/bibliotheque': typeof AuthenticatedBibliothequeRoute
   '/_authenticated/bulletins': typeof AuthenticatedBulletinsRoute
@@ -177,6 +187,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/affectations'
     | '/annonces'
     | '/bibliotheque'
     | '/bulletins'
@@ -195,6 +206,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/affectations'
     | '/annonces'
     | '/bibliotheque'
     | '/bulletins'
@@ -214,6 +226,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/affectations'
     | '/_authenticated/annonces'
     | '/_authenticated/bibliotheque'
     | '/_authenticated/bulletins'
@@ -357,10 +370,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAnnoncesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/affectations': {
+      id: '/_authenticated/affectations'
+      path: '/affectations'
+      fullPath: '/affectations'
+      preLoaderRoute: typeof AuthenticatedAffectationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAffectationsRoute: typeof AuthenticatedAffectationsRoute
   AuthenticatedAnnoncesRoute: typeof AuthenticatedAnnoncesRoute
   AuthenticatedBibliothequeRoute: typeof AuthenticatedBibliothequeRoute
   AuthenticatedBulletinsRoute: typeof AuthenticatedBulletinsRoute
@@ -378,6 +399,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAffectationsRoute: AuthenticatedAffectationsRoute,
   AuthenticatedAnnoncesRoute: AuthenticatedAnnoncesRoute,
   AuthenticatedBibliothequeRoute: AuthenticatedBibliothequeRoute,
   AuthenticatedBulletinsRoute: AuthenticatedBulletinsRoute,
