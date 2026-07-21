@@ -183,11 +183,15 @@ function PaymentsPage() {
         <CardContent className="p-4 overflow-x-auto">
           {tab === "late" ? (
             <Table>
-              <TableHeader><TableRow><TableHead>Élève</TableHead><TableHead>Classe</TableHead><TableHead>Payé</TableHead><TableHead>Reste</TableHead><TableHead>Progression</TableHead></TableRow></TableHeader>
+              <TableHeader><TableRow>
+                <TableHead className="w-10"><input type="checkbox" checked={lateStudents.length > 0 && lateStudents.every((s: any) => selected.has(s.id))} onChange={(e) => setSelected(e.target.checked ? new Set(lateStudents.map((s: any) => s.id)) : new Set())} /></TableHead>
+                <TableHead>Élève</TableHead><TableHead>Classe</TableHead><TableHead>Payé</TableHead><TableHead>Reste</TableHead><TableHead>Progression</TableHead>
+              </TableRow></TableHeader>
               <TableBody>
-                {lateStudents.length === 0 && <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Aucun retard</TableCell></TableRow>}
+                {lateStudents.length === 0 && <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Aucun retard</TableCell></TableRow>}
                 {lateStudents.map((s: any) => (
-                  <TableRow key={s.id}>
+                  <TableRow key={s.id} data-state={selected.has(s.id) ? "selected" : undefined}>
+                    <TableCell><input type="checkbox" checked={selected.has(s.id)} onChange={(e) => { const n = new Set(selected); e.target.checked ? n.add(s.id) : n.delete(s.id); setSelected(n); }} /></TableCell>
                     <TableCell><div className="flex items-center gap-2"><AlertTriangle className="size-4 text-destructive" /><span className="font-medium">{s.full_name}</span></div></TableCell>
                     <TableCell>{s.classes?.name ?? "—"}</TableCell>
                     <TableCell>{fmt(s.paid)} GNF</TableCell>
@@ -206,6 +210,7 @@ function PaymentsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10"><input type="checkbox" checked={rows.length > 0 && rows.every((p: PaymentRow) => selected.has(p.id))} onChange={(e) => setSelected(e.target.checked ? new Set(rows.map((p: PaymentRow) => p.id)) : new Set())} /></TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Reçu</TableHead>
                   <TableHead>Élève</TableHead>
@@ -217,9 +222,10 @@ function PaymentsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rows.length === 0 && <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">Aucun paiement</TableCell></TableRow>}
+                {rows.length === 0 && <TableRow><TableCell colSpan={9} className="text-center py-8 text-muted-foreground">Aucun paiement</TableCell></TableRow>}
                 {rows.map((p: PaymentRow) => (
-                  <TableRow key={p.id}>
+                  <TableRow key={p.id} data-state={selected.has(p.id) ? "selected" : undefined}>
+                    <TableCell><input type="checkbox" checked={selected.has(p.id)} onChange={(e) => { const n = new Set(selected); e.target.checked ? n.add(p.id) : n.delete(p.id); setSelected(n); }} /></TableCell>
                     <TableCell className="text-sm">{new Date(p.paid_at).toLocaleDateString("fr-FR")}</TableCell>
                     <TableCell className="font-mono text-xs">{p.receipt_number ?? <span className="text-muted-foreground italic">à générer</span>}</TableCell>
                     <TableCell><div className="font-medium">{p.students?.full_name}</div><div className="text-xs text-muted-foreground">{p.students?.classes?.name}</div></TableCell>
@@ -242,6 +248,7 @@ function PaymentsPage() {
               </TableBody>
             </Table>
           )}
+
         </CardContent>
       </Card>
     </div>
