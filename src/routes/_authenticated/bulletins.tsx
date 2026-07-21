@@ -235,7 +235,7 @@ function BulletinsPage() {
 
             <div className="border border-black p-3 text-sm mb-6">
               <span className="font-semibold">Décision du conseil de classe : </span>
-              <span className="font-bold">{decision(selected.avg, cls.level)}</span>
+              <span className="font-bold">{decision(selected.avg, cls.level, maxScore)}</span>
             </div>
 
             {/* Signatures */}
