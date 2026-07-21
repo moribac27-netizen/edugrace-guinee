@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Printer, FileSpreadsheet, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { maxScoreForLevel } from "@/lib/grading";
 
 export const Route = createFileRoute("/_authenticated/rapports")({
   component: RapportsPage,
@@ -226,7 +227,7 @@ function NotesReport() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.from("classes").select("id,name").order("name").then(({ data }) => setClasses(data || []));
+    supabase.from("classes").select("id,name,level").order("name").then(({ data }) => setClasses(data || []));
   }, []);
 
   useEffect(() => {
@@ -234,20 +235,26 @@ function NotesReport() {
       setLoading(true);
       let q = supabase
         .from("grades")
-        .select("score,max_score,period,evaluation_type,students(first_name,last_name,class_id,classes(name)),subjects(name)")
+        .select("score,max_score,period,evaluation_type,students(first_name,last_name,class_id,classes(name,level)),subjects(name)")
         .order("created_at", { ascending: false });
       if (term !== "all") q = q.eq("period", term);
       const { data } = await q;
-      let mapped = (data || []).map((g: any) => ({
-        eleve: `${g.students?.last_name ?? ""} ${g.students?.first_name ?? ""}`.trim(),
-        classe: g.students?.classes?.name,
-        classId: g.students?.class_id,
-        matiere: g.subjects?.name,
-        type: g.evaluation_type,
-        periode: g.period,
-        note: g.score,
-        max: g.max_score,
-      }));
+      let mapped = (data || []).map((g: any) => {
+        const level = g.students?.classes?.level;
+        const base = maxScoreForLevel(level);
+        return {
+          eleve: `${g.students?.last_name ?? ""} ${g.students?.first_name ?? ""}`.trim(),
+          classe: g.students?.classes?.name,
+          niveau: level ?? "",
+          classId: g.students?.class_id,
+          matiere: g.subjects?.name,
+          type: g.evaluation_type,
+          periode: g.period,
+          note: g.score,
+          base: `/${base}`,
+          max: g.max_score ?? base,
+        };
+      });
       if (classId !== "all") mapped = mapped.filter((r) => r.classId === classId);
       setRows(mapped);
       setLoading(false);
@@ -257,10 +264,12 @@ function NotesReport() {
   const columns = [
     { key: "eleve", label: "Élève" },
     { key: "classe", label: "Classe" },
+    { key: "niveau", label: "Niveau" },
     { key: "matiere", label: "Matière" },
     { key: "type", label: "Type" },
     { key: "periode", label: "Période" },
     { key: "note", label: "Note" },
+    { key: "base", label: "Base" },
     { key: "max", label: "Max" },
   ];
 
