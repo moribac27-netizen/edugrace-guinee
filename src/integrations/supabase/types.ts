@@ -1360,6 +1360,7 @@ export type Database = {
           academic_year: string | null
           address: string | null
           bulletin_settings: Json
+          city: string | null
           code: string | null
           created_at: string
           currency: string
@@ -1367,6 +1368,7 @@ export type Database = {
           director_signature_url: string | null
           email: string | null
           id: string
+          last_activity_at: string | null
           logo_url: string | null
           name: string
           period_system: string
@@ -1379,6 +1381,7 @@ export type Database = {
           receipt_settings: Json
           receipt_title: string | null
           school_stamp_url: string | null
+          status: string
           theme_primary: string | null
           theme_secondary: string | null
           updated_at: string
@@ -1388,6 +1391,7 @@ export type Database = {
           academic_year?: string | null
           address?: string | null
           bulletin_settings?: Json
+          city?: string | null
           code?: string | null
           created_at?: string
           currency?: string
@@ -1395,6 +1399,7 @@ export type Database = {
           director_signature_url?: string | null
           email?: string | null
           id?: string
+          last_activity_at?: string | null
           logo_url?: string | null
           name: string
           period_system?: string
@@ -1407,6 +1412,7 @@ export type Database = {
           receipt_settings?: Json
           receipt_title?: string | null
           school_stamp_url?: string | null
+          status?: string
           theme_primary?: string | null
           theme_secondary?: string | null
           updated_at?: string
@@ -1416,6 +1422,7 @@ export type Database = {
           academic_year?: string | null
           address?: string | null
           bulletin_settings?: Json
+          city?: string | null
           code?: string | null
           created_at?: string
           currency?: string
@@ -1423,6 +1430,7 @@ export type Database = {
           director_signature_url?: string | null
           email?: string | null
           id?: string
+          last_activity_at?: string | null
           logo_url?: string | null
           name?: string
           period_system?: string
@@ -1435,6 +1443,7 @@ export type Database = {
           receipt_settings?: Json
           receipt_title?: string | null
           school_stamp_url?: string | null
+          status?: string
           theme_primary?: string | null
           theme_secondary?: string | null
           updated_at?: string
@@ -1883,6 +1892,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      auto_suspend_expired_subscriptions: { Args: never; Returns: number }
       current_school_id: { Args: never; Returns: string }
       has_role: {
         Args: {
@@ -1896,6 +1906,14 @@ export type Database = {
       is_super_admin: { Args: { _uid: string }; Returns: boolean }
       next_receipt_number: { Args: { _school_id: string }; Returns: string }
       same_school: { Args: { _school_id: string }; Returns: boolean }
+      school_storage_usage: {
+        Args: never
+        Returns: {
+          bytes: number
+          files: number
+          school_id: string
+        }[]
+      }
       teacher_teaches_class: {
         Args: { _class_id: string; _uid: string }
         Returns: boolean
