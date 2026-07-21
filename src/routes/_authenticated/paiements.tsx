@@ -503,7 +503,6 @@ async function printReceipt(p: any, school: any) {
 
   <div class="note">Reçu généré électroniquement — vérifiable en ligne via QR code.</div>
 
-  <script>setTimeout(() => window.print(), 300);</script>
 </body></html>
   `);
   w.document.close();
