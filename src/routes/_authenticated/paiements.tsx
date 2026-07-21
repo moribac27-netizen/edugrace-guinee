@@ -522,6 +522,13 @@ function escapeHtml(s: string): string {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 }
 
+async function signIfPath(val?: string | null): Promise<string> {
+  if (!val) return "";
+  if (val.startsWith("http") || val.startsWith("data:") || val.startsWith("blob:")) return val;
+  const { data } = await supabase.storage.from("school-assets").createSignedUrl(val, 3600);
+  return data?.signedUrl ?? "";
+}
+
 function exportExcel(rows: any[], tab: "pending" | "validated" | "late") {
   const today = new Date().toISOString().slice(0, 10);
   let sheetData: any[];
