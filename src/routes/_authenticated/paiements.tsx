@@ -462,3 +462,111 @@ async function printReceipt(p: any, school: any) {
 function escapeHtml(s: string): string {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 }
+
+function exportExcel(rows: any[], tab: "pending" | "validated" | "late") {
+  const today = new Date().toISOString().slice(0, 10);
+  let sheetData: any[];
+  let sheetName: string;
+  if (tab === "late") {
+    sheetData = rows.map((s: any) => ({
+      Élève: s.full_name,
+      Matricule: s.matricule,
+      Classe: s.classes?.name ?? "",
+      "Frais annuels (GNF)": s.due,
+      "Payé (GNF)": s.paid,
+      "Reste (GNF)": s.remaining,
+      "Progression %": Number(s.pct.toFixed(1)),
+    }));
+    sheetName = "Retards";
+  } else {
+    sheetData = rows.map((p: any) => ({
+      Date: new Date(p.paid_at).toLocaleDateString("fr-FR"),
+      "N° Reçu": p.receipt_number ?? "",
+      Élève: p.students?.full_name ?? "",
+      Matricule: p.students?.matricule ?? "",
+      Classe: p.students?.classes?.name ?? "",
+      Type: p.payment_type,
+      Période: p.period ?? "",
+      Méthode: p.payment_method ?? "",
+      Référence: p.transaction_reference ?? "",
+      "Montant (GNF)": Number(p.amount),
+      Statut: p.validation_status,
+    }));
+    sheetName = tab === "pending" ? "En attente" : "Validés";
+  }
+  const ws = XLSX.utils.json_to_sheet(sheetData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  XLSX.writeFile(wb, `paiements-${sheetName.toLowerCase().replace(/\s+/g, "-")}-${today}.xlsx`);
+}
+
+function exportPdf(rows: any[], tab: "pending" | "validated" | "late", school: any, lateStudents: any[]) {
+  const w = window.open("", "_blank", "width=1000,height=800");
+  if (!w) return;
+  const title = tab === "late" ? "Liste des retards de paiement" : tab === "pending" ? "Paiements en attente" : "Registre des paiements validés";
+  const schoolName = school?.name ?? "MBGEduGuinée";
+  const schoolAddress = school?.address ?? "";
+  const logo = school?.logo_url ?? "";
+  const today = new Date().toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+
+  let head = "";
+  let body = "";
+  let totalRow = "";
+  if (tab === "late") {
+    head = `<tr><th>Élève</th><th>Matricule</th><th>Classe</th><th>Frais</th><th>Payé</th><th>Reste</th><th>%</th></tr>`;
+    body = lateStudents.map((s: any) => `<tr>
+      <td>${escapeHtml(s.full_name)}</td>
+      <td>${escapeHtml(s.matricule ?? "")}</td>
+      <td>${escapeHtml(s.classes?.name ?? "")}</td>
+      <td class="num">${fmt(s.due)}</td>
+      <td class="num">${fmt(s.paid)}</td>
+      <td class="num" style="color:#b91c1c;font-weight:600">${fmt(s.remaining)}</td>
+      <td class="num">${s.pct.toFixed(0)}%</td>
+    </tr>`).join("");
+  } else {
+    head = `<tr><th>Date</th><th>Reçu</th><th>Élève</th><th>Classe</th><th>Type</th><th>Méthode</th><th>Référence</th><th class="num">Montant (GNF)</th></tr>`;
+    const total = rows.reduce((s: number, p: any) => s + Number(p.amount), 0);
+    body = rows.map((p: any) => `<tr>
+      <td>${new Date(p.paid_at).toLocaleDateString("fr-FR")}</td>
+      <td class="mono">${escapeHtml(p.receipt_number ?? "—")}</td>
+      <td>${escapeHtml(p.students?.full_name ?? "")}</td>
+      <td>${escapeHtml(p.students?.classes?.name ?? "")}</td>
+      <td>${escapeHtml(p.payment_type)}</td>
+      <td>${escapeHtml(p.payment_method ?? "")}</td>
+      <td class="mono">${escapeHtml(p.transaction_reference ?? "—")}</td>
+      <td class="num">${fmt(Number(p.amount))}</td>
+    </tr>`).join("");
+    totalRow = `<tr class="total"><td colspan="7" style="text-align:right">TOTAL</td><td class="num">${fmt(total)} GNF</td></tr>`;
+  }
+
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>
+<style>
+  @page { size: A4 landscape; margin: 12mm; }
+  body { font-family: system-ui, sans-serif; color: #1f2937; margin: 0; padding: 20px; }
+  .header { display: flex; align-items: center; gap: 14px; border-bottom: 2px solid #2a5a3e; padding-bottom: 10px; margin-bottom: 14px; }
+  .header img { height: 56px; width: 56px; object-fit: contain; }
+  .header h1 { margin: 0; color: #2a5a3e; font-size: 18px; }
+  .header .sub { font-size: 11px; color: #555; }
+  .title { text-align: center; font-size: 15px; font-weight: 700; margin: 10px 0 14px; color: #2a5a3e; letter-spacing: 1px; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  th, td { border: 1px solid #d1d5db; padding: 6px 8px; text-align: left; }
+  th { background: #f0f9f4; color: #2a5a3e; font-weight: 600; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .mono { font-family: ui-monospace, monospace; font-size: 10px; }
+  .total td { background: #f0f9f4; font-weight: 700; font-size: 12px; }
+  .foot { margin-top: 16px; font-size: 10px; color: #666; display: flex; justify-content: space-between; }
+</style></head><body>
+  <div class="header">
+    ${logo ? `<img src="${logo}" />` : ""}
+    <div>
+      <h1>${escapeHtml(schoolName)}</h1>
+      <div class="sub">${escapeHtml(schoolAddress)}</div>
+    </div>
+  </div>
+  <div class="title">${escapeHtml(title.toUpperCase())}</div>
+  <table><thead>${head}</thead><tbody>${body || `<tr><td colspan="8" style="text-align:center;padding:20px;color:#888">Aucune donnée</td></tr>`}${totalRow}</tbody></table>
+  <div class="foot"><span>Édité le ${today}</span><span>${escapeHtml(schoolName)}</span></div>
+  <script>setTimeout(() => window.print(), 300);</script>
+</body></html>`);
+  w.document.close();
+}
