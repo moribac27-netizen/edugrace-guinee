@@ -64,12 +64,13 @@ function AuthPage() {
   }
 
   async function handleGoogle() {
+    const dest = plan ? `/souscription?plan=${encodeURIComponent(plan)}` : "/dashboard";
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/dashboard",
+      redirect_uri: window.location.origin + dest,
     });
     if (result.error) return toast.error("Connexion Google indisponible");
     if (result.redirected) return;
-    navigate({ to: "/dashboard" });
+    afterAuth();
   }
 
   return (
