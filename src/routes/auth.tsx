@@ -39,15 +39,37 @@ function AuthPage() {
     else navigate({ to: "/dashboard" });
   };
 
+  const [unconfirmedEmail, setUnconfirmedEmail] = useState<string | null>(null);
+  const [resending, setResending] = useState(false);
+
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
     if (loading) return;
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword(signIn);
     setLoading(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      const msg = error.message.toLowerCase();
+      if (msg.includes("confirm")) setUnconfirmedEmail(signIn.email.trim());
+      return toast.error(error.message);
+    }
+    setUnconfirmedEmail(null);
     toast.success("Connexion réussie");
     afterAuth();
+  }
+
+  async function handleResend() {
+    const email = unconfirmedEmail ?? signIn.email.trim();
+    if (!email || resending) return;
+    setResending(true);
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: { emailRedirectTo: window.location.origin + "/auth" },
+    });
+    setResending(false);
+    if (error) return toast.error(error.message);
+    toast.success("E-mail de confirmation renvoyé. Vérifiez votre boîte de réception.");
   }
 
   async function handleSignUp(e: React.FormEvent) {
@@ -132,6 +154,14 @@ function AuthPage() {
                   <div><Label>Email</Label><Input type="email" required value={signIn.email} onChange={(e) => setSignIn({ ...signIn, email: e.target.value })} /></div>
                   <div><Label>Mot de passe</Label><Input type="password" required value={signIn.password} onChange={(e) => setSignIn({ ...signIn, password: e.target.value })} /></div>
                   <Button type="submit" className="w-full" disabled={loading}>Se connecter</Button>
+                  {unconfirmedEmail && (
+                    <div className="mt-2 rounded-md border border-amber-200 bg-amber-50 dark:bg-amber-950/30 p-3 text-sm">
+                      <p className="mb-2">Votre e-mail <span className="font-medium">{unconfirmedEmail}</span> n'est pas encore confirmé.</p>
+                      <Button type="button" variant="outline" size="sm" onClick={handleResend} disabled={resending}>
+                        {resending ? "Envoi..." : "Renvoyer l'e-mail de confirmation"}
+                      </Button>
+                    </div>
+                  )}
                 </form>
               </TabsContent>
               <TabsContent value="signup">
