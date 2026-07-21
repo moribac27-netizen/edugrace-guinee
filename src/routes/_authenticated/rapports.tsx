@@ -541,20 +541,23 @@ function SalairesReport() {
   useEffect(() => {
     (async () => {
       setLoading(true);
+      const [y, m] = month.split("-").map(Number);
       const { data, error } = await supabase
         .from("payslips")
-        .select("*")
-        .like("period", `${month}%`);
+        .select("period_year,period_month,base_salary,bonuses,advances,overtime_amount,deductions,net_pay,paid,employee_contracts(full_name,position)")
+        .eq("period_year", y)
+        .eq("period_month", m);
       if (error) toast.error(error.message);
       setRows(
         (data || []).map((p: any) => ({
-          periode: p.period,
-          employe: p.employee_name ?? "—",
+          periode: `${String(p.period_month).padStart(2, "0")}/${p.period_year}`,
+          employe: p.employee_contracts?.full_name ?? "—",
+          poste: p.employee_contracts?.position ?? "—",
           base: p.base_salary,
-          primes: p.bonus,
-          avances: p.advance,
-          net: p.net_salary,
-          statut: p.status,
+          primes: p.bonuses,
+          avances: p.advances,
+          net: p.net_pay,
+          statut: p.paid ? "Payé" : "En attente",
         })),
       );
       setLoading(false);
