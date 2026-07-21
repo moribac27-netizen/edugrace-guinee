@@ -203,6 +203,7 @@ function PaymentsPage() {
                       <div className="text-xs text-muted-foreground mt-1">{s.pct.toFixed(0)}%</div>
                     </TableCell>
                     <TableCell className="text-right space-x-1 whitespace-nowrap">
+                      <Button variant="ghost" size="icon" title="Imprimer" onClick={() => exportPdf([], "late", school, [s])}><Printer className="size-4" /></Button>
                       <Button variant="ghost" size="icon" title="Télécharger Excel" onClick={() => exportExcel([s], "late")}><FileSpreadsheet className="size-4" /></Button>
                       <Button variant="ghost" size="icon" title="Télécharger PDF" onClick={() => exportPdf([], "late", school, [s])}><FileText className="size-4" /></Button>
                     </TableCell>
