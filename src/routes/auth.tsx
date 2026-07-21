@@ -177,9 +177,14 @@ function AuthPage() {
                   {unconfirmedEmail && (
                     <div className="mt-2 rounded-md border border-amber-200 bg-amber-50 dark:bg-amber-950/30 p-3 text-sm">
                       <p className="mb-2">Votre e-mail <span className="font-medium">{unconfirmedEmail}</span> n'est pas encore confirmé.</p>
-                      <Button type="button" variant="outline" size="sm" onClick={handleResend} disabled={resending}>
-                        {resending ? "Envoi..." : "Renvoyer l'e-mail de confirmation"}
-                      </Button>
+                      <div className="flex flex-wrap gap-2">
+                        <Button type="button" variant="outline" size="sm" onClick={handleResend} disabled={resending}>
+                          {resending ? "Envoi..." : "Renvoyer l'e-mail de confirmation"}
+                        </Button>
+                        <Button type="button" size="sm" onClick={handleRecheck} disabled={rechecking}>
+                          {rechecking ? "Vérification..." : "Vérifier à nouveau"}
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </form>
