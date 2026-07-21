@@ -158,7 +158,7 @@ function MessageriePage() {
                             {!m.read_at && <Badge variant="secondary" className="text-xs">Nouveau</Badge>}
                           </div>
                           <div className="text-xs text-muted-foreground mt-0.5">
-                            De {m.sender?.full_name ?? "—"} · {new Date(m.created_at).toLocaleString("fr-FR")}
+                            De {profileMap[m.sender_id] ?? "—"} · {new Date(m.created_at).toLocaleString("fr-FR")}
                           </div>
                           <p className="text-sm mt-2 whitespace-pre-wrap">{m.body}</p>
                         </div>
@@ -194,7 +194,7 @@ function MessageriePage() {
                         <div className="min-w-0">
                           <div className="font-medium">{m.subject}</div>
                           <div className="text-xs text-muted-foreground mt-0.5">
-                            À {m.recipient?.full_name ?? "—"} · {new Date(m.created_at).toLocaleString("fr-FR")}
+                            À {profileMap[m.recipient_id] ?? "—"} · {new Date(m.created_at).toLocaleString("fr-FR")}
                             {m.read_at && <span className="ml-2 text-success">· Lu</span>}
                           </div>
                           <p className="text-sm mt-2 whitespace-pre-wrap">{m.body}</p>
@@ -224,7 +224,7 @@ function MessageriePage() {
                     <Badge variant="outline">{b.channel}</Badge>
                   </div>
                   <div className="text-xs text-muted-foreground flex flex-wrap gap-2">
-                    <span>{b.author?.full_name ?? "—"}</span>
+                    <span>{profileMap[b.author_id] ?? "—"}</span>
                     <span>·</span>
                     <span>{new Date(b.created_at).toLocaleString("fr-FR")}</span>
                     {b.target_role && <Badge variant="secondary" className="text-xs">Rôle: {b.target_role}</Badge>}
