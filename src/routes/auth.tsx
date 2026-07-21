@@ -72,6 +72,26 @@ function AuthPage() {
     toast.success("E-mail de confirmation renvoyé. Vérifiez votre boîte de réception.");
   }
 
+  const [rechecking, setRechecking] = useState(false);
+  async function handleRecheck() {
+    if (rechecking) return;
+    if (!signIn.password) return toast.error("Saisissez votre mot de passe pour vérifier.");
+    setRechecking(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: unconfirmedEmail ?? signIn.email.trim(),
+      password: signIn.password,
+    });
+    setRechecking(false);
+    if (error) {
+      const msg = error.message.toLowerCase();
+      if (msg.includes("confirm")) return toast.info("E-mail toujours non confirmé. Réessayez dans un instant.");
+      return toast.error(error.message);
+    }
+    setUnconfirmedEmail(null);
+    toast.success("E-mail confirmé. Redirection...");
+    afterAuth();
+  }
+
   async function handleSignUp(e: React.FormEvent) {
     e.preventDefault();
     if (loading) return;
@@ -157,9 +177,14 @@ function AuthPage() {
                   {unconfirmedEmail && (
                     <div className="mt-2 rounded-md border border-amber-200 bg-amber-50 dark:bg-amber-950/30 p-3 text-sm">
                       <p className="mb-2">Votre e-mail <span className="font-medium">{unconfirmedEmail}</span> n'est pas encore confirmé.</p>
-                      <Button type="button" variant="outline" size="sm" onClick={handleResend} disabled={resending}>
-                        {resending ? "Envoi..." : "Renvoyer l'e-mail de confirmation"}
-                      </Button>
+                      <div className="flex flex-wrap gap-2">
+                        <Button type="button" variant="outline" size="sm" onClick={handleResend} disabled={resending}>
+                          {resending ? "Envoi..." : "Renvoyer l'e-mail de confirmation"}
+                        </Button>
+                        <Button type="button" size="sm" onClick={handleRecheck} disabled={rechecking}>
+                          {rechecking ? "Vérification..." : "Vérifier à nouveau"}
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </form>
