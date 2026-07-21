@@ -203,6 +203,7 @@ function PaymentsPage() {
                       <div className="text-xs text-muted-foreground mt-1">{s.pct.toFixed(0)}%</div>
                     </TableCell>
                     <TableCell className="text-right space-x-1 whitespace-nowrap">
+                      <Button variant="ghost" size="icon" title="Imprimer" onClick={() => exportPdf([], "late", school, [s])}><Printer className="size-4" /></Button>
                       <Button variant="ghost" size="icon" title="Télécharger Excel" onClick={() => exportExcel([s], "late")}><FileSpreadsheet className="size-4" /></Button>
                       <Button variant="ghost" size="icon" title="Télécharger PDF" onClick={() => exportPdf([], "late", school, [s])}><FileText className="size-4" /></Button>
                     </TableCell>
@@ -243,9 +244,8 @@ function PaymentsPage() {
                           <Button size="sm" variant="default" className="gap-1" onClick={() => validatePayment(p)}><CheckCircle2 className="size-3.5" />Valider</Button>
                           <Button size="sm" variant="outline" className="gap-1 text-destructive" onClick={() => rejectPayment(p)}><XCircle className="size-3.5" />Rejeter</Button>
                         </>
-                      ) : (
-                        <Button variant="ghost" size="icon" title="Imprimer le reçu" onClick={() => printReceipt(p, school)}><Printer className="size-4" /></Button>
-                      )}
+                      ) : null}
+                      <Button variant="ghost" size="icon" title="Imprimer le reçu" onClick={() => p.receipt_number ? printReceipt(p, school) : exportPdf([p], tab, school, [])}><Printer className="size-4" /></Button>
                       <Button variant="ghost" size="icon" title="Télécharger Excel" onClick={() => exportExcel([p], tab)}><FileSpreadsheet className="size-4" /></Button>
                       <Button variant="ghost" size="icon" title="Télécharger PDF" onClick={() => exportPdf([p], tab, school, [])}><FileText className="size-4" /></Button>
                     </TableCell>
