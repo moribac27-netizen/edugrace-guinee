@@ -60,7 +60,7 @@ function AuthPage() {
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Compte créé. Vérifiez votre email si requis.");
-    navigate({ to: "/dashboard" });
+    afterAuth();
   }
 
   async function handleGoogle() {
