@@ -25,24 +25,26 @@ const PERIODS = [
 
 const SCHOOL_YEAR = "2025-2026";
 
-function appreciation(note: number | null): string {
+function appreciation(note: number | null, max: 10 | 20 = 20): string {
   if (note == null) return "—";
-  if (note >= 18) return "Excellent";
-  if (note >= 16) return "Très Bien";
-  if (note >= 14) return "Bien";
-  if (note >= 12) return "Assez Bien";
-  if (note >= 10) return "Passable";
-  if (note >= 8) return "Insuffisant";
-  if (note >= 5) return "Médiocre";
+  const n = max === 10 ? note * 2 : note; // normalise sur 20
+  if (n >= 18) return "Excellent";
+  if (n >= 16) return "Très Bien";
+  if (n >= 14) return "Bien";
+  if (n >= 12) return "Assez Bien";
+  if (n >= 10) return "Passable";
+  if (n >= 8) return "Insuffisant";
+  if (n >= 5) return "Médiocre";
   return "Très faible";
 }
 
-function decision(avg: number | null, level: string): string {
+function decision(avg: number | null, level: string, max: 10 | 20 = 20): string {
   if (avg == null) return "—";
+  const n = max === 10 ? avg * 2 : avg;
   const isExam = /terminale|3ème|3eme|cm2/i.test(level);
-  if (avg >= 10) return "Admis(e) en classe supérieure";
-  if (avg >= 8.5) return isExam ? "Autorisé(e) à composer" : "Passage conditionnel";
-  if (avg >= 6) return "Redoublement";
+  if (n >= 10) return "Admis(e) en classe supérieure";
+  if (n >= 8.5) return isExam ? "Autorisé(e) à composer" : "Passage conditionnel";
+  if (n >= 6) return "Redoublement";
   return "Exclusion / Réorientation";
 }
 
