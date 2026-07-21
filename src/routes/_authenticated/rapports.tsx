@@ -315,17 +315,17 @@ function PaiementsReport() {
       setLoading(true);
       const { data } = await supabase
         .from("payments")
-        .select("amount,payment_date,payment_method,status,reference,fee_type,students(first_name,last_name,classes(name))")
-        .gte("payment_date", from)
-        .lte("payment_date", to)
-        .order("payment_date", { ascending: false });
+        .select("amount,paid_at,payment_method,status,receipt_number,payment_type,students(first_name,last_name,classes(name))")
+        .gte("paid_at", from)
+        .lte("paid_at", to + "T23:59:59")
+        .order("paid_at", { ascending: false });
       setRows(
         (data || []).map((p: any) => ({
-          date: p.payment_date,
-          reference: p.reference,
+          date: p.paid_at?.slice(0, 10),
+          reference: p.receipt_number,
           eleve: `${p.students?.last_name ?? ""} ${p.students?.first_name ?? ""}`.trim(),
           classe: p.students?.classes?.name,
-          type: p.fee_type,
+          type: p.payment_type,
           methode: p.payment_method,
           statut: p.status,
           montant: p.amount,
