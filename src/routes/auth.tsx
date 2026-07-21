@@ -53,7 +53,7 @@ function AuthPage() {
       email: signUp.email,
       password: signUp.password,
       options: {
-        emailRedirectTo: window.location.origin + "/dashboard",
+        emailRedirectTo: window.location.origin + (plan ? `/souscription?plan=${encodeURIComponent(plan)}` : "/dashboard"),
         data: { full_name: signUp.fullName, phone: signUp.phone },
       },
     });
