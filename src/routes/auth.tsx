@@ -25,10 +25,16 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
+  const { plan } = useSearch({ from: "/auth" });
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [signIn, setSignIn] = useState({ email: "", password: "" });
   const [signUp, setSignUp] = useState({ email: "", password: "", fullName: "", phone: "" });
+
+  const afterAuth = () => {
+    if (plan) navigate({ to: "/souscription", search: { plan } });
+    else navigate({ to: "/dashboard" });
+  };
 
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
