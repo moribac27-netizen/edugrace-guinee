@@ -406,10 +406,15 @@ async function printReceipt(p: any, school: any) {
   const schoolAddress = school?.address ?? "";
   const schoolPhone = school?.phone ?? "";
   const schoolEmail = school?.email ?? "";
-  const logo = school?.logo_url ?? "";
-  const stamp = school?.school_stamp_url ?? "";
-  const signature = school?.director_signature_url ?? "";
+  const logo = await signIfPath(school?.logo_url);
+  const stamp = await signIfPath(school?.school_stamp_url);
+  const signature = await signIfPath(school?.director_signature_url);
   const directorName = school?.director_name ?? "Le Directeur";
+  const accent = school?.receipt_accent_color || "#2a5a3e";
+  const receiptTitle = school?.receipt_title || "REÇU DE PAIEMENT";
+  const receiptHeader = school?.receipt_header || "";
+  const legalNotice = school?.receipt_legal_notice || "";
+  const footerNote = school?.receipt_footer_note || "Reçu généré électroniquement — vérifiable en ligne via QR code.";
 
   w.document.write(`
 <!DOCTYPE html><html><head><meta charset="utf-8"><title>Reçu ${p.receipt_number}</title>
