@@ -72,6 +72,26 @@ function AuthPage() {
     toast.success("E-mail de confirmation renvoyé. Vérifiez votre boîte de réception.");
   }
 
+  const [rechecking, setRechecking] = useState(false);
+  async function handleRecheck() {
+    if (rechecking) return;
+    if (!signIn.password) return toast.error("Saisissez votre mot de passe pour vérifier.");
+    setRechecking(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: unconfirmedEmail ?? signIn.email.trim(),
+      password: signIn.password,
+    });
+    setRechecking(false);
+    if (error) {
+      const msg = error.message.toLowerCase();
+      if (msg.includes("confirm")) return toast.info("E-mail toujours non confirmé. Réessayez dans un instant.");
+      return toast.error(error.message);
+    }
+    setUnconfirmedEmail(null);
+    toast.success("E-mail confirmé. Redirection...");
+    afterAuth();
+  }
+
   async function handleSignUp(e: React.FormEvent) {
     e.preventDefault();
     if (loading) return;
