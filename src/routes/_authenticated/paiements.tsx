@@ -604,7 +604,20 @@ function exportPdf(rows: any[], tab: "pending" | "validated" | "late", school: a
   .mono { font-family: ui-monospace, monospace; font-size: 10px; }
   .total td { background: #f0f9f4; font-weight: 700; font-size: 12px; }
   .foot { margin-top: 16px; font-size: 10px; color: #666; display: flex; justify-content: space-between; }
+  .toolbar { position: fixed; top: 0; left: 0; right: 0; background: #2a5a3e; color: #fff; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; z-index: 9999; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
+  .toolbar .t-title { font-size: 13px; font-weight: 600; }
+  .toolbar button { background: #fff; color: #2a5a3e; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; margin-left: 8px; }
+  .toolbar button.secondary { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.5); }
+  body { padding-top: 70px; }
+  @media print { .toolbar { display: none !important; } body { padding-top: 20px; } }
 </style></head><body>
+  <div class="toolbar">
+    <span class="t-title">Aperçu avant impression — vérifiez avant d'imprimer</span>
+    <div>
+      <button class="secondary" onclick="window.close()">Fermer</button>
+      <button onclick="window.print()">🖨️ Imprimer</button>
+    </div>
+  </div>
   <div class="header">
     ${logo ? `<img src="${logo}" />` : ""}
     <div>
@@ -615,7 +628,6 @@ function exportPdf(rows: any[], tab: "pending" | "validated" | "late", school: a
   <div class="title">${escapeHtml(title.toUpperCase())}</div>
   <table><thead>${head}</thead><tbody>${body || `<tr><td colspan="8" style="text-align:center;padding:20px;color:#888">Aucune donnée</td></tr>`}${totalRow}</tbody></table>
   <div class="foot"><span>Édité le ${today}</span><span>${escapeHtml(schoolName)}</span></div>
-  <script>setTimeout(() => window.print(), 300);</script>
 </body></html>`);
   w.document.close();
 }
