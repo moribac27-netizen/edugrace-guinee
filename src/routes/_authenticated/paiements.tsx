@@ -447,11 +447,13 @@ async function printReceipt(p: any, school: any) {
   .stamp { position: absolute; opacity: .55; }
   .note { margin-top: 14px; font-size: 10px; color: #888; text-align: center; font-style: italic; }
   @media print { .no-print { display: none; } }
-  .toolbar { position: fixed; top: 0; left: 0; right: 0; background: #2a5a3e; color: #fff; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; z-index: 9999; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
+  .toolbar { position: fixed; top: 0; left: 0; right: 0; background: ${accent}; color: #fff; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; z-index: 9999; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
   .toolbar .title { font-size: 13px; font-weight: 600; }
-  .toolbar button { background: #fff; color: #2a5a3e; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; }
+  .toolbar button { background: #fff; color: ${accent}; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; }
   .toolbar button.secondary { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.5); }
   .toolbar button:hover { opacity: .9; }
+  .rheader { text-align: center; font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 2px; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px dashed #ddd; }
+  .legal { margin-top: 10px; font-size: 9.5px; color: #666; text-align: center; font-style: italic; border-top: 1px solid #eee; padding-top: 6px; }
   body { padding-top: 70px !important; }
   @media print { .no-print, .toolbar { display: none !important; } body { padding-top: 24px !important; } }
 </style>
