@@ -166,10 +166,11 @@ function PaymentsPage() {
 
 
       <div className="flex gap-2 border-b">
-        <TabBtn active={tab === "pending"} onClick={() => setTab("pending")} label={`En attente (${pending.length})`} icon={<Clock className="size-4" />} />
-        <TabBtn active={tab === "validated"} onClick={() => setTab("validated")} label={`Validés (${validated.length})`} icon={<CheckCircle2 className="size-4" />} />
-        <TabBtn active={tab === "late"} onClick={() => setTab("late")} label={`Retards (${lateStudents.length})`} icon={<AlertTriangle className="size-4" />} />
+        <TabBtn active={tab === "pending"} onClick={() => { setTab("pending"); setSelected(new Set()); }} label={`En attente (${pending.length})`} icon={<Clock className="size-4" />} />
+        <TabBtn active={tab === "validated"} onClick={() => { setTab("validated"); setSelected(new Set()); }} label={`Validés (${validated.length})`} icon={<CheckCircle2 className="size-4" />} />
+        <TabBtn active={tab === "late"} onClick={() => { setTab("late"); setSelected(new Set()); }} label={`Retards (${lateStudents.length})`} icon={<AlertTriangle className="size-4" />} />
       </div>
+
 
       {tab !== "late" && (
         <div className="relative max-w-sm">
