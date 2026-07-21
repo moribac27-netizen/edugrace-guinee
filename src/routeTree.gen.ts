@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedSalairesRouteImport } from './routes/_authenticated/salaires'
+import { Route as AuthenticatedRapportsRouteImport } from './routes/_authenticated/rapports'
 import { Route as AuthenticatedPresencesRouteImport } from './routes/_authenticated/presences'
 import { Route as AuthenticatedParametresRouteImport } from './routes/_authenticated/parametres'
 import { Route as AuthenticatedPaiementsRouteImport } from './routes/_authenticated/paiements'
@@ -47,6 +48,11 @@ const IndexRoute = IndexRouteImport.update({
 const AuthenticatedSalairesRoute = AuthenticatedSalairesRouteImport.update({
   id: '/salaires',
   path: '/salaires',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedRapportsRoute = AuthenticatedRapportsRouteImport.update({
+  id: '/rapports',
+  path: '/rapports',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPresencesRoute = AuthenticatedPresencesRouteImport.update({
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/paiements': typeof AuthenticatedPaiementsRoute
   '/parametres': typeof AuthenticatedParametresRoute
   '/presences': typeof AuthenticatedPresencesRoute
+  '/rapports': typeof AuthenticatedRapportsRoute
   '/salaires': typeof AuthenticatedSalairesRoute
 }
 export interface FileRoutesByTo {
@@ -175,6 +182,7 @@ export interface FileRoutesByTo {
   '/paiements': typeof AuthenticatedPaiementsRoute
   '/parametres': typeof AuthenticatedParametresRoute
   '/presences': typeof AuthenticatedPresencesRoute
+  '/rapports': typeof AuthenticatedRapportsRoute
   '/salaires': typeof AuthenticatedSalairesRoute
 }
 export interface FileRoutesById {
@@ -198,6 +206,7 @@ export interface FileRoutesById {
   '/_authenticated/paiements': typeof AuthenticatedPaiementsRoute
   '/_authenticated/parametres': typeof AuthenticatedParametresRoute
   '/_authenticated/presences': typeof AuthenticatedPresencesRoute
+  '/_authenticated/rapports': typeof AuthenticatedRapportsRoute
   '/_authenticated/salaires': typeof AuthenticatedSalairesRoute
 }
 export interface FileRouteTypes {
@@ -221,6 +230,7 @@ export interface FileRouteTypes {
     | '/paiements'
     | '/parametres'
     | '/presences'
+    | '/rapports'
     | '/salaires'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -242,6 +252,7 @@ export interface FileRouteTypes {
     | '/paiements'
     | '/parametres'
     | '/presences'
+    | '/rapports'
     | '/salaires'
   id:
     | '__root__'
@@ -264,6 +275,7 @@ export interface FileRouteTypes {
     | '/_authenticated/paiements'
     | '/_authenticated/parametres'
     | '/_authenticated/presences'
+    | '/_authenticated/rapports'
     | '/_authenticated/salaires'
   fileRoutesById: FileRoutesById
 }
@@ -301,6 +313,13 @@ declare module '@tanstack/react-router' {
       path: '/salaires'
       fullPath: '/salaires'
       preLoaderRoute: typeof AuthenticatedSalairesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/rapports': {
+      id: '/_authenticated/rapports'
+      path: '/rapports'
+      fullPath: '/rapports'
+      preLoaderRoute: typeof AuthenticatedRapportsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/presences': {
@@ -435,6 +454,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPaiementsRoute: typeof AuthenticatedPaiementsRoute
   AuthenticatedParametresRoute: typeof AuthenticatedParametresRoute
   AuthenticatedPresencesRoute: typeof AuthenticatedPresencesRoute
+  AuthenticatedRapportsRoute: typeof AuthenticatedRapportsRoute
   AuthenticatedSalairesRoute: typeof AuthenticatedSalairesRoute
 }
 
@@ -455,6 +475,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPaiementsRoute: AuthenticatedPaiementsRoute,
   AuthenticatedParametresRoute: AuthenticatedParametresRoute,
   AuthenticatedPresencesRoute: AuthenticatedPresencesRoute,
+  AuthenticatedRapportsRoute: AuthenticatedRapportsRoute,
   AuthenticatedSalairesRoute: AuthenticatedSalairesRoute,
 }
 
