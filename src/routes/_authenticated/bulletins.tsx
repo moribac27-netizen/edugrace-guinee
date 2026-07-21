@@ -84,6 +84,7 @@ function BulletinsPage() {
   });
 
   const cls = classes.find((c: any) => c.id === classId);
+  const maxScore = maxScoreForLevel(cls?.level);
 
   const computed = useMemo(() => {
     return students.map((s: any) => {
@@ -93,7 +94,7 @@ function BulletinsPage() {
         const gs = sg.filter((x: any) => x.subject_id === sub.id);
         const avg = gs.length ? gs.reduce((a: number, g: any) => a + Number(g.score), 0) / gs.length : null;
         if (avg != null) { totalW += avg * Number(sub.coefficient); totalC += Number(sub.coefficient); }
-        return { subject: sub, avg, appreciation: appreciation(avg) };
+        return { subject: sub, avg, appreciation: appreciation(avg, maxScore) };
       });
       const avg = totalC > 0 ? totalW / totalC : null;
       return { student: s, perSubject, avg, totalW, totalC };
