@@ -569,6 +569,7 @@ function SalairesReport() {
   const columns = [
     { key: "periode", label: "Période" },
     { key: "employe", label: "Employé" },
+    { key: "poste", label: "Poste" },
     { key: "base", label: "Salaire base", render: (v: number) => fmtGNF(v) },
     { key: "primes", label: "Primes", render: (v: number) => fmtGNF(v) },
     { key: "avances", label: "Avances", render: (v: number) => fmtGNF(v) },
