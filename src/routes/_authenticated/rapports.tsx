@@ -468,11 +468,13 @@ function FinanceReport() {
     (async () => {
       setLoading(true);
       const [{ data: rev }, { data: exp }] = await Promise.all([
-        supabase.from("revenues").select("amount,category,date,description").gte("date", from).lte("date", to),
-        supabase.from("expenses").select("amount,category,date,description").gte("date", from).lte("date", to),
+        supabase.from("revenues").select("amount,type,occurred_at,description")
+          .gte("occurred_at", from).lte("occurred_at", to + "T23:59:59"),
+        supabase.from("expenses").select("amount,type,occurred_at,description")
+          .gte("occurred_at", from).lte("occurred_at", to + "T23:59:59"),
       ]);
-      setRevenues(rev || []);
-      setExpenses(exp || []);
+      setRevenues((rev || []).map((r: any) => ({ date: r.occurred_at?.slice(0, 10), category: r.type, description: r.description, amount: r.amount })));
+      setExpenses((exp || []).map((r: any) => ({ date: r.occurred_at?.slice(0, 10), category: r.type, description: r.description, amount: r.amount })));
       setLoading(false);
     })();
   }, [from, to]);
@@ -484,7 +486,7 @@ function FinanceReport() {
   const rows = [
     ...revenues.map((r) => ({ ...r, sens: "Recette" })),
     ...expenses.map((r) => ({ ...r, sens: "Dépense" })),
-  ].sort((a, b) => (a.date < b.date ? 1 : -1));
+  ].sort((a: any, b: any) => (a.date < b.date ? 1 : -1));
 
   const columns = [
     { key: "date", label: "Date" },
