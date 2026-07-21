@@ -115,7 +115,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             Année scolaire <span className="font-medium text-foreground">2025-2026</span>
           </div>
         </header>
-        <main className="flex-1 p-4 lg:p-8 max-w-[1400px] w-full mx-auto">
+        <main key={pathname} className="flex-1 p-4 lg:p-8 max-w-[1400px] w-full mx-auto page-fade-in">
           {children}
         </main>
       </div>
