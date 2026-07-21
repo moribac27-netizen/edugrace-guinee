@@ -154,6 +154,14 @@ function AuthPage() {
                   <div><Label>Email</Label><Input type="email" required value={signIn.email} onChange={(e) => setSignIn({ ...signIn, email: e.target.value })} /></div>
                   <div><Label>Mot de passe</Label><Input type="password" required value={signIn.password} onChange={(e) => setSignIn({ ...signIn, password: e.target.value })} /></div>
                   <Button type="submit" className="w-full" disabled={loading}>Se connecter</Button>
+                  {unconfirmedEmail && (
+                    <div className="mt-2 rounded-md border border-amber-200 bg-amber-50 dark:bg-amber-950/30 p-3 text-sm">
+                      <p className="mb-2">Votre e-mail <span className="font-medium">{unconfirmedEmail}</span> n'est pas encore confirmé.</p>
+                      <Button type="button" variant="outline" size="sm" onClick={handleResend} disabled={resending}>
+                        {resending ? "Envoi..." : "Renvoyer l'e-mail de confirmation"}
+                      </Button>
+                    </div>
+                  )}
                 </form>
               </TabsContent>
               <TabsContent value="signup">
