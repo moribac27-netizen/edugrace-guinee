@@ -108,6 +108,118 @@ export type Database = {
           },
         ]
       }
+      backup_schedules: {
+        Row: {
+          created_at: string
+          day_of_month: number | null
+          day_of_week: number | null
+          enabled: boolean
+          frequency: string
+          hour_of_day: number
+          id: string
+          last_run_at: string | null
+          next_run_at: string | null
+          retention_days: number
+          school_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_month?: number | null
+          day_of_week?: number | null
+          enabled?: boolean
+          frequency?: string
+          hour_of_day?: number
+          id?: string
+          last_run_at?: string | null
+          next_run_at?: string | null
+          retention_days?: number
+          school_id?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          day_of_month?: number | null
+          day_of_week?: number | null
+          enabled?: boolean
+          frequency?: string
+          hour_of_day?: number
+          id?: string
+          last_run_at?: string | null
+          next_run_at?: string | null
+          retention_days?: number
+          school_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "backup_schedules_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: true
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      backups: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          error_message: string | null
+          id: string
+          kind: string
+          notes: string | null
+          row_counts: Json
+          school_id: string
+          scope: string
+          size_bytes: number
+          status: string
+          storage_path: string | null
+          tables: string[]
+          total_rows: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          error_message?: string | null
+          id?: string
+          kind?: string
+          notes?: string | null
+          row_counts?: Json
+          school_id?: string
+          scope?: string
+          size_bytes?: number
+          status?: string
+          storage_path?: string | null
+          tables?: string[]
+          total_rows?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          error_message?: string | null
+          id?: string
+          kind?: string
+          notes?: string | null
+          row_counts?: Json
+          school_id?: string
+          scope?: string
+          size_bytes?: number
+          status?: string
+          storage_path?: string | null
+          tables?: string[]
+          total_rows?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "backups_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       classes: {
         Row: {
           annual_fee: number
