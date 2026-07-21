@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Save, Upload, Loader2, ImageIcon, RotateCcw } from "lucide-react";
+import { Save, Upload, Loader2, ImageIcon, RotateCcw, Printer } from "lucide-react";
+import QRCode from "qrcode";
 
 export const Route = createFileRoute("/_authenticated/personnalisation-recu")({
   head: () => ({
