@@ -1371,7 +1371,13 @@ export type Database = {
           name: string
           period_system: string
           phone: string | null
+          receipt_accent_color: string | null
+          receipt_footer_note: string | null
+          receipt_header: string | null
+          receipt_legal_notice: string | null
+          receipt_prefix: string | null
           receipt_settings: Json
+          receipt_title: string | null
           school_stamp_url: string | null
           theme_primary: string | null
           theme_secondary: string | null
@@ -1393,7 +1399,13 @@ export type Database = {
           name: string
           period_system?: string
           phone?: string | null
+          receipt_accent_color?: string | null
+          receipt_footer_note?: string | null
+          receipt_header?: string | null
+          receipt_legal_notice?: string | null
+          receipt_prefix?: string | null
           receipt_settings?: Json
+          receipt_title?: string | null
           school_stamp_url?: string | null
           theme_primary?: string | null
           theme_secondary?: string | null
@@ -1415,7 +1427,13 @@ export type Database = {
           name?: string
           period_system?: string
           phone?: string | null
+          receipt_accent_color?: string | null
+          receipt_footer_note?: string | null
+          receipt_header?: string | null
+          receipt_legal_notice?: string | null
+          receipt_prefix?: string | null
           receipt_settings?: Json
+          receipt_title?: string | null
           school_stamp_url?: string | null
           theme_primary?: string | null
           theme_secondary?: string | null
