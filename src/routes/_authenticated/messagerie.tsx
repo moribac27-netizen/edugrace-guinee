@@ -27,8 +27,6 @@ type Msg = {
   created_at: string;
   sender_id: string;
   recipient_id: string;
-  sender?: { full_name: string | null } | null;
-  recipient?: { full_name: string | null } | null;
 };
 
 type Broadcast = {
@@ -41,8 +39,8 @@ type Broadcast = {
   created_at: string;
   author_id: string;
   classes?: { name: string } | null;
-  author?: { full_name: string | null } | null;
 };
+
 
 function MessageriePage() {
   const qc = useQueryClient();
