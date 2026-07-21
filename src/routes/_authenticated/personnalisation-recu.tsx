@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Save, Upload, Loader2, ImageIcon, RotateCcw } from "lucide-react";
+import { Save, Upload, Loader2, ImageIcon, RotateCcw, Printer } from "lucide-react";
+import QRCode from "qrcode";
 
 export const Route = createFileRoute("/_authenticated/personnalisation-recu")({
   head: () => ({
@@ -103,6 +104,7 @@ function ReceiptCustomizationPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={reset} className="gap-2"><RotateCcw className="size-4" /> Réinitialiser</Button>
+          <Button variant="outline" onClick={() => printTest(form)} className="gap-2"><Printer className="size-4" /> Imprimer un reçu test</Button>
           <Button onClick={save} disabled={saving} className="gap-2">
             {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
             Enregistrer
@@ -329,4 +331,146 @@ function AssetSlot({ kind, label, schoolId, url, onDone }: { kind: Kind; label: 
       </div>
     </div>
   );
+}
+
+async function signIfPath(val?: string | null): Promise<string> {
+  if (!val) return "";
+  if (val.startsWith("http") || val.startsWith("data:") || val.startsWith("blob:")) return val;
+  const { data } = await supabase.storage.from("school-assets").createSignedUrl(val, 3600);
+  return data?.signedUrl ?? "";
+}
+
+function esc(s: any): string {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+}
+
+function fmtGNF(n: number): string {
+  return new Intl.NumberFormat("fr-FR").format(n);
+}
+
+async function printTest(form: any) {
+  if (!form) return;
+  const year = new Date().getFullYear();
+  const prefix = (form.receipt_prefix || "REC").toUpperCase();
+  const sampleNumber = `${prefix}-${year}-000001-TEST`;
+
+  const logo = await signIfPath(form.logo_url);
+  const stamp = await signIfPath(form.school_stamp_url);
+  const signature = await signIfPath(form.director_signature_url);
+
+  const qrDataUrl = await QRCode.toDataURL(`${window.location.origin}/verifier-recu/${sampleNumber}`, { width: 200, margin: 1 });
+
+  const accent = form.receipt_accent_color || "#2a5a3e";
+  const receiptTitle = form.receipt_title || "REÇU DE PAIEMENT";
+  const receiptHeader = form.receipt_header || "";
+  const legalNotice = form.receipt_legal_notice || "";
+  const footerNote = form.receipt_footer_note || "Reçu généré électroniquement — vérifiable en ligne via QR code.";
+  const directorName = form.director_name || "Le Directeur";
+  const schoolName = form.name || "MBGEduGuinée";
+  const schoolAddress = form.address || "";
+  const schoolPhone = form.phone || "";
+  const schoolEmail = form.email || "";
+
+  const w = window.open("", "_blank", "width=800,height=900");
+  if (!w) { toast.error("Le navigateur a bloqué la fenêtre d'aperçu."); return; }
+
+  w.document.write(`
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Reçu test</title>
+<style>
+  @page { size: A5; margin: 12mm; }
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, sans-serif; color: #1f2937; margin: 0; padding: 24px; padding-top: 70px !important; position: relative; }
+  .watermark { position: fixed; top: 40%; left: 50%; transform: translate(-50%,-50%) rotate(-25deg); font-size: 90px; color: ${accent}22; font-weight: 800; letter-spacing: 8px; pointer-events: none; z-index: 0; }
+  .content { position: relative; z-index: 1; }
+  .rheader { text-align: center; font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 2px; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px dashed #ddd; }
+  .header { display: flex; align-items: center; gap: 16px; border-bottom: 3px double ${accent}; padding-bottom: 12px; }
+  .header img.logo { height: 64px; width: 64px; object-fit: contain; }
+  .header .school { flex: 1; }
+  .header h1 { margin: 0; color: ${accent}; font-size: 20px; }
+  .header .addr { font-size: 11px; color: #555; margin-top: 2px; }
+  .title { text-align: center; margin: 18px 0 8px; font-weight: 700; font-size: 15px; letter-spacing: 3px; color: ${accent}; }
+  .subtitle { text-align: center; font-family: monospace; font-size: 13px; margin-bottom: 12px; color: #555; }
+  .box { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 18px; }
+  .row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #e5e7eb; font-size: 13px; }
+  .row:last-child { border: none; }
+  .row strong { color: #444; }
+  .total { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 12px 18px; background: ${accent}14; border-radius: 8px; }
+  .total .label { font-weight: 600; }
+  .total .value { font-size: 20px; font-weight: 700; color: ${accent}; }
+  .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 26px; gap: 16px; }
+  .sig { text-align: center; flex: 1; }
+  .sig .name { font-size: 11px; color: #555; }
+  .sig img { max-height: 55px; max-width: 140px; object-fit: contain; margin-bottom: 4px; }
+  .sig .line { border-top: 1px solid #333; margin-top: 40px; padding-top: 3px; font-size: 11px; font-weight: 600; }
+  .qr { text-align: center; }
+  .qr img { width: 90px; height: 90px; }
+  .qr .cap { font-size: 9px; color: #666; margin-top: 3px; max-width: 100px; }
+  .legal { margin-top: 10px; font-size: 9.5px; color: #666; text-align: center; font-style: italic; border-top: 1px solid #eee; padding-top: 6px; }
+  .note { margin-top: 8px; font-size: 10px; color: #888; text-align: center; font-style: italic; }
+  .toolbar { position: fixed; top: 0; left: 0; right: 0; background: ${accent}; color: #fff; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; z-index: 9999; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
+  .toolbar .ttl { font-size: 13px; font-weight: 600; }
+  .toolbar button { background: #fff; color: ${accent}; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; }
+  .toolbar button.secondary { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.5); }
+  @media print { .toolbar { display: none !important; } body { padding-top: 24px !important; } }
+</style>
+</head><body>
+  <div class="toolbar">
+    <span class="ttl">Aperçu du reçu TEST — données fictives</span>
+    <div>
+      <button class="secondary" onclick="window.close()">Fermer</button>
+      <button onclick="window.print()">🖨️ Imprimer</button>
+    </div>
+  </div>
+  <div class="watermark">SPÉCIMEN</div>
+  <div class="content">
+    ${receiptHeader ? `<div class="rheader">${esc(receiptHeader)}</div>` : ""}
+    <div class="header">
+      ${logo ? `<img class="logo" src="${logo}" alt="Logo" />` : ""}
+      <div class="school">
+        <h1>${esc(schoolName)}</h1>
+        ${schoolAddress ? `<div class="addr">${esc(schoolAddress)}</div>` : ""}
+        <div class="addr">${[schoolPhone, schoolEmail].filter(Boolean).map(esc).join(" • ")}</div>
+      </div>
+    </div>
+
+    <div class="title">${esc(receiptTitle)}</div>
+    <div class="subtitle">N° ${esc(sampleNumber)}</div>
+
+    <div class="box">
+      <div class="row"><strong>Date</strong><span>${new Date().toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</span></div>
+      <div class="row"><strong>Élève</strong><span>Aïssatou DIALLO</span></div>
+      <div class="row"><strong>Matricule</strong><span>MAT-2025-0042</span></div>
+      <div class="row"><strong>Classe</strong><span>6ème A</span></div>
+      <div class="row"><strong>Type de paiement</strong><span>Scolarité</span></div>
+      <div class="row"><strong>Période</strong><span>Trimestre 1</span></div>
+      <div class="row"><strong>Moyen de paiement</strong><span>Orange Money</span></div>
+      <div class="row"><strong>Référence transaction</strong><span style="font-family:monospace">OM-TEST-XYZ123</span></div>
+    </div>
+
+    <div class="total">
+      <span class="label">Montant total payé</span>
+      <span class="value">${fmtGNF(450000)} GNF</span>
+    </div>
+
+    <div class="footer">
+      <div class="sig">
+        <div class="qr"><img src="${qrDataUrl}" alt="QR" /><div class="cap">Scannez pour vérifier</div></div>
+      </div>
+      <div class="sig">
+        ${stamp ? `<img src="${stamp}" alt="Cachet" />` : ""}
+        <div class="line">Cachet de l'école</div>
+      </div>
+      <div class="sig">
+        ${signature ? `<img src="${signature}" alt="Signature" />` : ""}
+        <div class="line">${esc(directorName)}</div>
+        <div class="name">Validé par : Comptable (test)</div>
+      </div>
+    </div>
+
+    ${legalNotice ? `<div class="legal">${esc(legalNotice)}</div>` : ""}
+    <div class="note">${esc(footerNote)}</div>
+  </div>
+</body></html>
+  `);
+  w.document.close();
 }
