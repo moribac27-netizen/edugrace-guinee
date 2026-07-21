@@ -406,10 +406,15 @@ async function printReceipt(p: any, school: any) {
   const schoolAddress = school?.address ?? "";
   const schoolPhone = school?.phone ?? "";
   const schoolEmail = school?.email ?? "";
-  const logo = school?.logo_url ?? "";
-  const stamp = school?.school_stamp_url ?? "";
-  const signature = school?.director_signature_url ?? "";
+  const logo = await signIfPath(school?.logo_url);
+  const stamp = await signIfPath(school?.school_stamp_url);
+  const signature = await signIfPath(school?.director_signature_url);
   const directorName = school?.director_name ?? "Le Directeur";
+  const accent = school?.receipt_accent_color || "#2a5a3e";
+  const receiptTitle = school?.receipt_title || "REÇU DE PAIEMENT";
+  const receiptHeader = school?.receipt_header || "";
+  const legalNotice = school?.receipt_legal_notice || "";
+  const footerNote = school?.receipt_footer_note || "Reçu généré électroniquement — vérifiable en ligne via QR code.";
 
   w.document.write(`
 <!DOCTYPE html><html><head><meta charset="utf-8"><title>Reçu ${p.receipt_number}</title>
@@ -417,20 +422,20 @@ async function printReceipt(p: any, school: any) {
   @page { size: A5; margin: 12mm; }
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; color: #1f2937; margin: 0; padding: 24px; }
-  .header { display: flex; align-items: center; gap: 16px; border-bottom: 3px double #2a5a3e; padding-bottom: 12px; }
+  .header { display: flex; align-items: center; gap: 16px; border-bottom: 3px double ${accent}; padding-bottom: 12px; }
   .header img.logo { height: 64px; width: 64px; object-fit: contain; }
   .header .school { flex: 1; }
-  .header h1 { margin: 0; color: #2a5a3e; font-size: 20px; }
+  .header h1 { margin: 0; color: ${accent}; font-size: 20px; }
   .header .addr { font-size: 11px; color: #555; margin-top: 2px; }
-  .title { text-align: center; margin: 18px 0 8px; font-weight: 700; font-size: 15px; letter-spacing: 3px; color: #2a5a3e; }
+  .title { text-align: center; margin: 18px 0 8px; font-weight: 700; font-size: 15px; letter-spacing: 3px; color: ${accent}; }
   .subtitle { text-align: center; font-family: monospace; font-size: 13px; margin-bottom: 12px; color: #555; }
   .box { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 18px; }
   .row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #e5e7eb; font-size: 13px; }
   .row:last-child { border: none; }
   .row strong { color: #444; }
-  .total { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 12px 18px; background: #f0f9f4; border-radius: 8px; }
+  .total { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 12px 18px; background: ${accent}14; border-radius: 8px; }
   .total .label { font-weight: 600; }
-  .total .value { font-size: 20px; font-weight: 700; color: #2a5a3e; }
+  .total .value { font-size: 20px; font-weight: 700; color: ${accent}; }
   .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 26px; gap: 16px; }
   .sig { text-align: center; flex: 1; }
   .sig .name { font-size: 11px; color: #555; }
@@ -442,11 +447,13 @@ async function printReceipt(p: any, school: any) {
   .stamp { position: absolute; opacity: .55; }
   .note { margin-top: 14px; font-size: 10px; color: #888; text-align: center; font-style: italic; }
   @media print { .no-print { display: none; } }
-  .toolbar { position: fixed; top: 0; left: 0; right: 0; background: #2a5a3e; color: #fff; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; z-index: 9999; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
+  .toolbar { position: fixed; top: 0; left: 0; right: 0; background: ${accent}; color: #fff; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; z-index: 9999; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
   .toolbar .title { font-size: 13px; font-weight: 600; }
-  .toolbar button { background: #fff; color: #2a5a3e; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; }
+  .toolbar button { background: #fff; color: ${accent}; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; }
   .toolbar button.secondary { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.5); }
   .toolbar button:hover { opacity: .9; }
+  .rheader { text-align: center; font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 2px; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px dashed #ddd; }
+  .legal { margin-top: 10px; font-size: 9.5px; color: #666; text-align: center; font-style: italic; border-top: 1px solid #eee; padding-top: 6px; }
   body { padding-top: 70px !important; }
   @media print { .no-print, .toolbar { display: none !important; } body { padding-top: 24px !important; } }
 </style>
@@ -458,6 +465,7 @@ async function printReceipt(p: any, school: any) {
       <button onclick="window.print()">🖨️ Imprimer</button>
     </div>
   </div>
+  ${receiptHeader ? `<div class="rheader">${escapeHtml(receiptHeader)}</div>` : ""}
   <div class="header">
     ${logo ? `<img class="logo" src="${logo}" alt="Logo" />` : ""}
     <div class="school">
@@ -467,8 +475,9 @@ async function printReceipt(p: any, school: any) {
     </div>
   </div>
 
-  <div class="title">REÇU DE PAIEMENT</div>
+  <div class="title">${escapeHtml(receiptTitle)}</div>
   <div class="subtitle">N° ${escapeHtml(p.receipt_number)}</div>
+
 
   <div class="box">
     <div class="row"><strong>Date</strong><span>${new Date(p.paid_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</span></div>
@@ -501,7 +510,8 @@ async function printReceipt(p: any, school: any) {
     </div>
   </div>
 
-  <div class="note">Reçu généré électroniquement — vérifiable en ligne via QR code.</div>
+  ${legalNotice ? `<div class="legal">${escapeHtml(legalNotice)}</div>` : ""}
+  <div class="note">${escapeHtml(footerNote)}</div>
 
 </body></html>
   `);
@@ -510,6 +520,13 @@ async function printReceipt(p: any, school: any) {
 
 function escapeHtml(s: string): string {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+}
+
+async function signIfPath(val?: string | null): Promise<string> {
+  if (!val) return "";
+  if (val.startsWith("http") || val.startsWith("data:") || val.startsWith("blob:")) return val;
+  const { data } = await supabase.storage.from("school-assets").createSignedUrl(val, 3600);
+  return data?.signedUrl ?? "";
 }
 
 function exportExcel(rows: any[], tab: "pending" | "validated" | "late") {

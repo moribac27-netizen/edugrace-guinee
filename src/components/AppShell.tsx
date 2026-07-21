@@ -33,6 +33,7 @@ const NAV = [
   { to: "/souscription", label: "Abonnement", icon: Sparkles },
   { to: "/plans", label: "Offres (admin)", icon: Package },
 
+  { to: "/personnalisation-recu", label: "Personnalisation reçu", icon: FileText },
   { to: "/parametres", label: "Paramètres", icon: Settings },
 ] as const;
 
