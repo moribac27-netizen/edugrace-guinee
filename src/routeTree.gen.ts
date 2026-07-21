@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedSalairesRouteImport } from './routes/_authenticated/salaires'
 import { Route as AuthenticatedPresencesRouteImport } from './routes/_authenticated/presences'
+import { Route as AuthenticatedParametresRouteImport } from './routes/_authenticated/parametres'
 import { Route as AuthenticatedPaiementsRouteImport } from './routes/_authenticated/paiements'
 import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
 import { Route as AuthenticatedExamensRouteImport } from './routes/_authenticated/examens'
@@ -50,6 +51,11 @@ const AuthenticatedSalairesRoute = AuthenticatedSalairesRouteImport.update({
 const AuthenticatedPresencesRoute = AuthenticatedPresencesRouteImport.update({
   id: '/presences',
   path: '/presences',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedParametresRoute = AuthenticatedParametresRouteImport.update({
+  id: '/parametres',
+  path: '/parametres',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPaiementsRoute = AuthenticatedPaiementsRouteImport.update({
@@ -139,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/examens': typeof AuthenticatedExamensRoute
   '/notes': typeof AuthenticatedNotesRoute
   '/paiements': typeof AuthenticatedPaiementsRoute
+  '/parametres': typeof AuthenticatedParametresRoute
   '/presences': typeof AuthenticatedPresencesRoute
   '/salaires': typeof AuthenticatedSalairesRoute
 }
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/examens': typeof AuthenticatedExamensRoute
   '/notes': typeof AuthenticatedNotesRoute
   '/paiements': typeof AuthenticatedPaiementsRoute
+  '/parametres': typeof AuthenticatedParametresRoute
   '/presences': typeof AuthenticatedPresencesRoute
   '/salaires': typeof AuthenticatedSalairesRoute
 }
@@ -179,6 +187,7 @@ export interface FileRoutesById {
   '/_authenticated/examens': typeof AuthenticatedExamensRoute
   '/_authenticated/notes': typeof AuthenticatedNotesRoute
   '/_authenticated/paiements': typeof AuthenticatedPaiementsRoute
+  '/_authenticated/parametres': typeof AuthenticatedParametresRoute
   '/_authenticated/presences': typeof AuthenticatedPresencesRoute
   '/_authenticated/salaires': typeof AuthenticatedSalairesRoute
 }
@@ -200,6 +209,7 @@ export interface FileRouteTypes {
     | '/examens'
     | '/notes'
     | '/paiements'
+    | '/parametres'
     | '/presences'
     | '/salaires'
   fileRoutesByTo: FileRoutesByTo
@@ -219,6 +229,7 @@ export interface FileRouteTypes {
     | '/examens'
     | '/notes'
     | '/paiements'
+    | '/parametres'
     | '/presences'
     | '/salaires'
   id:
@@ -239,6 +250,7 @@ export interface FileRouteTypes {
     | '/_authenticated/examens'
     | '/_authenticated/notes'
     | '/_authenticated/paiements'
+    | '/_authenticated/parametres'
     | '/_authenticated/presences'
     | '/_authenticated/salaires'
   fileRoutesById: FileRoutesById
@@ -284,6 +296,13 @@ declare module '@tanstack/react-router' {
       path: '/presences'
       fullPath: '/presences'
       preLoaderRoute: typeof AuthenticatedPresencesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/parametres': {
+      id: '/_authenticated/parametres'
+      path: '/parametres'
+      fullPath: '/parametres'
+      preLoaderRoute: typeof AuthenticatedParametresRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/paiements': {
@@ -394,6 +413,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedExamensRoute: typeof AuthenticatedExamensRoute
   AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
   AuthenticatedPaiementsRoute: typeof AuthenticatedPaiementsRoute
+  AuthenticatedParametresRoute: typeof AuthenticatedParametresRoute
   AuthenticatedPresencesRoute: typeof AuthenticatedPresencesRoute
   AuthenticatedSalairesRoute: typeof AuthenticatedSalairesRoute
 }
@@ -412,6 +432,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedExamensRoute: AuthenticatedExamensRoute,
   AuthenticatedNotesRoute: AuthenticatedNotesRoute,
   AuthenticatedPaiementsRoute: AuthenticatedPaiementsRoute,
+  AuthenticatedParametresRoute: AuthenticatedParametresRoute,
   AuthenticatedPresencesRoute: AuthenticatedPresencesRoute,
   AuthenticatedSalairesRoute: AuthenticatedSalairesRoute,
 }
@@ -427,13 +448,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

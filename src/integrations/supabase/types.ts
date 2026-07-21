@@ -992,37 +992,70 @@ export type Database = {
       }
       schools: {
         Row: {
+          academic_year: string | null
           address: string | null
+          bulletin_settings: Json
           code: string | null
           created_at: string
+          currency: string
+          director_name: string | null
+          director_signature_url: string | null
           email: string | null
           id: string
           logo_url: string | null
           name: string
+          period_system: string
           phone: string | null
+          receipt_settings: Json
+          school_stamp_url: string | null
+          theme_primary: string | null
+          theme_secondary: string | null
           updated_at: string
+          website: string | null
         }
         Insert: {
+          academic_year?: string | null
           address?: string | null
+          bulletin_settings?: Json
           code?: string | null
           created_at?: string
+          currency?: string
+          director_name?: string | null
+          director_signature_url?: string | null
           email?: string | null
           id?: string
           logo_url?: string | null
           name: string
+          period_system?: string
           phone?: string | null
+          receipt_settings?: Json
+          school_stamp_url?: string | null
+          theme_primary?: string | null
+          theme_secondary?: string | null
           updated_at?: string
+          website?: string | null
         }
         Update: {
+          academic_year?: string | null
           address?: string | null
+          bulletin_settings?: Json
           code?: string | null
           created_at?: string
+          currency?: string
+          director_name?: string | null
+          director_signature_url?: string | null
           email?: string | null
           id?: string
           logo_url?: string | null
           name?: string
+          period_system?: string
           phone?: string | null
+          receipt_settings?: Json
+          school_stamp_url?: string | null
+          theme_primary?: string | null
+          theme_secondary?: string | null
           updated_at?: string
+          website?: string | null
         }
         Relationships: []
       }
