@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VerifierRecuNumberRouteImport } from './routes/verifier-recu.$number'
+import { Route as AuthenticatedSuperAdminRouteImport } from './routes/_authenticated/super-admin'
 import { Route as AuthenticatedSouscriptionRouteImport } from './routes/_authenticated/souscription'
 import { Route as AuthenticatedSauvegardeRouteImport } from './routes/_authenticated/sauvegarde'
 import { Route as AuthenticatedSalairesRouteImport } from './routes/_authenticated/salaires'
@@ -55,6 +56,11 @@ const VerifierRecuNumberRoute = VerifierRecuNumberRouteImport.update({
   id: '/verifier-recu/$number',
   path: '/verifier-recu/$number',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedSuperAdminRoute = AuthenticatedSuperAdminRouteImport.update({
+  id: '/super-admin',
+  path: '/super-admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSouscriptionRoute =
   AuthenticatedSouscriptionRouteImport.update({
@@ -205,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/salaires': typeof AuthenticatedSalairesRoute
   '/sauvegarde': typeof AuthenticatedSauvegardeRoute
   '/souscription': typeof AuthenticatedSouscriptionRoute
+  '/super-admin': typeof AuthenticatedSuperAdminRoute
   '/verifier-recu/$number': typeof VerifierRecuNumberRoute
 }
 export interface FileRoutesByTo {
@@ -233,6 +240,7 @@ export interface FileRoutesByTo {
   '/salaires': typeof AuthenticatedSalairesRoute
   '/sauvegarde': typeof AuthenticatedSauvegardeRoute
   '/souscription': typeof AuthenticatedSouscriptionRoute
+  '/super-admin': typeof AuthenticatedSuperAdminRoute
   '/verifier-recu/$number': typeof VerifierRecuNumberRoute
 }
 export interface FileRoutesById {
@@ -263,6 +271,7 @@ export interface FileRoutesById {
   '/_authenticated/salaires': typeof AuthenticatedSalairesRoute
   '/_authenticated/sauvegarde': typeof AuthenticatedSauvegardeRoute
   '/_authenticated/souscription': typeof AuthenticatedSouscriptionRoute
+  '/_authenticated/super-admin': typeof AuthenticatedSuperAdminRoute
   '/verifier-recu/$number': typeof VerifierRecuNumberRoute
 }
 export interface FileRouteTypes {
@@ -293,6 +302,7 @@ export interface FileRouteTypes {
     | '/salaires'
     | '/sauvegarde'
     | '/souscription'
+    | '/super-admin'
     | '/verifier-recu/$number'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -321,6 +331,7 @@ export interface FileRouteTypes {
     | '/salaires'
     | '/sauvegarde'
     | '/souscription'
+    | '/super-admin'
     | '/verifier-recu/$number'
   id:
     | '__root__'
@@ -350,6 +361,7 @@ export interface FileRouteTypes {
     | '/_authenticated/salaires'
     | '/_authenticated/sauvegarde'
     | '/_authenticated/souscription'
+    | '/_authenticated/super-admin'
     | '/verifier-recu/$number'
   fileRoutesById: FileRoutesById
 }
@@ -389,6 +401,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/verifier-recu/$number'
       preLoaderRoute: typeof VerifierRecuNumberRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/super-admin': {
+      id: '/_authenticated/super-admin'
+      path: '/super-admin'
+      fullPath: '/super-admin'
+      preLoaderRoute: typeof AuthenticatedSuperAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/souscription': {
       id: '/_authenticated/souscription'
@@ -578,6 +597,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSalairesRoute: typeof AuthenticatedSalairesRoute
   AuthenticatedSauvegardeRoute: typeof AuthenticatedSauvegardeRoute
   AuthenticatedSouscriptionRoute: typeof AuthenticatedSouscriptionRoute
+  AuthenticatedSuperAdminRoute: typeof AuthenticatedSuperAdminRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -605,6 +625,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSalairesRoute: AuthenticatedSalairesRoute,
   AuthenticatedSauvegardeRoute: AuthenticatedSauvegardeRoute,
   AuthenticatedSouscriptionRoute: AuthenticatedSouscriptionRoute,
+  AuthenticatedSuperAdminRoute: AuthenticatedSuperAdminRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
