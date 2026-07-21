@@ -32,6 +32,8 @@ function PaymentsPage() {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<"pending" | "validated" | "late">("pending");
   const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+
 
   const { data: payments = [] } = useQuery({
     queryKey: ["payments"],
