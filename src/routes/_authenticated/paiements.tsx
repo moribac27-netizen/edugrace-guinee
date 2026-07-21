@@ -510,7 +510,8 @@ async function printReceipt(p: any, school: any) {
     </div>
   </div>
 
-  <div class="note">Reçu généré électroniquement — vérifiable en ligne via QR code.</div>
+  ${legalNotice ? `<div class="legal">${escapeHtml(legalNotice)}</div>` : ""}
+  <div class="note">${escapeHtml(footerNote)}</div>
 
 </body></html>
   `);
