@@ -222,9 +222,9 @@ function BulletinsPage() {
             {/* Summary */}
             <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
               <div className="border border-black p-3 space-y-1">
-                <div className="flex justify-between"><span className="font-semibold">Moyenne générale :</span> <span className="font-bold text-base">{selected.avg != null ? selected.avg.toFixed(2) : "—"} / 20</span></div>
+                <div className="flex justify-between"><span className="font-semibold">Moyenne générale :</span> <span className="font-bold text-base">{selected.avg != null ? selected.avg.toFixed(2) : "—"} / {maxScore}</span></div>
                 <div className="flex justify-between"><span className="font-semibold">Rang :</span> <span>{selected.rank ?? "—"} / {withRank.length}</span></div>
-                <div className="flex justify-between"><span className="font-semibold">Appréciation :</span> <span>{appreciation(selected.avg)}</span></div>
+                <div className="flex justify-between"><span className="font-semibold">Appréciation :</span> <span>{appreciation(selected.avg, maxScore)}</span></div>
               </div>
               <div className="border border-black p-3 space-y-1">
                 <div className="flex justify-between"><span className="font-semibold">Moyenne de classe :</span> <span>{classAvg ? classAvg.toFixed(2) : "—"}</span></div>
