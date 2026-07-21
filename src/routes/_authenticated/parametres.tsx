@@ -248,7 +248,8 @@ function AssetUploader({ kind, schoolId, url, label, onDone }: {
       });
       if (error) throw error;
       // Persist path in schools row
-      const { error: upErr } = await supabase.from("schools").update({ [KIND_TO_COL[kind]]: path }).eq("id", schoolId);
+      const patch: any = { [KIND_TO_COL[kind]]: path };
+      const { error: upErr } = await supabase.from("schools").update(patch).eq("id", schoolId);
       if (upErr) throw upErr;
       onDone(path);
       setPending(null);
