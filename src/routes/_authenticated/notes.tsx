@@ -44,6 +44,9 @@ function NotesPage() {
     queryFn: async () => (await supabase.from("grades").select("*").in("student_id", studentIds).eq("period", period)).data ?? [],
   });
 
+  const cls = classes.find((c: any) => c.id === classId);
+  const maxScore = maxScoreForLevel(cls?.level);
+
   const rows = useMemo(() => {
     return students.map((s: any) => {
       const sg = grades.filter((g: any) => g.student_id === s.id);
