@@ -898,11 +898,17 @@ export type Database = {
           payment_method: string | null
           payment_type: string
           period: string | null
+          proof_url: string | null
           receipt_number: string | null
           recorded_by: string | null
+          rejection_reason: string | null
           school_id: string
           status: string
           student_id: string
+          transaction_reference: string | null
+          validated_at: string | null
+          validated_by: string | null
+          validation_status: string
         }
         Insert: {
           amount: number
@@ -913,11 +919,17 @@ export type Database = {
           payment_method?: string | null
           payment_type: string
           period?: string | null
+          proof_url?: string | null
           receipt_number?: string | null
           recorded_by?: string | null
+          rejection_reason?: string | null
           school_id?: string
           status?: string
           student_id: string
+          transaction_reference?: string | null
+          validated_at?: string | null
+          validated_by?: string | null
+          validation_status?: string
         }
         Update: {
           amount?: number
@@ -928,11 +940,17 @@ export type Database = {
           payment_method?: string | null
           payment_type?: string
           period?: string | null
+          proof_url?: string | null
           receipt_number?: string | null
           recorded_by?: string | null
+          rejection_reason?: string | null
           school_id?: string
           status?: string
           student_id?: string
+          transaction_reference?: string | null
+          validated_at?: string | null
+          validated_by?: string | null
+          validation_status?: string
         }
         Relationships: [
           {
@@ -1063,6 +1081,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      receipt_counters: {
+        Row: {
+          last_seq: number
+          school_id: string
+          year: number
+        }
+        Insert: {
+          last_seq?: number
+          school_id: string
+          year: number
+        }
+        Update: {
+          last_seq?: number
+          school_id?: string
+          year?: number
+        }
+        Relationships: []
       }
       revenues: {
         Row: {
@@ -1840,6 +1876,7 @@ export type Database = {
       is_finance: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       is_super_admin: { Args: { _uid: string }; Returns: boolean }
+      next_receipt_number: { Args: { _school_id: string }; Returns: string }
       same_school: { Args: { _school_id: string }; Returns: boolean }
       teacher_teaches_class: {
         Args: { _class_id: string; _uid: string }
@@ -1848,6 +1885,23 @@ export type Database = {
       teacher_teaches_student: {
         Args: { _student_id: string; _uid: string }
         Returns: boolean
+      }
+      verify_receipt: {
+        Args: { _receipt_number: string }
+        Returns: {
+          amount: number
+          class_name: string
+          paid_at: string
+          payment_method: string
+          payment_type: string
+          period: string
+          receipt_number: string
+          school_address: string
+          school_logo_url: string
+          school_name: string
+          student_name: string
+          validation_status: string
+        }[]
       }
     }
     Enums: {
