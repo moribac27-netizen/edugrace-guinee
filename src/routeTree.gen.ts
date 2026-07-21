@@ -12,10 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedSouscriptionRouteImport } from './routes/_authenticated/souscription'
 import { Route as AuthenticatedSauvegardeRouteImport } from './routes/_authenticated/sauvegarde'
 import { Route as AuthenticatedSalairesRouteImport } from './routes/_authenticated/salaires'
 import { Route as AuthenticatedRapportsRouteImport } from './routes/_authenticated/rapports'
 import { Route as AuthenticatedPresencesRouteImport } from './routes/_authenticated/presences'
+import { Route as AuthenticatedPlansRouteImport } from './routes/_authenticated/plans'
 import { Route as AuthenticatedParametresRouteImport } from './routes/_authenticated/parametres'
 import { Route as AuthenticatedPaiementsRouteImport } from './routes/_authenticated/paiements'
 import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
@@ -47,6 +49,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedSouscriptionRoute =
+  AuthenticatedSouscriptionRouteImport.update({
+    id: '/souscription',
+    path: '/souscription',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSauvegardeRoute = AuthenticatedSauvegardeRouteImport.update({
   id: '/sauvegarde',
   path: '/sauvegarde',
@@ -65,6 +73,11 @@ const AuthenticatedRapportsRoute = AuthenticatedRapportsRouteImport.update({
 const AuthenticatedPresencesRoute = AuthenticatedPresencesRouteImport.update({
   id: '/presences',
   path: '/presences',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPlansRoute = AuthenticatedPlansRouteImport.update({
+  id: '/plans',
+  path: '/plans',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedParametresRoute = AuthenticatedParametresRouteImport.update({
@@ -172,10 +185,12 @@ export interface FileRoutesByFullPath {
   '/notes': typeof AuthenticatedNotesRoute
   '/paiements': typeof AuthenticatedPaiementsRoute
   '/parametres': typeof AuthenticatedParametresRoute
+  '/plans': typeof AuthenticatedPlansRoute
   '/presences': typeof AuthenticatedPresencesRoute
   '/rapports': typeof AuthenticatedRapportsRoute
   '/salaires': typeof AuthenticatedSalairesRoute
   '/sauvegarde': typeof AuthenticatedSauvegardeRoute
+  '/souscription': typeof AuthenticatedSouscriptionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -196,10 +211,12 @@ export interface FileRoutesByTo {
   '/notes': typeof AuthenticatedNotesRoute
   '/paiements': typeof AuthenticatedPaiementsRoute
   '/parametres': typeof AuthenticatedParametresRoute
+  '/plans': typeof AuthenticatedPlansRoute
   '/presences': typeof AuthenticatedPresencesRoute
   '/rapports': typeof AuthenticatedRapportsRoute
   '/salaires': typeof AuthenticatedSalairesRoute
   '/sauvegarde': typeof AuthenticatedSauvegardeRoute
+  '/souscription': typeof AuthenticatedSouscriptionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -222,10 +239,12 @@ export interface FileRoutesById {
   '/_authenticated/notes': typeof AuthenticatedNotesRoute
   '/_authenticated/paiements': typeof AuthenticatedPaiementsRoute
   '/_authenticated/parametres': typeof AuthenticatedParametresRoute
+  '/_authenticated/plans': typeof AuthenticatedPlansRoute
   '/_authenticated/presences': typeof AuthenticatedPresencesRoute
   '/_authenticated/rapports': typeof AuthenticatedRapportsRoute
   '/_authenticated/salaires': typeof AuthenticatedSalairesRoute
   '/_authenticated/sauvegarde': typeof AuthenticatedSauvegardeRoute
+  '/_authenticated/souscription': typeof AuthenticatedSouscriptionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -248,10 +267,12 @@ export interface FileRouteTypes {
     | '/notes'
     | '/paiements'
     | '/parametres'
+    | '/plans'
     | '/presences'
     | '/rapports'
     | '/salaires'
     | '/sauvegarde'
+    | '/souscription'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -272,10 +293,12 @@ export interface FileRouteTypes {
     | '/notes'
     | '/paiements'
     | '/parametres'
+    | '/plans'
     | '/presences'
     | '/rapports'
     | '/salaires'
     | '/sauvegarde'
+    | '/souscription'
   id:
     | '__root__'
     | '/'
@@ -297,10 +320,12 @@ export interface FileRouteTypes {
     | '/_authenticated/notes'
     | '/_authenticated/paiements'
     | '/_authenticated/parametres'
+    | '/_authenticated/plans'
     | '/_authenticated/presences'
     | '/_authenticated/rapports'
     | '/_authenticated/salaires'
     | '/_authenticated/sauvegarde'
+    | '/_authenticated/souscription'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -332,6 +357,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/souscription': {
+      id: '/_authenticated/souscription'
+      path: '/souscription'
+      fullPath: '/souscription'
+      preLoaderRoute: typeof AuthenticatedSouscriptionRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/sauvegarde': {
       id: '/_authenticated/sauvegarde'
       path: '/sauvegarde'
@@ -358,6 +390,13 @@ declare module '@tanstack/react-router' {
       path: '/presences'
       fullPath: '/presences'
       preLoaderRoute: typeof AuthenticatedPresencesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/plans': {
+      id: '/_authenticated/plans'
+      path: '/plans'
+      fullPath: '/plans'
+      preLoaderRoute: typeof AuthenticatedPlansRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/parametres': {
@@ -492,10 +531,12 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
   AuthenticatedPaiementsRoute: typeof AuthenticatedPaiementsRoute
   AuthenticatedParametresRoute: typeof AuthenticatedParametresRoute
+  AuthenticatedPlansRoute: typeof AuthenticatedPlansRoute
   AuthenticatedPresencesRoute: typeof AuthenticatedPresencesRoute
   AuthenticatedRapportsRoute: typeof AuthenticatedRapportsRoute
   AuthenticatedSalairesRoute: typeof AuthenticatedSalairesRoute
   AuthenticatedSauvegardeRoute: typeof AuthenticatedSauvegardeRoute
+  AuthenticatedSouscriptionRoute: typeof AuthenticatedSouscriptionRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -515,10 +556,12 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedNotesRoute: AuthenticatedNotesRoute,
   AuthenticatedPaiementsRoute: AuthenticatedPaiementsRoute,
   AuthenticatedParametresRoute: AuthenticatedParametresRoute,
+  AuthenticatedPlansRoute: AuthenticatedPlansRoute,
   AuthenticatedPresencesRoute: AuthenticatedPresencesRoute,
   AuthenticatedRapportsRoute: AuthenticatedRapportsRoute,
   AuthenticatedSalairesRoute: AuthenticatedSalairesRoute,
   AuthenticatedSauvegardeRoute: AuthenticatedSauvegardeRoute,
+  AuthenticatedSouscriptionRoute: AuthenticatedSouscriptionRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

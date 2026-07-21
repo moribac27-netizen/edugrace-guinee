@@ -1,9 +1,14 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
+  Accordion, AccordionContent, AccordionItem, AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   School, Users, GraduationCap, ClipboardList, CreditCard, Megaphone,
-  BarChart3, Check, ArrowRight,
+  BarChart3, Check, X, ArrowRight, Sparkles,
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -26,13 +31,96 @@ const FEATURES = [
   { icon: BarChart3, title: "Rapports", desc: "Statistiques financières et académiques." },
 ];
 
-const PLANS = [
-  { name: "Basic", price: "100 000", features: ["Jusqu'à 200 élèves", "Gestion élèves & classes", "Notes & bulletins", "Support email"] },
-  { name: "Standard", price: "150 000", popular: true, features: ["Jusqu'à 600 élèves", "Tout Basic", "Paiements & comptabilité", "Espace parent", "Support prioritaire"] },
-  { name: "Premium", price: "200 000", features: ["Élèves illimités", "Tout Standard", "Rapports avancés", "Multi-établissements", "Support dédié"] },
+const FAQ = [
+  { q: "Puis-je essayer MBGEduGuinée gratuitement ?", a: "Oui. Chaque nouvelle école bénéficie automatiquement d'une période d'essai gratuite de 30 jours sur l'offre Standard, sans carte bancaire." },
+  { q: "Quels moyens de paiement acceptez-vous ?", a: "Nous préparons l'intégration Orange Money, Mobile Money (MTN/Moov), Stripe (carte bancaire) et PayPal. Vous pouvez actuellement souscrire depuis votre espace et notre équipe vous accompagne pour la première facturation." },
+  { q: "Puis-je changer d'offre à tout moment ?", a: "Oui. Depuis votre espace de souscription, vous pouvez passer à une offre supérieure ou inférieure. Les changements prennent effet immédiatement." },
+  { q: "Mes données sont-elles sécurisées ?", a: "Chaque école est isolée par des politiques strictes (multi-tenant + RLS). Les sauvegardes sont automatiques et chiffrées." },
+  { q: "Que se passe-t-il à la fin de l'essai gratuit ?", a: "Vous recevez un rappel avant la fin de la période. Vous pouvez ensuite souscrire à l'offre de votre choix pour conserver vos données et fonctionnalités." },
+  { q: "Proposez-vous une formation ?", a: "Oui. Toutes les offres incluent une prise en main. Les offres Standard et Premium bénéficient d'un accompagnement personnalisé." },
 ];
 
+type Plan = {
+  id: string;
+  code: string;
+  name: string;
+  description: string | null;
+  price_monthly: number;
+  currency: string;
+  student_limit: number | null;
+  features: string[];
+  is_popular: boolean;
+  display_order: number;
+};
+
+type CurrentSub = {
+  id: string;
+  status: string;
+  trial_ends_at: string | null;
+  current_period_end: string;
+  plan: { name: string; code: string } | null;
+} | null;
+
+function formatPrice(v: number) {
+  return new Intl.NumberFormat("fr-FR").format(v);
+}
+function formatDate(v: string | null) {
+  if (!v) return "—";
+  return new Date(v).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+}
+
 function Landing() {
+  const navigate = useNavigate();
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [currentSub, setCurrentSub] = useState<CurrentSub>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await (supabase as any)
+        .from("subscription_plans")
+        .select("*")
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
+      setPlans(
+        (data ?? []).map((p: any) => ({
+          ...p,
+          features: Array.isArray(p.features) ? p.features : [],
+        })),
+      );
+      setLoading(false);
+    })();
+
+    (async () => {
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) return;
+      setUserId(u.user.id);
+      const { data: prof } = await supabase
+        .from("profiles").select("school_id").eq("id", u.user.id).maybeSingle();
+      if (!prof?.school_id) return;
+      const { data: sub } = await (supabase as any)
+        .from("school_subscriptions")
+        .select("id,status,trial_ends_at,current_period_end,plan:subscription_plans(name,code)")
+        .eq("school_id", prof.school_id)
+        .maybeSingle();
+      setCurrentSub(sub ?? null);
+    })();
+  }, []);
+
+  function handleChoose(planCode: string) {
+    if (userId) {
+      navigate({ to: "/souscription", search: { plan: planCode } as any });
+    } else {
+      navigate({ to: "/auth", search: { plan: planCode } as any });
+    }
+  }
+
+  // Build comparison rows: union of features across plans
+  const allFeatures = Array.from(
+    new Set(plans.flatMap((p) => p.features)),
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-background/80 backdrop-blur sticky top-0 z-40">
@@ -49,10 +137,17 @@ function Landing() {
           <nav className="hidden md:flex items-center gap-8 text-sm">
             <a href="#fonctionnalites" className="text-muted-foreground hover:text-foreground">Fonctionnalités</a>
             <a href="#tarifs" className="text-muted-foreground hover:text-foreground">Tarifs</a>
+            <a href="#faq" className="text-muted-foreground hover:text-foreground">FAQ</a>
           </nav>
           <div className="flex items-center gap-2">
-            <Link to="/auth"><Button variant="ghost" size="sm">Connexion</Button></Link>
-            <Link to="/auth"><Button size="sm">Commencer</Button></Link>
+            {userId ? (
+              <Link to="/dashboard"><Button size="sm">Mon espace</Button></Link>
+            ) : (
+              <>
+                <Link to="/auth"><Button variant="ghost" size="sm">Connexion</Button></Link>
+                <Link to="/auth"><Button size="sm">Commencer</Button></Link>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -108,28 +203,139 @@ function Landing() {
       {/* Pricing */}
       <section id="tarifs" className="py-20 border-t bg-muted/30">
         <div className="max-w-6xl mx-auto px-4 lg:px-6">
-          <div className="text-center mb-12">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+              <Sparkles className="size-4" /> Essai gratuit de 30 jours
+            </div>
             <h2 className="font-display text-3xl md:text-4xl font-bold">Des tarifs adaptés à chaque école</h2>
             <p className="mt-4 text-muted-foreground">Sans engagement. Annulez à tout moment.</p>
           </div>
+
+          {currentSub && (
+            <div className="max-w-3xl mx-auto mb-10 p-5 rounded-xl border bg-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <div className="text-sm text-muted-foreground">Votre abonnement actuel</div>
+                <div className="font-display font-semibold text-lg">
+                  {currentSub.plan?.name ?? "—"}{" "}
+                  <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary uppercase">
+                    {currentSub.status}
+                  </span>
+                </div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  {currentSub.status === "trial"
+                    ? `Essai jusqu'au ${formatDate(currentSub.trial_ends_at)}`
+                    : `Valide jusqu'au ${formatDate(currentSub.current_period_end)}`}
+                </div>
+              </div>
+              <Link to="/souscription">
+                <Button>{currentSub.status === "trial" ? "Choisir une offre" : "Renouveler / Changer d'offre"}</Button>
+              </Link>
+            </div>
+          )}
+
           <div className="grid md:grid-cols-3 gap-6">
-            {PLANS.map((p) => (
-              <div key={p.name} className={"p-8 rounded-2xl border bg-card relative " + (p.popular ? "border-primary shadow-lg ring-1 ring-primary/20" : "")}>
-                {p.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-medium">Recommandé</div>}
+            {loading && Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="p-8 rounded-2xl border bg-card animate-pulse h-96" />
+            ))}
+            {!loading && plans.map((p) => (
+              <div key={p.id} className={"p-8 rounded-2xl border bg-card relative " + (p.is_popular ? "border-primary shadow-lg ring-1 ring-primary/20" : "")}>
+                {p.is_popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-medium">Recommandé</div>}
                 <h3 className="font-display text-2xl font-bold">{p.name}</h3>
+                {p.description && <p className="text-sm text-muted-foreground mt-2">{p.description}</p>}
                 <div className="mt-4 flex items-baseline gap-1">
-                  <span className="text-4xl font-bold">{p.price}</span>
-                  <span className="text-muted-foreground">GNF/mois</span>
+                  <span className="text-4xl font-bold">{formatPrice(p.price_monthly)}</span>
+                  <span className="text-muted-foreground">{p.currency}/mois</span>
+                </div>
+                <div className="mt-2 text-xs inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent/20 text-accent-foreground">
+                  <Sparkles className="size-3" /> 30 jours gratuits
                 </div>
                 <ul className="mt-6 space-y-2 text-sm">
                   {p.features.map((f) => (
                     <li key={f} className="flex gap-2"><Check className="size-4 text-primary mt-0.5 shrink-0" />{f}</li>
                   ))}
                 </ul>
-                <Link to="/auth"><Button className="w-full mt-6" variant={p.popular ? "default" : "outline"}>Choisir {p.name}</Button></Link>
+                <Button
+                  className="w-full mt-6"
+                  variant={p.is_popular ? "default" : "outline"}
+                  onClick={() => handleChoose(p.code)}
+                >
+                  Choisir {p.name}
+                </Button>
               </div>
             ))}
           </div>
+
+          {/* Comparison table */}
+          {!loading && plans.length > 0 && (
+            <div className="mt-16">
+              <h3 className="font-display text-2xl font-bold text-center mb-6">Comparer les offres</h3>
+              <div className="overflow-x-auto rounded-xl border bg-card">
+                <table className="w-full text-sm">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="text-left p-4 font-medium">Fonctionnalité</th>
+                      {plans.map((p) => (
+                        <th key={p.id} className="p-4 font-display font-semibold">
+                          {p.name}
+                          {p.is_popular && <div className="text-xs font-normal text-primary mt-1">Recommandé</div>}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-t">
+                      <td className="p-4 text-muted-foreground">Prix mensuel</td>
+                      {plans.map((p) => (
+                        <td key={p.id} className="p-4 text-center font-semibold">{formatPrice(p.price_monthly)} {p.currency}</td>
+                      ))}
+                    </tr>
+                    <tr className="border-t">
+                      <td className="p-4 text-muted-foreground">Limite d'élèves</td>
+                      {plans.map((p) => (
+                        <td key={p.id} className="p-4 text-center">{p.student_limit ? p.student_limit : "Illimité"}</td>
+                      ))}
+                    </tr>
+                    <tr className="border-t">
+                      <td className="p-4 text-muted-foreground">Essai gratuit</td>
+                      {plans.map((p) => (
+                        <td key={p.id} className="p-4 text-center"><Check className="size-4 text-primary inline" /> 30 jours</td>
+                      ))}
+                    </tr>
+                    {allFeatures.map((feat) => (
+                      <tr key={feat} className="border-t">
+                        <td className="p-4 text-muted-foreground">{feat}</td>
+                        {plans.map((p) => (
+                          <td key={p.id} className="p-4 text-center">
+                            {p.features.includes(feat)
+                              ? <Check className="size-4 text-primary inline" />
+                              : <X className="size-4 text-muted-foreground/40 inline" />}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="py-20 border-t">
+        <div className="max-w-3xl mx-auto px-4 lg:px-6">
+          <div className="text-center mb-10">
+            <h2 className="font-display text-3xl md:text-4xl font-bold">Questions fréquentes</h2>
+            <p className="mt-4 text-muted-foreground">Tout ce qu'il faut savoir avant de vous lancer.</p>
+          </div>
+          <Accordion type="single" collapsible className="w-full">
+            {FAQ.map((item, i) => (
+              <AccordionItem key={i} value={`item-${i}`}>
+                <AccordionTrigger className="text-left">{item.q}</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">{item.a}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </section>
 

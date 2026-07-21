@@ -1,4 +1,4 @@
-import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
@@ -7,24 +7,34 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { School } from "lucide-react";
+import { School, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  beforeLoad: async () => {
+  validateSearch: (s: Record<string, unknown>) => ({ plan: (s.plan as string) || undefined }),
+  beforeLoad: async ({ search }) => {
     const { data } = await supabase.auth.getUser();
-    if (data.user) throw redirect({ to: "/dashboard" });
+    if (data.user) {
+      if (search.plan) throw redirect({ to: "/souscription", search: { plan: search.plan } });
+      throw redirect({ to: "/dashboard" });
+    }
   },
   head: () => ({ meta: [{ title: "Connexion — MBGEduGuinée" }] }),
   component: AuthPage,
 });
 
 function AuthPage() {
+  const { plan } = useSearch({ from: "/auth" });
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [signIn, setSignIn] = useState({ email: "", password: "" });
   const [signUp, setSignUp] = useState({ email: "", password: "", fullName: "", phone: "" });
+
+  const afterAuth = () => {
+    if (plan) navigate({ to: "/souscription", search: { plan } });
+    else navigate({ to: "/dashboard" });
+  };
 
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
@@ -33,7 +43,7 @@ function AuthPage() {
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Connexion réussie");
-    navigate({ to: "/dashboard" });
+    afterAuth();
   }
 
   async function handleSignUp(e: React.FormEvent) {
@@ -43,23 +53,24 @@ function AuthPage() {
       email: signUp.email,
       password: signUp.password,
       options: {
-        emailRedirectTo: window.location.origin + "/dashboard",
+        emailRedirectTo: window.location.origin + (plan ? `/souscription?plan=${encodeURIComponent(plan)}` : "/dashboard"),
         data: { full_name: signUp.fullName, phone: signUp.phone },
       },
     });
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Compte créé. Vérifiez votre email si requis.");
-    navigate({ to: "/dashboard" });
+    afterAuth();
   }
 
   async function handleGoogle() {
+    const dest = plan ? `/souscription?plan=${encodeURIComponent(plan)}` : "/dashboard";
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/dashboard",
+      redirect_uri: window.location.origin + dest,
     });
     if (result.error) return toast.error("Connexion Google indisponible");
     if (result.redirected) return;
-    navigate({ to: "/dashboard" });
+    afterAuth();
   }
 
   return (
@@ -75,6 +86,12 @@ function AuthPage() {
           </div>
         </Link>
 
+        {plan && (
+          <div className="mb-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/20 text-sm font-medium">
+            <Sparkles className="size-4 text-accent" />
+            Essai gratuit de 30 jours — offre <span className="uppercase">{plan}</span>
+          </div>
+        )}
         <Card>
           <CardHeader>
             <CardTitle>Bienvenue</CardTitle>

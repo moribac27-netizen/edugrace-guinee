@@ -1250,6 +1250,75 @@ export type Database = {
           },
         ]
       }
+      school_subscriptions: {
+        Row: {
+          billing_cycle: string
+          created_at: string
+          current_period_end: string
+          current_period_start: string
+          external_reference: string | null
+          id: string
+          last_payment_amount: number | null
+          last_payment_at: string | null
+          metadata: Json
+          payment_provider: string | null
+          plan_id: string
+          school_id: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          trial_ends_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          billing_cycle?: string
+          created_at?: string
+          current_period_end?: string
+          current_period_start?: string
+          external_reference?: string | null
+          id?: string
+          last_payment_amount?: number | null
+          last_payment_at?: string | null
+          metadata?: Json
+          payment_provider?: string | null
+          plan_id: string
+          school_id: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          trial_ends_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          billing_cycle?: string
+          created_at?: string
+          current_period_end?: string
+          current_period_start?: string
+          external_reference?: string | null
+          id?: string
+          last_payment_amount?: number | null
+          last_payment_at?: string | null
+          metadata?: Json
+          payment_provider?: string | null
+          plan_id?: string
+          school_id?: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          trial_ends_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "school_subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "school_subscriptions_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: true
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       schools: {
         Row: {
           academic_year: string | null
@@ -1495,6 +1564,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      subscription_plans: {
+        Row: {
+          code: string
+          created_at: string
+          currency: string
+          description: string | null
+          display_order: number
+          features: Json
+          id: string
+          is_active: boolean
+          is_popular: boolean
+          name: string
+          price_monthly: number
+          price_yearly: number
+          student_limit: number | null
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          currency?: string
+          description?: string | null
+          display_order?: number
+          features?: Json
+          id?: string
+          is_active?: boolean
+          is_popular?: boolean
+          name: string
+          price_monthly?: number
+          price_yearly?: number
+          student_limit?: number | null
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          currency?: string
+          description?: string | null
+          display_order?: number
+          features?: Json
+          id?: string
+          is_active?: boolean
+          is_popular?: boolean
+          name?: string
+          price_monthly?: number
+          price_yearly?: number
+          student_limit?: number | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       super_admins: {
         Row: {
@@ -1773,6 +1893,12 @@ export type Database = {
         | "uniforme"
         | "examens"
         | "autres"
+      subscription_status:
+        | "trial"
+        | "active"
+        | "past_due"
+        | "canceled"
+        | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1946,6 +2072,13 @@ export const Constants = {
         "uniforme",
         "examens",
         "autres",
+      ],
+      subscription_status: [
+        "trial",
+        "active",
+        "past_due",
+        "canceled",
+        "expired",
       ],
     },
   },
