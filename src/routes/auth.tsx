@@ -1,4 +1,4 @@
-import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
@@ -7,14 +7,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { School } from "lucide-react";
+import { School, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  beforeLoad: async () => {
+  validateSearch: (s: Record<string, unknown>) => ({ plan: (s.plan as string) || undefined }),
+  beforeLoad: async ({ search }) => {
     const { data } = await supabase.auth.getUser();
-    if (data.user) throw redirect({ to: "/dashboard" });
+    if (data.user) {
+      if (search.plan) throw redirect({ to: "/souscription", search: { plan: search.plan } });
+      throw redirect({ to: "/dashboard" });
+    }
   },
   head: () => ({ meta: [{ title: "Connexion — MBGEduGuinée" }] }),
   component: AuthPage,
