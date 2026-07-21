@@ -234,9 +234,9 @@ function NotesReport() {
       setLoading(true);
       let q = supabase
         .from("grades")
-        .select("score,max_score,term,evaluation_type,students(first_name,last_name,class_id,classes(name)),subjects(name)")
+        .select("score,max_score,period,evaluation_type,students(first_name,last_name,class_id,classes(name)),subjects(name)")
         .order("created_at", { ascending: false });
-      if (term !== "all") q = q.eq("term", term);
+      if (term !== "all") q = q.eq("period", term);
       const { data } = await q;
       let mapped = (data || []).map((g: any) => ({
         eleve: `${g.students?.last_name ?? ""} ${g.students?.first_name ?? ""}`.trim(),
@@ -244,7 +244,7 @@ function NotesReport() {
         classId: g.students?.class_id,
         matiere: g.subjects?.name,
         type: g.evaluation_type,
-        periode: g.term,
+        periode: g.period,
         note: g.score,
         max: g.max_score,
       }));
