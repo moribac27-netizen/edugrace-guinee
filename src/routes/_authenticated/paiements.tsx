@@ -422,12 +422,12 @@ async function printReceipt(p: any, school: any) {
   @page { size: A5; margin: 12mm; }
   * { box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; color: #1f2937; margin: 0; padding: 24px; }
-  .header { display: flex; align-items: center; gap: 16px; border-bottom: 3px double #2a5a3e; padding-bottom: 12px; }
+  .header { display: flex; align-items: center; gap: 16px; border-bottom: 3px double ${accent}; padding-bottom: 12px; }
   .header img.logo { height: 64px; width: 64px; object-fit: contain; }
   .header .school { flex: 1; }
-  .header h1 { margin: 0; color: #2a5a3e; font-size: 20px; }
+  .header h1 { margin: 0; color: ${accent}; font-size: 20px; }
   .header .addr { font-size: 11px; color: #555; margin-top: 2px; }
-  .title { text-align: center; margin: 18px 0 8px; font-weight: 700; font-size: 15px; letter-spacing: 3px; color: #2a5a3e; }
+  .title { text-align: center; margin: 18px 0 8px; font-weight: 700; font-size: 15px; letter-spacing: 3px; color: ${accent}; }
   .subtitle { text-align: center; font-family: monospace; font-size: 13px; margin-bottom: 12px; color: #555; }
   .box { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 18px; }
   .row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #e5e7eb; font-size: 13px; }
