@@ -233,15 +233,17 @@ function PaymentsPage() {
                     <TableCell className="text-sm">{p.payment_method}</TableCell>
                     <TableCell className="font-mono text-xs">{p.transaction_reference ?? "—"}</TableCell>
                     <TableCell className="font-semibold">{fmt(p.amount)} GNF</TableCell>
-                    <TableCell className="text-right space-x-1">
+                    <TableCell className="text-right space-x-1 whitespace-nowrap">
                       {p.validation_status === "en_attente" ? (
                         <>
                           <Button size="sm" variant="default" className="gap-1" onClick={() => validatePayment(p)}><CheckCircle2 className="size-3.5" />Valider</Button>
                           <Button size="sm" variant="outline" className="gap-1 text-destructive" onClick={() => rejectPayment(p)}><XCircle className="size-3.5" />Rejeter</Button>
                         </>
                       ) : (
-                        <Button variant="ghost" size="icon" onClick={() => printReceipt(p, school)}><Printer className="size-4" /></Button>
+                        <Button variant="ghost" size="icon" title="Imprimer le reçu" onClick={() => printReceipt(p, school)}><Printer className="size-4" /></Button>
                       )}
+                      <Button variant="ghost" size="icon" title="Télécharger Excel" onClick={() => exportExcel([p], tab)}><FileSpreadsheet className="size-4" /></Button>
+                      <Button variant="ghost" size="icon" title="Télécharger PDF" onClick={() => exportPdf([p], tab, school, [])}><FileText className="size-4" /></Button>
                     </TableCell>
                   </TableRow>
                 ))}
