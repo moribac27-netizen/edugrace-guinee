@@ -52,17 +52,27 @@ function MessageriePage() {
     supabase.auth.getUser().then(({ data }) => setUid(data.user?.id ?? null));
   }, []);
 
+  const { data: profileMap = {} } = useQuery({
+    queryKey: ["profiles-map"],
+    queryFn: async () => {
+      const { data } = await supabase.from("profiles").select("id, full_name");
+      const map: Record<string, string> = {};
+      (data ?? []).forEach((p: any) => { map[p.id] = p.full_name ?? "—"; });
+      return map;
+    },
+  });
+
   const { data: inbox = [] } = useQuery({
     queryKey: ["messages", "inbox", uid],
     enabled: !!uid,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("messages")
-        .select("*, sender:profiles!messages_sender_id_fkey(full_name)")
+        .select("*")
         .eq("recipient_id", uid!)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data as Msg[];
+      return (data ?? []) as Msg[];
     },
   });
 
@@ -72,11 +82,11 @@ function MessageriePage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("messages")
-        .select("*, recipient:profiles!messages_recipient_id_fkey(full_name)")
+        .select("*")
         .eq("sender_id", uid!)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data as Msg[];
+      return (data ?? []) as Msg[];
     },
   });
 
@@ -85,13 +95,14 @@ function MessageriePage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("message_broadcasts")
-        .select("*, classes(name), author:profiles!message_broadcasts_author_id_fkey(full_name)")
+        .select("*, classes(name)")
         .order("created_at", { ascending: false })
         .limit(100);
       if (error) throw error;
-      return data as Broadcast[];
+      return (data ?? []) as Broadcast[];
     },
   });
+
 
   const unread = inbox.filter((m) => !m.read_at).length;
 
