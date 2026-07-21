@@ -29,6 +29,7 @@ const NAV = [
   { to: "/messagerie", label: "Messagerie", icon: MessageSquare },
   { to: "/rapports", label: "Rapports", icon: BarChart3 },
   { to: "/journal", label: "Journal d'activité", icon: History },
+  { to: "/sauvegarde", label: "Sauvegarde", icon: DatabaseBackup },
 
   { to: "/parametres", label: "Paramètres", icon: Settings },
 ] as const;
