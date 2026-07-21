@@ -1277,6 +1277,7 @@ export type Database = {
       }
       teacher_class_assignments: {
         Row: {
+          academic_year: string
           class_id: string
           created_at: string
           id: string
@@ -1286,6 +1287,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          academic_year?: string
           class_id: string
           created_at?: string
           id?: string
@@ -1295,6 +1297,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          academic_year?: string
           class_id?: string
           created_at?: string
           id?: string
