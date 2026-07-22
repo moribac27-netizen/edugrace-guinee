@@ -11,12 +11,16 @@ const schema = z.object({
   schoolPhone: z.string().optional().nullable(),
 });
 
+type Result =
+  | { ok: true; schoolId: string; userId: string; emailConfirmed: true }
+  | { ok: false; error: string };
+
 export const registerSchool = createServerFn({ method: "POST" })
   .inputValidator((d) => schema.parse(d))
-  .handler(async ({ data }) => {
+  .handler(async ({ data }): Promise<Result> => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    // 1. Create school
+    // 1. Create school first
     const { data: school, error: schoolErr } = await supabaseAdmin
       .from("schools")
       .insert({
@@ -28,10 +32,10 @@ export const registerSchool = createServerFn({ method: "POST" })
       .select("id")
       .single();
     if (schoolErr || !school) {
-      throw new Error(`Impossible de créer l'établissement: ${schoolErr?.message ?? "erreur inconnue"}`);
+      return { ok: false, error: `Impossible de créer l'établissement: ${schoolErr?.message ?? "erreur inconnue"}` };
     }
 
-    // 2. Create admin user (auto-confirmed so login works immediately)
+    // 2. Create admin user
     const { data: userRes, error: userErr } = await supabaseAdmin.auth.admin.createUser({
       email: data.email,
       password: data.password,
@@ -44,14 +48,13 @@ export const registerSchool = createServerFn({ method: "POST" })
       },
     });
     if (userErr || !userRes.user) {
-      // rollback the school
       await supabaseAdmin.from("schools").delete().eq("id", school.id);
       const msg = userErr?.message ?? "";
       if (/already registered|already been registered|exists/i.test(msg)) {
-        throw new Error("Cette adresse e-mail est déjà utilisée. Connectez-vous ou utilisez une autre adresse.");
+        return { ok: false, error: "Cette adresse e-mail est déjà utilisée. Connectez-vous ou utilisez une autre adresse." };
       }
-      throw new Error(`Impossible de créer le compte administrateur: ${msg || "erreur inconnue"}`);
+      return { ok: false, error: `Impossible de créer le compte administrateur: ${msg || "erreur inconnue"}` };
     }
 
-    return { schoolId: school.id, userId: userRes.user.id, emailConfirmed: true };
+    return { ok: true, schoolId: school.id, userId: userRes.user.id, emailConfirmed: true };
   });

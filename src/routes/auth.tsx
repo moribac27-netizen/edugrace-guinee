@@ -97,7 +97,7 @@ function AuthPage() {
     if (loading) return;
     setLoading(true);
     try {
-      await registerSchool({
+      const res = await registerSchool({
         data: {
           email: signUp.email.trim(),
           password: signUp.password,
@@ -108,7 +108,11 @@ function AuthPage() {
           schoolPhone: signUp.schoolPhone.trim() || null,
         },
       });
-      // Auto sign-in (email is auto-confirmed by the server function)
+      if (!res.ok) {
+        setLoading(false);
+        toast.error(res.error);
+        return;
+      }
       const { error: signInErr } = await supabase.auth.signInWithPassword({
         email: signUp.email.trim(),
         password: signUp.password,
