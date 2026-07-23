@@ -34,9 +34,16 @@ function AuthPage() {
   const [signIn, setSignIn] = useState({ email: "", password: "" });
   const [signUp, setSignUp] = useState(emptySignUp);
 
-  const afterAuth = () => {
-    if (plan) navigate({ to: "/souscription", search: { plan } });
-    else navigate({ to: "/dashboard" });
+  const afterAuth = async () => {
+    if (plan) return navigate({ to: "/souscription", search: { plan } });
+    const { data: user } = await supabase.auth.getUser();
+    if (user.user) {
+      const { data: roleRows } = await supabase.from("user_roles").select("role").eq("user_id", user.user.id);
+      const roles = (roleRows ?? []).map((r: any) => r.role);
+      if (roles.includes("parent")) return navigate({ to: "/parent" });
+      if (roles.includes("eleve") && !roles.some((r: string) => ["admin", "directeur", "comptable", "enseignant"].includes(r))) return navigate({ to: "/eleve" });
+    }
+    navigate({ to: "/dashboard" });
   };
 
   const [unconfirmedEmail, setUnconfirmedEmail] = useState<string | null>(null);
