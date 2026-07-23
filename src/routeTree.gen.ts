@@ -21,6 +21,7 @@ import { Route as AuthenticatedRapportsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedPresencesRouteImport } from './routes/_authenticated/presences'
 import { Route as AuthenticatedPlansRouteImport } from './routes/_authenticated/plans'
 import { Route as AuthenticatedPersonnalisationRecuRouteImport } from './routes/_authenticated/personnalisation-recu'
+import { Route as AuthenticatedParentRouteImport } from './routes/_authenticated/parent'
 import { Route as AuthenticatedParametresRouteImport } from './routes/_authenticated/parametres'
 import { Route as AuthenticatedPaiementsRouteImport } from './routes/_authenticated/paiements'
 import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
@@ -30,6 +31,7 @@ import { Route as AuthenticatedExamensRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedEnseignantsRouteImport } from './routes/_authenticated/enseignants'
 import { Route as AuthenticatedEmploiDuTempsRouteImport } from './routes/_authenticated/emploi-du-temps'
 import { Route as AuthenticatedElevesRouteImport } from './routes/_authenticated/eleves'
+import { Route as AuthenticatedEleveRouteImport } from './routes/_authenticated/eleve'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedComptabiliteRouteImport } from './routes/_authenticated/comptabilite'
 import { Route as AuthenticatedClassesRouteImport } from './routes/_authenticated/classes'
@@ -99,6 +101,11 @@ const AuthenticatedPersonnalisationRecuRoute =
     path: '/personnalisation-recu',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedParentRoute = AuthenticatedParentRouteImport.update({
+  id: '/parent',
+  path: '/parent',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedParametresRoute = AuthenticatedParametresRouteImport.update({
   id: '/parametres',
   path: '/parametres',
@@ -144,6 +151,11 @@ const AuthenticatedEmploiDuTempsRoute =
 const AuthenticatedElevesRoute = AuthenticatedElevesRouteImport.update({
   id: '/eleves',
   path: '/eleves',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedEleveRoute = AuthenticatedEleveRouteImport.update({
+  id: '/eleve',
+  path: '/eleve',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -195,6 +207,7 @@ export interface FileRoutesByFullPath {
   '/classes': typeof AuthenticatedClassesRoute
   '/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/eleve': typeof AuthenticatedEleveRoute
   '/eleves': typeof AuthenticatedElevesRoute
   '/emploi-du-temps': typeof AuthenticatedEmploiDuTempsRoute
   '/enseignants': typeof AuthenticatedEnseignantsRoute
@@ -204,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/notes': typeof AuthenticatedNotesRoute
   '/paiements': typeof AuthenticatedPaiementsRoute
   '/parametres': typeof AuthenticatedParametresRoute
+  '/parent': typeof AuthenticatedParentRoute
   '/personnalisation-recu': typeof AuthenticatedPersonnalisationRecuRoute
   '/plans': typeof AuthenticatedPlansRoute
   '/presences': typeof AuthenticatedPresencesRoute
@@ -224,6 +238,7 @@ export interface FileRoutesByTo {
   '/classes': typeof AuthenticatedClassesRoute
   '/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/eleve': typeof AuthenticatedEleveRoute
   '/eleves': typeof AuthenticatedElevesRoute
   '/emploi-du-temps': typeof AuthenticatedEmploiDuTempsRoute
   '/enseignants': typeof AuthenticatedEnseignantsRoute
@@ -233,6 +248,7 @@ export interface FileRoutesByTo {
   '/notes': typeof AuthenticatedNotesRoute
   '/paiements': typeof AuthenticatedPaiementsRoute
   '/parametres': typeof AuthenticatedParametresRoute
+  '/parent': typeof AuthenticatedParentRoute
   '/personnalisation-recu': typeof AuthenticatedPersonnalisationRecuRoute
   '/plans': typeof AuthenticatedPlansRoute
   '/presences': typeof AuthenticatedPresencesRoute
@@ -255,6 +271,7 @@ export interface FileRoutesById {
   '/_authenticated/classes': typeof AuthenticatedClassesRoute
   '/_authenticated/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/eleve': typeof AuthenticatedEleveRoute
   '/_authenticated/eleves': typeof AuthenticatedElevesRoute
   '/_authenticated/emploi-du-temps': typeof AuthenticatedEmploiDuTempsRoute
   '/_authenticated/enseignants': typeof AuthenticatedEnseignantsRoute
@@ -264,6 +281,7 @@ export interface FileRoutesById {
   '/_authenticated/notes': typeof AuthenticatedNotesRoute
   '/_authenticated/paiements': typeof AuthenticatedPaiementsRoute
   '/_authenticated/parametres': typeof AuthenticatedParametresRoute
+  '/_authenticated/parent': typeof AuthenticatedParentRoute
   '/_authenticated/personnalisation-recu': typeof AuthenticatedPersonnalisationRecuRoute
   '/_authenticated/plans': typeof AuthenticatedPlansRoute
   '/_authenticated/presences': typeof AuthenticatedPresencesRoute
@@ -286,6 +304,7 @@ export interface FileRouteTypes {
     | '/classes'
     | '/comptabilite'
     | '/dashboard'
+    | '/eleve'
     | '/eleves'
     | '/emploi-du-temps'
     | '/enseignants'
@@ -295,6 +314,7 @@ export interface FileRouteTypes {
     | '/notes'
     | '/paiements'
     | '/parametres'
+    | '/parent'
     | '/personnalisation-recu'
     | '/plans'
     | '/presences'
@@ -315,6 +335,7 @@ export interface FileRouteTypes {
     | '/classes'
     | '/comptabilite'
     | '/dashboard'
+    | '/eleve'
     | '/eleves'
     | '/emploi-du-temps'
     | '/enseignants'
@@ -324,6 +345,7 @@ export interface FileRouteTypes {
     | '/notes'
     | '/paiements'
     | '/parametres'
+    | '/parent'
     | '/personnalisation-recu'
     | '/plans'
     | '/presences'
@@ -345,6 +367,7 @@ export interface FileRouteTypes {
     | '/_authenticated/classes'
     | '/_authenticated/comptabilite'
     | '/_authenticated/dashboard'
+    | '/_authenticated/eleve'
     | '/_authenticated/eleves'
     | '/_authenticated/emploi-du-temps'
     | '/_authenticated/enseignants'
@@ -354,6 +377,7 @@ export interface FileRouteTypes {
     | '/_authenticated/notes'
     | '/_authenticated/paiements'
     | '/_authenticated/parametres'
+    | '/_authenticated/parent'
     | '/_authenticated/personnalisation-recu'
     | '/_authenticated/plans'
     | '/_authenticated/presences'
@@ -458,6 +482,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPersonnalisationRecuRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/parent': {
+      id: '/_authenticated/parent'
+      path: '/parent'
+      fullPath: '/parent'
+      preLoaderRoute: typeof AuthenticatedParentRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/parametres': {
       id: '/_authenticated/parametres'
       path: '/parametres'
@@ -521,6 +552,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedElevesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/eleve': {
+      id: '/_authenticated/eleve'
+      path: '/eleve'
+      fullPath: '/eleve'
+      preLoaderRoute: typeof AuthenticatedEleveRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -581,6 +619,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedClassesRoute: typeof AuthenticatedClassesRoute
   AuthenticatedComptabiliteRoute: typeof AuthenticatedComptabiliteRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedEleveRoute: typeof AuthenticatedEleveRoute
   AuthenticatedElevesRoute: typeof AuthenticatedElevesRoute
   AuthenticatedEmploiDuTempsRoute: typeof AuthenticatedEmploiDuTempsRoute
   AuthenticatedEnseignantsRoute: typeof AuthenticatedEnseignantsRoute
@@ -590,6 +629,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
   AuthenticatedPaiementsRoute: typeof AuthenticatedPaiementsRoute
   AuthenticatedParametresRoute: typeof AuthenticatedParametresRoute
+  AuthenticatedParentRoute: typeof AuthenticatedParentRoute
   AuthenticatedPersonnalisationRecuRoute: typeof AuthenticatedPersonnalisationRecuRoute
   AuthenticatedPlansRoute: typeof AuthenticatedPlansRoute
   AuthenticatedPresencesRoute: typeof AuthenticatedPresencesRoute
@@ -608,6 +648,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedClassesRoute: AuthenticatedClassesRoute,
   AuthenticatedComptabiliteRoute: AuthenticatedComptabiliteRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedEleveRoute: AuthenticatedEleveRoute,
   AuthenticatedElevesRoute: AuthenticatedElevesRoute,
   AuthenticatedEmploiDuTempsRoute: AuthenticatedEmploiDuTempsRoute,
   AuthenticatedEnseignantsRoute: AuthenticatedEnseignantsRoute,
@@ -617,6 +658,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedNotesRoute: AuthenticatedNotesRoute,
   AuthenticatedPaiementsRoute: AuthenticatedPaiementsRoute,
   AuthenticatedParametresRoute: AuthenticatedParametresRoute,
+  AuthenticatedParentRoute: AuthenticatedParentRoute,
   AuthenticatedPersonnalisationRecuRoute:
     AuthenticatedPersonnalisationRecuRoute,
   AuthenticatedPlansRoute: AuthenticatedPlansRoute,
