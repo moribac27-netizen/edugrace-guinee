@@ -4,13 +4,14 @@ import {
   LayoutDashboard, Users, GraduationCap, BookOpen, ClipboardList,
   CreditCard, Megaphone, LogOut, Menu, X, School, FileText, CalendarDays, UserCheck,
   Calculator, Wallet, ScrollText, Library, Link2, Settings, MessageSquare, BarChart3, History, DatabaseBackup, Sparkles, Package, ShieldCheck,
+  Home,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth, useRoles, primaryRole } from "@/hooks/useAuth";
 
-const NAV = [
+const STAFF_NAV = [
   { to: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
   { to: "/eleves", label: "Élèves", icon: Users },
   { to: "/classes", label: "Classes", icon: BookOpen },
@@ -33,17 +34,28 @@ const NAV = [
   { to: "/souscription", label: "Abonnement", icon: Sparkles },
   { to: "/plans", label: "Offres (admin)", icon: Package },
   { to: "/super-admin", label: "Super Admin", icon: ShieldCheck },
-
   { to: "/personnalisation-recu", label: "Personnalisation reçu", icon: FileText },
   { to: "/parametres", label: "Paramètres", icon: Settings },
 ] as const;
 
+const PARENT_NAV = [
+  { to: "/parent", label: "Mon espace", icon: Home },
+  { to: "/messagerie", label: "Messagerie", icon: MessageSquare },
+] as const;
+
+const STUDENT_NAV = [
+  { to: "/eleve", label: "Mon espace", icon: Home },
+  { to: "/messagerie", label: "Messagerie", icon: MessageSquare },
+] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { roles } = useRoles();
+  const role = primaryRole(roles);
+  const NAV = role === "parent" ? PARENT_NAV : role === "eleve" ? STUDENT_NAV : STAFF_NAV;
 
   async function handleSignOut() {
     await supabase.auth.signOut();
