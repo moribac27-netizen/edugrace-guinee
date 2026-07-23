@@ -103,7 +103,7 @@ function ChildDetails({ student }: { student: any }) {
     queryFn: async () => {
       const { data } = await supabase
         .from("grades")
-        .select("id, score, term, exam_type, created_at, subjects(name, coefficient)")
+        .select("id, score, period, evaluation_type, created_at, subjects(name, coefficient)")
         .eq("student_id", studentId)
         .order("created_at", { ascending: false });
       return data ?? [];
@@ -220,7 +220,7 @@ function ChildDetails({ student }: { student: any }) {
                   <div key={g.id} className="flex justify-between text-sm border-b py-1.5">
                     <div>
                       <span className="font-medium">{g.subjects?.name}</span>
-                      <span className="text-muted-foreground ml-2">{g.exam_type} · {g.term}</span>
+                      <span className="text-muted-foreground ml-2">{g.evaluation_type} · {g.period}</span>
                     </div>
                     <span className="font-medium">{Number(g.score).toFixed(2)} / {max}</span>
                   </div>

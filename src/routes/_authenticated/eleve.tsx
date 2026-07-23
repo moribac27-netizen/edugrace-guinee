@@ -52,7 +52,7 @@ function StudentDashboard({ student }: { student: any }) {
 
   const { data: grades = [] } = useQuery({
     queryKey: ["eleve-grades", studentId],
-    queryFn: async () => (await supabase.from("grades").select("id, score, term, exam_type, created_at, subjects(name, coefficient)").eq("student_id", studentId).order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await supabase.from("grades").select("id, score, period, evaluation_type, created_at, subjects(name, coefficient)").eq("student_id", studentId).order("created_at", { ascending: false })).data ?? [],
   });
   const { data: payments = [] } = useQuery({
     queryKey: ["eleve-payments", studentId],
@@ -126,7 +126,7 @@ function StudentDashboard({ student }: { student: any }) {
             <div className="space-y-1 max-h-96 overflow-y-auto">
               {grades.map((g: any) => (
                 <div key={g.id} className="flex justify-between text-sm border-b py-1.5">
-                  <span>{g.subjects?.name} <span className="text-muted-foreground">· {g.exam_type} · {g.term}</span></span>
+                  <span>{g.subjects?.name} <span className="text-muted-foreground">· {g.evaluation_type} · {g.period}</span></span>
                   <span className="font-medium">{Number(g.score).toFixed(2)} / {max}</span>
                 </div>
               ))}
