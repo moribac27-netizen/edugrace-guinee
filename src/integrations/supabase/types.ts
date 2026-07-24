@@ -888,6 +888,51 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          link: string | null
+          metadata: Json
+          read_at: string | null
+          school_id: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          link?: string | null
+          metadata?: Json
+          read_at?: string | null
+          school_id?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          link?: string | null
+          metadata?: Json
+          read_at?: string | null
+          school_id?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount: number
@@ -1961,6 +2006,12 @@ export type Database = {
           bytes: number
           files: number
           school_id: string
+        }[]
+      }
+      student_recipient_users: {
+        Args: { _student_id: string }
+        Returns: {
+          user_id: string
         }[]
       }
       teacher_teaches_class: {
