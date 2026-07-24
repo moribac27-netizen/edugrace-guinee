@@ -172,6 +172,13 @@ function MessageriePage() {
                             De {profileMap[m.sender_id] ?? "—"} · {new Date(m.created_at).toLocaleString("fr-FR")}
                           </div>
                           <p className="text-sm mt-2 whitespace-pre-wrap">{m.body}</p>
+                          {m.attachments && m.attachments.length > 0 && (
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              {m.attachments.map((a, i) => (
+                                <a key={i} href={a.url} target="_blank" rel="noreferrer" className="text-xs text-primary underline">📎 {a.name}</a>
+                              ))}
+                            </div>
+                          )}
                         </div>
                         <div className="flex gap-1 shrink-0">
                           {!m.read_at && (
