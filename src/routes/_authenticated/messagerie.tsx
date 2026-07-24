@@ -72,7 +72,7 @@ function MessageriePage() {
         .eq("recipient_id", uid!)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as Msg[];
+      return (data ?? []) as unknown as Msg[];
     },
   });
 
@@ -86,7 +86,7 @@ function MessageriePage() {
         .eq("sender_id", uid!)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as Msg[];
+      return (data ?? []) as unknown as Msg[];
     },
   });
 
