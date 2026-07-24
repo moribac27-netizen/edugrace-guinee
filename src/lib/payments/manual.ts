@@ -19,13 +19,13 @@ export const manualProvider: PaymentProvider = {
         school_id: input.schoolId,
         student_id: input.studentId ?? null,
         amount: input.amount,
-        currency: input.currency ?? "GNF" as any,
+        currency: input.currency ?? "GNF",
         payment_type: input.paymentType,
         period: input.period ?? null,
         payment_method: input.method,
         reference: input.reference ?? null,
         validation_status: "en_attente",
-      })
+      } as any)
       .select("id")
       .single();
 
