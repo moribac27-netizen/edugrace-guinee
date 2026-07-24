@@ -220,6 +220,85 @@ export type Database = {
           },
         ]
       }
+      calendar_events: {
+        Row: {
+          all_day: boolean
+          class_id: string | null
+          color: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          ends_at: string | null
+          event_type: string
+          exam_id: string | null
+          id: string
+          location: string | null
+          school_id: string
+          starts_at: string
+          title: string
+          updated_at: string
+          visible_roles: string[]
+        }
+        Insert: {
+          all_day?: boolean
+          class_id?: string | null
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          ends_at?: string | null
+          event_type?: string
+          exam_id?: string | null
+          id?: string
+          location?: string | null
+          school_id: string
+          starts_at: string
+          title: string
+          updated_at?: string
+          visible_roles?: string[]
+        }
+        Update: {
+          all_day?: boolean
+          class_id?: string | null
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          ends_at?: string | null
+          event_type?: string
+          exam_id?: string | null
+          id?: string
+          location?: string | null
+          school_id?: string
+          starts_at?: string
+          title?: string
+          updated_at?: string
+          visible_roles?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_events_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_events_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_events_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       classes: {
         Row: {
           annual_fee: number
@@ -849,6 +928,7 @@ export type Database = {
       }
       messages: {
         Row: {
+          attachments: Json
           body: string
           created_at: string
           id: string
@@ -859,6 +939,7 @@ export type Database = {
           subject: string
         }
         Insert: {
+          attachments?: Json
           body: string
           created_at?: string
           id?: string
@@ -869,6 +950,7 @@ export type Database = {
           subject: string
         }
         Update: {
+          attachments?: Json
           body?: string
           created_at?: string
           id?: string
