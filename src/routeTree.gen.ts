@@ -35,6 +35,7 @@ import { Route as AuthenticatedEleveRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedComptabiliteRouteImport } from './routes/_authenticated/comptabilite'
 import { Route as AuthenticatedClassesRouteImport } from './routes/_authenticated/classes'
+import { Route as AuthenticatedCalendrierRouteImport } from './routes/_authenticated/calendrier'
 import { Route as AuthenticatedBulletinsRouteImport } from './routes/_authenticated/bulletins'
 import { Route as AuthenticatedBibliothequeRouteImport } from './routes/_authenticated/bibliotheque'
 import { Route as AuthenticatedAnnoncesRouteImport } from './routes/_authenticated/annonces'
@@ -174,6 +175,11 @@ const AuthenticatedClassesRoute = AuthenticatedClassesRouteImport.update({
   path: '/classes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCalendrierRoute = AuthenticatedCalendrierRouteImport.update({
+  id: '/calendrier',
+  path: '/calendrier',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedBulletinsRoute = AuthenticatedBulletinsRouteImport.update({
   id: '/bulletins',
   path: '/bulletins',
@@ -204,6 +210,7 @@ export interface FileRoutesByFullPath {
   '/annonces': typeof AuthenticatedAnnoncesRoute
   '/bibliotheque': typeof AuthenticatedBibliothequeRoute
   '/bulletins': typeof AuthenticatedBulletinsRoute
+  '/calendrier': typeof AuthenticatedCalendrierRoute
   '/classes': typeof AuthenticatedClassesRoute
   '/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -235,6 +242,7 @@ export interface FileRoutesByTo {
   '/annonces': typeof AuthenticatedAnnoncesRoute
   '/bibliotheque': typeof AuthenticatedBibliothequeRoute
   '/bulletins': typeof AuthenticatedBulletinsRoute
+  '/calendrier': typeof AuthenticatedCalendrierRoute
   '/classes': typeof AuthenticatedClassesRoute
   '/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -268,6 +276,7 @@ export interface FileRoutesById {
   '/_authenticated/annonces': typeof AuthenticatedAnnoncesRoute
   '/_authenticated/bibliotheque': typeof AuthenticatedBibliothequeRoute
   '/_authenticated/bulletins': typeof AuthenticatedBulletinsRoute
+  '/_authenticated/calendrier': typeof AuthenticatedCalendrierRoute
   '/_authenticated/classes': typeof AuthenticatedClassesRoute
   '/_authenticated/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -301,6 +310,7 @@ export interface FileRouteTypes {
     | '/annonces'
     | '/bibliotheque'
     | '/bulletins'
+    | '/calendrier'
     | '/classes'
     | '/comptabilite'
     | '/dashboard'
@@ -332,6 +342,7 @@ export interface FileRouteTypes {
     | '/annonces'
     | '/bibliotheque'
     | '/bulletins'
+    | '/calendrier'
     | '/classes'
     | '/comptabilite'
     | '/dashboard'
@@ -364,6 +375,7 @@ export interface FileRouteTypes {
     | '/_authenticated/annonces'
     | '/_authenticated/bibliotheque'
     | '/_authenticated/bulletins'
+    | '/_authenticated/calendrier'
     | '/_authenticated/classes'
     | '/_authenticated/comptabilite'
     | '/_authenticated/dashboard'
@@ -580,6 +592,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClassesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/calendrier': {
+      id: '/_authenticated/calendrier'
+      path: '/calendrier'
+      fullPath: '/calendrier'
+      preLoaderRoute: typeof AuthenticatedCalendrierRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/bulletins': {
       id: '/_authenticated/bulletins'
       path: '/bulletins'
@@ -616,6 +635,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAnnoncesRoute: typeof AuthenticatedAnnoncesRoute
   AuthenticatedBibliothequeRoute: typeof AuthenticatedBibliothequeRoute
   AuthenticatedBulletinsRoute: typeof AuthenticatedBulletinsRoute
+  AuthenticatedCalendrierRoute: typeof AuthenticatedCalendrierRoute
   AuthenticatedClassesRoute: typeof AuthenticatedClassesRoute
   AuthenticatedComptabiliteRoute: typeof AuthenticatedComptabiliteRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
@@ -645,6 +665,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAnnoncesRoute: AuthenticatedAnnoncesRoute,
   AuthenticatedBibliothequeRoute: AuthenticatedBibliothequeRoute,
   AuthenticatedBulletinsRoute: AuthenticatedBulletinsRoute,
+  AuthenticatedCalendrierRoute: AuthenticatedCalendrierRoute,
   AuthenticatedClassesRoute: AuthenticatedClassesRoute,
   AuthenticatedComptabiliteRoute: AuthenticatedComptabiliteRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,

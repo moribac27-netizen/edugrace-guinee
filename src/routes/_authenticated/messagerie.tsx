@@ -19,6 +19,7 @@ export const Route = createFileRoute("/_authenticated/messagerie")({
   component: MessageriePage,
 });
 
+type Attachment = { name: string; url: string };
 type Msg = {
   id: string;
   subject: string;
@@ -27,6 +28,7 @@ type Msg = {
   created_at: string;
   sender_id: string;
   recipient_id: string;
+  attachments?: Attachment[];
 };
 
 type Broadcast = {
@@ -50,6 +52,17 @@ function MessageriePage() {
     supabase.auth.getUser().then(({ data }) => setUid(data.user?.id ?? null));
   }, []);
 
+  // Realtime : rafraîchir la boîte de réception dès qu'un message arrive
+  useEffect(() => {
+    if (!uid) return;
+    const ch = supabase
+      .channel("messages-live-" + uid)
+      .on("postgres_changes", { event: "*", schema: "public", table: "messages", filter: `recipient_id=eq.${uid}` },
+        () => qc.invalidateQueries({ queryKey: ["messages"] }))
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [uid, qc]);
+
   const { data: profileMap = {} } = useQuery({
     queryKey: ["profiles-map"],
     queryFn: async () => {
@@ -70,7 +83,7 @@ function MessageriePage() {
         .eq("recipient_id", uid!)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as Msg[];
+      return (data ?? []) as unknown as Msg[];
     },
   });
 
@@ -84,7 +97,7 @@ function MessageriePage() {
         .eq("sender_id", uid!)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as Msg[];
+      return (data ?? []) as unknown as Msg[];
     },
   });
 
@@ -159,6 +172,13 @@ function MessageriePage() {
                             De {profileMap[m.sender_id] ?? "—"} · {new Date(m.created_at).toLocaleString("fr-FR")}
                           </div>
                           <p className="text-sm mt-2 whitespace-pre-wrap">{m.body}</p>
+                          {m.attachments && m.attachments.length > 0 && (
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              {m.attachments.map((a, i) => (
+                                <a key={i} href={a.url} target="_blank" rel="noreferrer" className="text-xs text-primary underline">📎 {a.name}</a>
+                              ))}
+                            </div>
+                          )}
                         </div>
                         <div className="flex gap-1 shrink-0">
                           {!m.read_at && (
@@ -247,6 +267,7 @@ function NewMessageDialog({ uid }: { uid: string | null }) {
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [q, setQ] = useState("");
+  const [attachUrls, setAttachUrls] = useState("");
 
   const { data: contacts = [] } = useQuery({
     queryKey: ["contacts"],
@@ -268,16 +289,22 @@ function NewMessageDialog({ uid }: { uid: string | null }) {
       toast.error("Destinataire, sujet et message requis");
       return;
     }
+    const attachments = attachUrls
+      .split(/[\n,]/)
+      .map((u) => u.trim())
+      .filter(Boolean)
+      .map((u) => ({ name: u.split("/").pop() ?? "fichier", url: u }));
     const { error } = await supabase.from("messages").insert({
       sender_id: uid,
       recipient_id: recipientId,
       subject: subject.trim(),
       body: body.trim(),
-    });
+      attachments,
+    } as any);
     if (error) return toast.error(error.message);
     toast.success("Message envoyé");
     setOpen(false);
-    setRecipientId(""); setSubject(""); setBody(""); setQ("");
+    setRecipientId(""); setSubject(""); setBody(""); setQ(""); setAttachUrls("");
     qc.invalidateQueries({ queryKey: ["messages"] });
   }
 
@@ -313,6 +340,10 @@ function NewMessageDialog({ uid }: { uid: string | null }) {
           <div>
             <Label>Message</Label>
             <Textarea rows={5} value={body} onChange={(e) => setBody(e.target.value)} maxLength={4000} />
+          </div>
+          <div>
+            <Label>Pièces jointes (URLs, une par ligne)</Label>
+            <Textarea rows={2} value={attachUrls} onChange={(e) => setAttachUrls(e.target.value)} placeholder="https://…/document.pdf" />
           </div>
         </div>
         <DialogFooter>
