@@ -334,6 +334,10 @@ function NewMessageDialog({ uid }: { uid: string | null }) {
             <Label>Message</Label>
             <Textarea rows={5} value={body} onChange={(e) => setBody(e.target.value)} maxLength={4000} />
           </div>
+          <div>
+            <Label>Pièces jointes (URLs, une par ligne)</Label>
+            <Textarea rows={2} value={attachUrls} onChange={(e) => setAttachUrls(e.target.value)} placeholder="https://…/document.pdf" />
+          </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)}>Annuler</Button>
