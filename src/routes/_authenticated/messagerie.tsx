@@ -19,6 +19,7 @@ export const Route = createFileRoute("/_authenticated/messagerie")({
   component: MessageriePage,
 });
 
+type Attachment = { name: string; url: string };
 type Msg = {
   id: string;
   subject: string;
@@ -27,6 +28,7 @@ type Msg = {
   created_at: string;
   sender_id: string;
   recipient_id: string;
+  attachments?: Attachment[];
 };
 
 type Broadcast = {
