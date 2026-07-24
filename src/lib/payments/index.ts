@@ -35,7 +35,7 @@ export type PaymentIntentInput = {
 
 export type PaymentIntentResult =
   | { status: "requires_action"; redirectUrl: string; providerRef: string }
-  | { status: "pending"; providerRef: string; message?: string }
+  | { status: "pending"; providerRef: string; paymentId?: string; message?: string }
   | { status: "succeeded"; providerRef: string; paymentId?: string }
   | { status: "error"; error: string };
 
