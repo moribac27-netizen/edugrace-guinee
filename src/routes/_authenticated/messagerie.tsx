@@ -52,6 +52,17 @@ function MessageriePage() {
     supabase.auth.getUser().then(({ data }) => setUid(data.user?.id ?? null));
   }, []);
 
+  // Realtime : rafraîchir la boîte de réception dès qu'un message arrive
+  useEffect(() => {
+    if (!uid) return;
+    const ch = supabase
+      .channel("messages-live-" + uid)
+      .on("postgres_changes", { event: "*", schema: "public", table: "messages", filter: `recipient_id=eq.${uid}` },
+        () => qc.invalidateQueries({ queryKey: ["messages"] }))
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [uid, qc]);
+
   const { data: profileMap = {} } = useQuery({
     queryKey: ["profiles-map"],
     queryFn: async () => {
