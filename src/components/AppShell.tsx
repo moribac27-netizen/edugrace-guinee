@@ -42,11 +42,13 @@ const STAFF_NAV = [
 
 const PARENT_NAV = [
   { to: "/parent", label: "Mon espace", icon: Home },
+  { to: "/calendrier", label: "Calendrier", icon: CalendarDays },
   { to: "/messagerie", label: "Messagerie", icon: MessageSquare },
 ] as const;
 
 const STUDENT_NAV = [
   { to: "/eleve", label: "Mon espace", icon: Home },
+  { to: "/calendrier", label: "Calendrier", icon: CalendarDays },
   { to: "/messagerie", label: "Messagerie", icon: MessageSquare },
 ] as const;
 
