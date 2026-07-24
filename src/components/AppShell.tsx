@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth, useRoles, primaryRole } from "@/hooks/useAuth";
+import { NotificationsBell } from "@/components/NotificationsBell";
 
 const STAFF_NAV = [
   { to: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
@@ -130,6 +131,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="text-sm text-muted-foreground hidden sm:block">
             Année scolaire <span className="font-medium text-foreground">2025-2026</span>
           </div>
+          <NotificationsBell />
         </header>
         <main key={pathname} className="flex-1 p-4 lg:p-8 max-w-[1400px] w-full mx-auto page-fade-in">
           {children}
