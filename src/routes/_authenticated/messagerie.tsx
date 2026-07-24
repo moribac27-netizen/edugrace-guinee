@@ -260,6 +260,7 @@ function NewMessageDialog({ uid }: { uid: string | null }) {
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [q, setQ] = useState("");
+  const [attachUrls, setAttachUrls] = useState("");
 
   const { data: contacts = [] } = useQuery({
     queryKey: ["contacts"],
@@ -281,16 +282,22 @@ function NewMessageDialog({ uid }: { uid: string | null }) {
       toast.error("Destinataire, sujet et message requis");
       return;
     }
+    const attachments = attachUrls
+      .split(/[\n,]/)
+      .map((u) => u.trim())
+      .filter(Boolean)
+      .map((u) => ({ name: u.split("/").pop() ?? "fichier", url: u }));
     const { error } = await supabase.from("messages").insert({
       sender_id: uid,
       recipient_id: recipientId,
       subject: subject.trim(),
       body: body.trim(),
-    });
+      attachments,
+    } as any);
     if (error) return toast.error(error.message);
     toast.success("Message envoyé");
     setOpen(false);
-    setRecipientId(""); setSubject(""); setBody(""); setQ("");
+    setRecipientId(""); setSubject(""); setBody(""); setQ(""); setAttachUrls("");
     qc.invalidateQueries({ queryKey: ["messages"] });
   }
 
