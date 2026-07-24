@@ -19,7 +19,7 @@ export const manualProvider: PaymentProvider = {
         school_id: input.schoolId,
         student_id: input.studentId ?? null,
         amount: input.amount,
-        currency: input.currency ?? "GNF",
+        currency: input.currency ?? "GNF" as any,
         payment_type: input.paymentType,
         period: input.period ?? null,
         payment_method: input.method,
