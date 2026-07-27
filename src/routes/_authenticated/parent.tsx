@@ -78,10 +78,13 @@ function ParentPortal() {
                   <button
                     key={c.id}
                     onClick={() => setSelectedId(c.id)}
-                    className={`px-4 py-3 rounded-lg border text-left transition ${selectedId === c.id ? "border-primary bg-primary/5" : "hover:bg-muted"}`}
+                    className={`px-4 py-3 rounded-lg border text-left transition flex items-center gap-3 ${selectedId === c.id ? "border-primary bg-primary/5" : "hover:bg-muted"}`}
                   >
-                    <div className="font-medium">{c.full_name}</div>
-                    <div className="text-xs text-muted-foreground">{c.matricule} · {c.classes?.name ?? "—"}</div>
+                    <StudentPhoto path={c.photo_url} name={c.full_name} size="sm" />
+                    <div>
+                      <div className="font-medium">{c.full_name}</div>
+                      <div className="text-xs text-muted-foreground">{c.matricule} · {c.classes?.name ?? "—"}</div>
+                    </div>
                   </button>
                 ))}
               </div>
