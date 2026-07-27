@@ -85,7 +85,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         )}
       >
         <div className="px-6 py-6 border-b border-sidebar-border flex items-center justify-between">
-          <Link to="/dashboard" className="flex items-center gap-3" onClick={() => setOpen(false)}>
+          <Link to={homePath} className="flex items-center gap-3" onClick={() => setOpen(false)}>
             <div className="size-10 rounded-xl bg-sidebar-primary text-sidebar-primary-foreground flex items-center justify-center">
               <School className="size-5" />
             </div>
