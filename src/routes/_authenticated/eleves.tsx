@@ -82,6 +82,7 @@ function ElevesPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-14">Photo</TableHead>
                   <TableHead>Matricule</TableHead>
                   <TableHead>Nom complet</TableHead>
                   <TableHead>Classe</TableHead>
@@ -92,10 +93,11 @@ function ElevesPage() {
               </TableHeader>
               <TableBody>
                 {filtered.length === 0 && (
-                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Aucun élève</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Aucun élève</TableCell></TableRow>
                 )}
                 {filtered.map((s: any) => (
                   <TableRow key={s.id}>
+                    <TableCell><StudentPhoto path={s.photo_url} name={s.full_name} size="sm" /></TableCell>
                     <TableCell className="font-mono text-xs">{s.matricule}</TableCell>
                     <TableCell className="font-medium">{s.full_name}</TableCell>
                     <TableCell>{s.classes?.name ?? <span className="text-muted-foreground">—</span>}</TableCell>
