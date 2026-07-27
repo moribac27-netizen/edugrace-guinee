@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Printer, FileDown, School } from "lucide-react";
 import { maxScoreForLevel } from "@/lib/grading";
+import { StudentPhoto } from "@/components/StudentPhoto";
 
 export const Route = createFileRoute("/_authenticated/bulletins")({
   head: () => ({ meta: [{ title: "Bulletins scolaires — MBGEduGuinée" }] }),
