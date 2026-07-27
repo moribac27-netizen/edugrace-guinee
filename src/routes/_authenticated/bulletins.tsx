@@ -179,14 +179,18 @@ function BulletinsPage() {
             </div>
 
             {/* Student info */}
-            <div className="grid grid-cols-2 gap-2 text-sm mb-4 border border-black p-3">
-              <div><span className="font-semibold">Nom & Prénom :</span> {selected.student.full_name}</div>
-              <div><span className="font-semibold">Matricule :</span> {selected.student.matricule}</div>
-              <div><span className="font-semibold">Classe :</span> {cls.name} ({cls.level})</div>
-              <div><span className="font-semibold">Sexe :</span> {selected.student.gender ?? "—"}</div>
-              <div><span className="font-semibold">Date de naissance :</span> {selected.student.birth_date ?? "—"}</div>
-              <div><span className="font-semibold">Lieu :</span> {selected.student.birth_place ?? "—"}</div>
+            <div className="flex gap-4 mb-4 border border-black p-3">
+              <StudentPhoto path={selected.student.photo_url} name={selected.student.full_name} size="lg" className="rounded-md ring-0 border border-black" />
+              <div className="grid grid-cols-2 gap-2 text-sm flex-1">
+                <div><span className="font-semibold">Nom & Prénom :</span> {selected.student.full_name}</div>
+                <div><span className="font-semibold">Matricule :</span> {selected.student.matricule}</div>
+                <div><span className="font-semibold">Classe :</span> {cls.name} ({cls.level})</div>
+                <div><span className="font-semibold">Sexe :</span> {selected.student.gender ?? "—"}</div>
+                <div><span className="font-semibold">Date de naissance :</span> {selected.student.birth_date ?? "—"}</div>
+                <div><span className="font-semibold">Lieu :</span> {selected.student.birth_place ?? "—"}</div>
+              </div>
             </div>
+
 
             {/* Grades table */}
             <table className="w-full text-xs border border-black border-collapse mb-4">
