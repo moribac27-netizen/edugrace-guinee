@@ -127,15 +127,14 @@ function StudentDialog({ editing, classes, onClose }: { editing: Student | null;
   const [loading, setLoading] = useState(false);
   const [schoolId, setSchoolId] = useState<string | null>(null);
 
-  useState(() => {
+  useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (!data.user) return;
       supabase.from("profiles").select("school_id").eq("id", data.user.id).maybeSingle().then(({ data: p }) => {
         setSchoolId(p?.school_id ?? null);
       });
     });
-    return undefined;
-  });
+  }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
