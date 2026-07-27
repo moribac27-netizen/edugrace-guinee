@@ -10,6 +10,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth, useRoles, primaryRole } from "@/hooks/useAuth";
+import { useSuperAdmin } from "@/hooks/useSuperAdmin";
+import { canAccess, homeForRoles } from "@/lib/access";
 import { NotificationsBell } from "@/components/NotificationsBell";
 
 const STAFF_NAV = [
@@ -58,8 +60,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { roles } = useRoles();
+  const { isSuperAdmin } = useSuperAdmin();
   const role = primaryRole(roles);
-  const NAV = role === "parent" ? PARENT_NAV : role === "eleve" ? STUDENT_NAV : STAFF_NAV;
+  const BASE_NAV = role === "parent" ? PARENT_NAV : role === "eleve" ? STUDENT_NAV : STAFF_NAV;
+  const NAV = BASE_NAV.filter((item) => canAccess(item.to, roles, isSuperAdmin));
+  const homePath = homeForRoles(roles, isSuperAdmin);
 
   async function handleSignOut() {
     await supabase.auth.signOut();
@@ -80,7 +85,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         )}
       >
         <div className="px-6 py-6 border-b border-sidebar-border flex items-center justify-between">
-          <Link to="/dashboard" className="flex items-center gap-3" onClick={() => setOpen(false)}>
+          <Link to={homePath} className="flex items-center gap-3" onClick={() => setOpen(false)}>
             <div className="size-10 rounded-xl bg-sidebar-primary text-sidebar-primary-foreground flex items-center justify-center">
               <School className="size-5" />
             </div>

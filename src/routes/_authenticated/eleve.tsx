@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { GraduationCap, CreditCard, UserCheck, CalendarDays, Megaphone, FileText } from "lucide-react";
 import { maxScoreForLevel } from "@/lib/grading";
+import { StudentPhoto } from "@/components/StudentPhoto";
 
 export const Route = createFileRoute("/_authenticated/eleve")({
   head: () => ({ meta: [{ title: "Espace Élève — MBGEduGuinée" }] }),
@@ -88,10 +89,14 @@ function StudentDashboard({ student }: { student: any }) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl lg:text-3xl font-display font-bold">Bonjour, {student.full_name}</h1>
-        <p className="text-muted-foreground">{student.matricule} · {student.classes?.name ?? "—"}</p>
+      <div className="flex items-center gap-4">
+        <StudentPhoto path={student.photo_url} name={student.full_name} size="lg" />
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-display font-bold">Bonjour, {student.full_name}</h1>
+          <p className="text-muted-foreground">{student.matricule} · {student.classes?.name ?? "—"}</p>
+        </div>
       </div>
+
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat icon={<GraduationCap className="size-4" />} label={`Moyenne ${max === 10 ? "/10" : "/20"}`} value={overall.toFixed(2)} />

@@ -38,10 +38,13 @@ function AuthPage() {
     if (plan) return navigate({ to: "/souscription", search: { plan } });
     const { data: user } = await supabase.auth.getUser();
     if (user.user) {
-      const { data: roleRows } = await supabase.from("user_roles").select("role").eq("user_id", user.user.id);
+      const [{ data: roleRows }, { data: saRow }] = await Promise.all([
+        supabase.from("user_roles").select("role").eq("user_id", user.user.id),
+        supabase.from("super_admins").select("user_id").eq("user_id", user.user.id).maybeSingle(),
+      ]);
       const roles = (roleRows ?? []).map((r: any) => r.role);
-      if (roles.includes("parent")) return navigate({ to: "/parent" });
-      if (roles.includes("eleve") && !roles.some((r: string) => ["admin", "directeur", "comptable", "enseignant"].includes(r))) return navigate({ to: "/eleve" });
+      const { homeForRoles } = await import("@/lib/access");
+      return navigate({ to: homeForRoles(roles, !!saRow) });
     }
     navigate({ to: "/dashboard" });
   };

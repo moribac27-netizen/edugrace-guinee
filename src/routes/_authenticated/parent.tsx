@@ -9,6 +9,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Users, GraduationCap, CreditCard, UserCheck, CalendarDays, Megaphone, FileText } from "lucide-react";
 import { maxScoreForLevel } from "@/lib/grading";
+import { StudentPhoto } from "@/components/StudentPhoto";
 
 export const Route = createFileRoute("/_authenticated/parent")({
   head: () => ({ meta: [{ title: "Espace Parent — MBGEduGuinée" }] }),
@@ -77,10 +78,13 @@ function ParentPortal() {
                   <button
                     key={c.id}
                     onClick={() => setSelectedId(c.id)}
-                    className={`px-4 py-3 rounded-lg border text-left transition ${selectedId === c.id ? "border-primary bg-primary/5" : "hover:bg-muted"}`}
+                    className={`px-4 py-3 rounded-lg border text-left transition flex items-center gap-3 ${selectedId === c.id ? "border-primary bg-primary/5" : "hover:bg-muted"}`}
                   >
-                    <div className="font-medium">{c.full_name}</div>
-                    <div className="text-xs text-muted-foreground">{c.matricule} · {c.classes?.name ?? "—"}</div>
+                    <StudentPhoto path={c.photo_url} name={c.full_name} size="sm" />
+                    <div>
+                      <div className="font-medium">{c.full_name}</div>
+                      <div className="text-xs text-muted-foreground">{c.matricule} · {c.classes?.name ?? "—"}</div>
+                    </div>
                   </button>
                 ))}
               </div>
