@@ -12,6 +12,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Plus, Search, Trash2, Pencil } from "lucide-react";
 import { toast } from "sonner";
+import { StudentPhoto } from "@/components/StudentPhoto";
+import { StudentPhotoUpload } from "@/components/StudentPhotoUpload";
+
 
 export const Route = createFileRoute("/_authenticated/eleves")({
   head: () => ({ meta: [{ title: "Élèves — MBGEduGuinée" }] }),
