@@ -60,8 +60,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { roles } = useRoles();
+  const { isSuperAdmin } = useSuperAdmin();
   const role = primaryRole(roles);
-  const NAV = role === "parent" ? PARENT_NAV : role === "eleve" ? STUDENT_NAV : STAFF_NAV;
+  const BASE_NAV = role === "parent" ? PARENT_NAV : role === "eleve" ? STUDENT_NAV : STAFF_NAV;
+  const NAV = BASE_NAV.filter((item) => canAccess(item.to, roles, isSuperAdmin));
+  const homePath = homeForRoles(roles, isSuperAdmin);
 
   async function handleSignOut() {
     await supabase.auth.signOut();
