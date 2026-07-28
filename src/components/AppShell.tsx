@@ -19,6 +19,8 @@ const STAFF_NAV = [
   { to: "/eleves", label: "Élèves", icon: Users },
   { to: "/classes", label: "Classes", icon: BookOpen },
   { to: "/enseignants", label: "Enseignants", icon: GraduationCap },
+  { to: "/matieres", label: "Matières", icon: BookMarked },
+  { to: "/cartes", label: "Cartes scolaires", icon: IdCard },
   { to: "/affectations", label: "Affectations", icon: Link2 },
   { to: "/emploi-du-temps", label: "Emploi du temps", icon: CalendarDays },
   { to: "/calendrier", label: "Calendrier", icon: CalendarDays },
