@@ -26,17 +26,18 @@ export function useAuth() {
 }
 
 export function useRoles() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [roles, setRoles] = useState<AppRole[]>([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    if (authLoading) { setLoading(true); return; }
     if (!user) { setRoles([]); setLoading(false); return; }
     setLoading(true);
     supabase.from("user_roles").select("role").eq("user_id", user.id).then(({ data }) => {
       setRoles((data ?? []).map((r: any) => r.role));
       setLoading(false);
     });
-  }, [user?.id]);
+  }, [user?.id, authLoading]);
   return { roles, loading };
 }
 
