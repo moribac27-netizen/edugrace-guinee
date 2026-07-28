@@ -26,6 +26,7 @@ import { Route as AuthenticatedParametresRouteImport } from './routes/_authentic
 import { Route as AuthenticatedPaiementsRouteImport } from './routes/_authenticated/paiements'
 import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
 import { Route as AuthenticatedMessagerieRouteImport } from './routes/_authenticated/messagerie'
+import { Route as AuthenticatedMatieresRouteImport } from './routes/_authenticated/matieres'
 import { Route as AuthenticatedJournalRouteImport } from './routes/_authenticated/journal'
 import { Route as AuthenticatedExamensRouteImport } from './routes/_authenticated/examens'
 import { Route as AuthenticatedEnseignantsRouteImport } from './routes/_authenticated/enseignants'
@@ -127,6 +128,11 @@ const AuthenticatedMessagerieRoute = AuthenticatedMessagerieRouteImport.update({
   path: '/messagerie',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMatieresRoute = AuthenticatedMatieresRouteImport.update({
+  id: '/matieres',
+  path: '/matieres',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedJournalRoute = AuthenticatedJournalRouteImport.update({
   id: '/journal',
   path: '/journal',
@@ -220,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/enseignants': typeof AuthenticatedEnseignantsRoute
   '/examens': typeof AuthenticatedExamensRoute
   '/journal': typeof AuthenticatedJournalRoute
+  '/matieres': typeof AuthenticatedMatieresRoute
   '/messagerie': typeof AuthenticatedMessagerieRoute
   '/notes': typeof AuthenticatedNotesRoute
   '/paiements': typeof AuthenticatedPaiementsRoute
@@ -252,6 +259,7 @@ export interface FileRoutesByTo {
   '/enseignants': typeof AuthenticatedEnseignantsRoute
   '/examens': typeof AuthenticatedExamensRoute
   '/journal': typeof AuthenticatedJournalRoute
+  '/matieres': typeof AuthenticatedMatieresRoute
   '/messagerie': typeof AuthenticatedMessagerieRoute
   '/notes': typeof AuthenticatedNotesRoute
   '/paiements': typeof AuthenticatedPaiementsRoute
@@ -286,6 +294,7 @@ export interface FileRoutesById {
   '/_authenticated/enseignants': typeof AuthenticatedEnseignantsRoute
   '/_authenticated/examens': typeof AuthenticatedExamensRoute
   '/_authenticated/journal': typeof AuthenticatedJournalRoute
+  '/_authenticated/matieres': typeof AuthenticatedMatieresRoute
   '/_authenticated/messagerie': typeof AuthenticatedMessagerieRoute
   '/_authenticated/notes': typeof AuthenticatedNotesRoute
   '/_authenticated/paiements': typeof AuthenticatedPaiementsRoute
@@ -320,6 +329,7 @@ export interface FileRouteTypes {
     | '/enseignants'
     | '/examens'
     | '/journal'
+    | '/matieres'
     | '/messagerie'
     | '/notes'
     | '/paiements'
@@ -352,6 +362,7 @@ export interface FileRouteTypes {
     | '/enseignants'
     | '/examens'
     | '/journal'
+    | '/matieres'
     | '/messagerie'
     | '/notes'
     | '/paiements'
@@ -385,6 +396,7 @@ export interface FileRouteTypes {
     | '/_authenticated/enseignants'
     | '/_authenticated/examens'
     | '/_authenticated/journal'
+    | '/_authenticated/matieres'
     | '/_authenticated/messagerie'
     | '/_authenticated/notes'
     | '/_authenticated/paiements'
@@ -529,6 +541,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMessagerieRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/matieres': {
+      id: '/_authenticated/matieres'
+      path: '/matieres'
+      fullPath: '/matieres'
+      preLoaderRoute: typeof AuthenticatedMatieresRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/journal': {
       id: '/_authenticated/journal'
       path: '/journal'
@@ -645,6 +664,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedEnseignantsRoute: typeof AuthenticatedEnseignantsRoute
   AuthenticatedExamensRoute: typeof AuthenticatedExamensRoute
   AuthenticatedJournalRoute: typeof AuthenticatedJournalRoute
+  AuthenticatedMatieresRoute: typeof AuthenticatedMatieresRoute
   AuthenticatedMessagerieRoute: typeof AuthenticatedMessagerieRoute
   AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
   AuthenticatedPaiementsRoute: typeof AuthenticatedPaiementsRoute
@@ -675,6 +695,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedEnseignantsRoute: AuthenticatedEnseignantsRoute,
   AuthenticatedExamensRoute: AuthenticatedExamensRoute,
   AuthenticatedJournalRoute: AuthenticatedJournalRoute,
+  AuthenticatedMatieresRoute: AuthenticatedMatieresRoute,
   AuthenticatedMessagerieRoute: AuthenticatedMessagerieRoute,
   AuthenticatedNotesRoute: AuthenticatedNotesRoute,
   AuthenticatedPaiementsRoute: AuthenticatedPaiementsRoute,
@@ -703,13 +724,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
