@@ -26,6 +26,7 @@ import { Route as AuthenticatedParametresRouteImport } from './routes/_authentic
 import { Route as AuthenticatedPaiementsRouteImport } from './routes/_authenticated/paiements'
 import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
 import { Route as AuthenticatedMessagerieRouteImport } from './routes/_authenticated/messagerie'
+import { Route as AuthenticatedMatieresRouteImport } from './routes/_authenticated/matieres'
 import { Route as AuthenticatedJournalRouteImport } from './routes/_authenticated/journal'
 import { Route as AuthenticatedExamensRouteImport } from './routes/_authenticated/examens'
 import { Route as AuthenticatedEnseignantsRouteImport } from './routes/_authenticated/enseignants'
@@ -35,6 +36,7 @@ import { Route as AuthenticatedEleveRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedComptabiliteRouteImport } from './routes/_authenticated/comptabilite'
 import { Route as AuthenticatedClassesRouteImport } from './routes/_authenticated/classes'
+import { Route as AuthenticatedCartesRouteImport } from './routes/_authenticated/cartes'
 import { Route as AuthenticatedCalendrierRouteImport } from './routes/_authenticated/calendrier'
 import { Route as AuthenticatedBulletinsRouteImport } from './routes/_authenticated/bulletins'
 import { Route as AuthenticatedBibliothequeRouteImport } from './routes/_authenticated/bibliotheque'
@@ -127,6 +129,11 @@ const AuthenticatedMessagerieRoute = AuthenticatedMessagerieRouteImport.update({
   path: '/messagerie',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMatieresRoute = AuthenticatedMatieresRouteImport.update({
+  id: '/matieres',
+  path: '/matieres',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedJournalRoute = AuthenticatedJournalRouteImport.update({
   id: '/journal',
   path: '/journal',
@@ -175,6 +182,11 @@ const AuthenticatedClassesRoute = AuthenticatedClassesRouteImport.update({
   path: '/classes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCartesRoute = AuthenticatedCartesRouteImport.update({
+  id: '/cartes',
+  path: '/cartes',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedCalendrierRoute = AuthenticatedCalendrierRouteImport.update({
   id: '/calendrier',
   path: '/calendrier',
@@ -211,6 +223,7 @@ export interface FileRoutesByFullPath {
   '/bibliotheque': typeof AuthenticatedBibliothequeRoute
   '/bulletins': typeof AuthenticatedBulletinsRoute
   '/calendrier': typeof AuthenticatedCalendrierRoute
+  '/cartes': typeof AuthenticatedCartesRoute
   '/classes': typeof AuthenticatedClassesRoute
   '/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -220,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/enseignants': typeof AuthenticatedEnseignantsRoute
   '/examens': typeof AuthenticatedExamensRoute
   '/journal': typeof AuthenticatedJournalRoute
+  '/matieres': typeof AuthenticatedMatieresRoute
   '/messagerie': typeof AuthenticatedMessagerieRoute
   '/notes': typeof AuthenticatedNotesRoute
   '/paiements': typeof AuthenticatedPaiementsRoute
@@ -243,6 +257,7 @@ export interface FileRoutesByTo {
   '/bibliotheque': typeof AuthenticatedBibliothequeRoute
   '/bulletins': typeof AuthenticatedBulletinsRoute
   '/calendrier': typeof AuthenticatedCalendrierRoute
+  '/cartes': typeof AuthenticatedCartesRoute
   '/classes': typeof AuthenticatedClassesRoute
   '/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -252,6 +267,7 @@ export interface FileRoutesByTo {
   '/enseignants': typeof AuthenticatedEnseignantsRoute
   '/examens': typeof AuthenticatedExamensRoute
   '/journal': typeof AuthenticatedJournalRoute
+  '/matieres': typeof AuthenticatedMatieresRoute
   '/messagerie': typeof AuthenticatedMessagerieRoute
   '/notes': typeof AuthenticatedNotesRoute
   '/paiements': typeof AuthenticatedPaiementsRoute
@@ -277,6 +293,7 @@ export interface FileRoutesById {
   '/_authenticated/bibliotheque': typeof AuthenticatedBibliothequeRoute
   '/_authenticated/bulletins': typeof AuthenticatedBulletinsRoute
   '/_authenticated/calendrier': typeof AuthenticatedCalendrierRoute
+  '/_authenticated/cartes': typeof AuthenticatedCartesRoute
   '/_authenticated/classes': typeof AuthenticatedClassesRoute
   '/_authenticated/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -286,6 +303,7 @@ export interface FileRoutesById {
   '/_authenticated/enseignants': typeof AuthenticatedEnseignantsRoute
   '/_authenticated/examens': typeof AuthenticatedExamensRoute
   '/_authenticated/journal': typeof AuthenticatedJournalRoute
+  '/_authenticated/matieres': typeof AuthenticatedMatieresRoute
   '/_authenticated/messagerie': typeof AuthenticatedMessagerieRoute
   '/_authenticated/notes': typeof AuthenticatedNotesRoute
   '/_authenticated/paiements': typeof AuthenticatedPaiementsRoute
@@ -311,6 +329,7 @@ export interface FileRouteTypes {
     | '/bibliotheque'
     | '/bulletins'
     | '/calendrier'
+    | '/cartes'
     | '/classes'
     | '/comptabilite'
     | '/dashboard'
@@ -320,6 +339,7 @@ export interface FileRouteTypes {
     | '/enseignants'
     | '/examens'
     | '/journal'
+    | '/matieres'
     | '/messagerie'
     | '/notes'
     | '/paiements'
@@ -343,6 +363,7 @@ export interface FileRouteTypes {
     | '/bibliotheque'
     | '/bulletins'
     | '/calendrier'
+    | '/cartes'
     | '/classes'
     | '/comptabilite'
     | '/dashboard'
@@ -352,6 +373,7 @@ export interface FileRouteTypes {
     | '/enseignants'
     | '/examens'
     | '/journal'
+    | '/matieres'
     | '/messagerie'
     | '/notes'
     | '/paiements'
@@ -376,6 +398,7 @@ export interface FileRouteTypes {
     | '/_authenticated/bibliotheque'
     | '/_authenticated/bulletins'
     | '/_authenticated/calendrier'
+    | '/_authenticated/cartes'
     | '/_authenticated/classes'
     | '/_authenticated/comptabilite'
     | '/_authenticated/dashboard'
@@ -385,6 +408,7 @@ export interface FileRouteTypes {
     | '/_authenticated/enseignants'
     | '/_authenticated/examens'
     | '/_authenticated/journal'
+    | '/_authenticated/matieres'
     | '/_authenticated/messagerie'
     | '/_authenticated/notes'
     | '/_authenticated/paiements'
@@ -529,6 +553,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMessagerieRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/matieres': {
+      id: '/_authenticated/matieres'
+      path: '/matieres'
+      fullPath: '/matieres'
+      preLoaderRoute: typeof AuthenticatedMatieresRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/journal': {
       id: '/_authenticated/journal'
       path: '/journal'
@@ -592,6 +623,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClassesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/cartes': {
+      id: '/_authenticated/cartes'
+      path: '/cartes'
+      fullPath: '/cartes'
+      preLoaderRoute: typeof AuthenticatedCartesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/calendrier': {
       id: '/_authenticated/calendrier'
       path: '/calendrier'
@@ -636,6 +674,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedBibliothequeRoute: typeof AuthenticatedBibliothequeRoute
   AuthenticatedBulletinsRoute: typeof AuthenticatedBulletinsRoute
   AuthenticatedCalendrierRoute: typeof AuthenticatedCalendrierRoute
+  AuthenticatedCartesRoute: typeof AuthenticatedCartesRoute
   AuthenticatedClassesRoute: typeof AuthenticatedClassesRoute
   AuthenticatedComptabiliteRoute: typeof AuthenticatedComptabiliteRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
@@ -645,6 +684,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedEnseignantsRoute: typeof AuthenticatedEnseignantsRoute
   AuthenticatedExamensRoute: typeof AuthenticatedExamensRoute
   AuthenticatedJournalRoute: typeof AuthenticatedJournalRoute
+  AuthenticatedMatieresRoute: typeof AuthenticatedMatieresRoute
   AuthenticatedMessagerieRoute: typeof AuthenticatedMessagerieRoute
   AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
   AuthenticatedPaiementsRoute: typeof AuthenticatedPaiementsRoute
@@ -666,6 +706,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBibliothequeRoute: AuthenticatedBibliothequeRoute,
   AuthenticatedBulletinsRoute: AuthenticatedBulletinsRoute,
   AuthenticatedCalendrierRoute: AuthenticatedCalendrierRoute,
+  AuthenticatedCartesRoute: AuthenticatedCartesRoute,
   AuthenticatedClassesRoute: AuthenticatedClassesRoute,
   AuthenticatedComptabiliteRoute: AuthenticatedComptabiliteRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
@@ -675,6 +716,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedEnseignantsRoute: AuthenticatedEnseignantsRoute,
   AuthenticatedExamensRoute: AuthenticatedExamensRoute,
   AuthenticatedJournalRoute: AuthenticatedJournalRoute,
+  AuthenticatedMatieresRoute: AuthenticatedMatieresRoute,
   AuthenticatedMessagerieRoute: AuthenticatedMessagerieRoute,
   AuthenticatedNotesRoute: AuthenticatedNotesRoute,
   AuthenticatedPaiementsRoute: AuthenticatedPaiementsRoute,
@@ -703,13 +745,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
