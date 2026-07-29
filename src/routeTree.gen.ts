@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VerifierRecuNumberRouteImport } from './routes/verifier-recu.$number'
+import { Route as AuthenticatedTransportRouteImport } from './routes/_authenticated/transport'
 import { Route as AuthenticatedSuperAdminRouteImport } from './routes/_authenticated/super-admin'
 import { Route as AuthenticatedSouscriptionRouteImport } from './routes/_authenticated/souscription'
 import { Route as AuthenticatedSauvegardeRouteImport } from './routes/_authenticated/sauvegarde'
@@ -28,6 +29,7 @@ import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedMessagerieRouteImport } from './routes/_authenticated/messagerie'
 import { Route as AuthenticatedMatieresRouteImport } from './routes/_authenticated/matieres'
 import { Route as AuthenticatedJournalRouteImport } from './routes/_authenticated/journal'
+import { Route as AuthenticatedInfirmerieRouteImport } from './routes/_authenticated/infirmerie'
 import { Route as AuthenticatedExamensRouteImport } from './routes/_authenticated/examens'
 import { Route as AuthenticatedEnseignantsRouteImport } from './routes/_authenticated/enseignants'
 import { Route as AuthenticatedEmploiDuTempsRouteImport } from './routes/_authenticated/emploi-du-temps'
@@ -61,6 +63,11 @@ const VerifierRecuNumberRoute = VerifierRecuNumberRouteImport.update({
   id: '/verifier-recu/$number',
   path: '/verifier-recu/$number',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedTransportRoute = AuthenticatedTransportRouteImport.update({
+  id: '/transport',
+  path: '/transport',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSuperAdminRoute = AuthenticatedSuperAdminRouteImport.update({
   id: '/super-admin',
@@ -137,6 +144,11 @@ const AuthenticatedMatieresRoute = AuthenticatedMatieresRouteImport.update({
 const AuthenticatedJournalRoute = AuthenticatedJournalRouteImport.update({
   id: '/journal',
   path: '/journal',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedInfirmerieRoute = AuthenticatedInfirmerieRouteImport.update({
+  id: '/infirmerie',
+  path: '/infirmerie',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedExamensRoute = AuthenticatedExamensRouteImport.update({
@@ -232,6 +244,7 @@ export interface FileRoutesByFullPath {
   '/emploi-du-temps': typeof AuthenticatedEmploiDuTempsRoute
   '/enseignants': typeof AuthenticatedEnseignantsRoute
   '/examens': typeof AuthenticatedExamensRoute
+  '/infirmerie': typeof AuthenticatedInfirmerieRoute
   '/journal': typeof AuthenticatedJournalRoute
   '/matieres': typeof AuthenticatedMatieresRoute
   '/messagerie': typeof AuthenticatedMessagerieRoute
@@ -247,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/sauvegarde': typeof AuthenticatedSauvegardeRoute
   '/souscription': typeof AuthenticatedSouscriptionRoute
   '/super-admin': typeof AuthenticatedSuperAdminRoute
+  '/transport': typeof AuthenticatedTransportRoute
   '/verifier-recu/$number': typeof VerifierRecuNumberRoute
 }
 export interface FileRoutesByTo {
@@ -266,6 +280,7 @@ export interface FileRoutesByTo {
   '/emploi-du-temps': typeof AuthenticatedEmploiDuTempsRoute
   '/enseignants': typeof AuthenticatedEnseignantsRoute
   '/examens': typeof AuthenticatedExamensRoute
+  '/infirmerie': typeof AuthenticatedInfirmerieRoute
   '/journal': typeof AuthenticatedJournalRoute
   '/matieres': typeof AuthenticatedMatieresRoute
   '/messagerie': typeof AuthenticatedMessagerieRoute
@@ -281,6 +296,7 @@ export interface FileRoutesByTo {
   '/sauvegarde': typeof AuthenticatedSauvegardeRoute
   '/souscription': typeof AuthenticatedSouscriptionRoute
   '/super-admin': typeof AuthenticatedSuperAdminRoute
+  '/transport': typeof AuthenticatedTransportRoute
   '/verifier-recu/$number': typeof VerifierRecuNumberRoute
 }
 export interface FileRoutesById {
@@ -302,6 +318,7 @@ export interface FileRoutesById {
   '/_authenticated/emploi-du-temps': typeof AuthenticatedEmploiDuTempsRoute
   '/_authenticated/enseignants': typeof AuthenticatedEnseignantsRoute
   '/_authenticated/examens': typeof AuthenticatedExamensRoute
+  '/_authenticated/infirmerie': typeof AuthenticatedInfirmerieRoute
   '/_authenticated/journal': typeof AuthenticatedJournalRoute
   '/_authenticated/matieres': typeof AuthenticatedMatieresRoute
   '/_authenticated/messagerie': typeof AuthenticatedMessagerieRoute
@@ -317,6 +334,7 @@ export interface FileRoutesById {
   '/_authenticated/sauvegarde': typeof AuthenticatedSauvegardeRoute
   '/_authenticated/souscription': typeof AuthenticatedSouscriptionRoute
   '/_authenticated/super-admin': typeof AuthenticatedSuperAdminRoute
+  '/_authenticated/transport': typeof AuthenticatedTransportRoute
   '/verifier-recu/$number': typeof VerifierRecuNumberRoute
 }
 export interface FileRouteTypes {
@@ -338,6 +356,7 @@ export interface FileRouteTypes {
     | '/emploi-du-temps'
     | '/enseignants'
     | '/examens'
+    | '/infirmerie'
     | '/journal'
     | '/matieres'
     | '/messagerie'
@@ -353,6 +372,7 @@ export interface FileRouteTypes {
     | '/sauvegarde'
     | '/souscription'
     | '/super-admin'
+    | '/transport'
     | '/verifier-recu/$number'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -372,6 +392,7 @@ export interface FileRouteTypes {
     | '/emploi-du-temps'
     | '/enseignants'
     | '/examens'
+    | '/infirmerie'
     | '/journal'
     | '/matieres'
     | '/messagerie'
@@ -387,6 +408,7 @@ export interface FileRouteTypes {
     | '/sauvegarde'
     | '/souscription'
     | '/super-admin'
+    | '/transport'
     | '/verifier-recu/$number'
   id:
     | '__root__'
@@ -407,6 +429,7 @@ export interface FileRouteTypes {
     | '/_authenticated/emploi-du-temps'
     | '/_authenticated/enseignants'
     | '/_authenticated/examens'
+    | '/_authenticated/infirmerie'
     | '/_authenticated/journal'
     | '/_authenticated/matieres'
     | '/_authenticated/messagerie'
@@ -422,6 +445,7 @@ export interface FileRouteTypes {
     | '/_authenticated/sauvegarde'
     | '/_authenticated/souscription'
     | '/_authenticated/super-admin'
+    | '/_authenticated/transport'
     | '/verifier-recu/$number'
   fileRoutesById: FileRoutesById
 }
@@ -461,6 +485,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/verifier-recu/$number'
       preLoaderRoute: typeof VerifierRecuNumberRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/transport': {
+      id: '/_authenticated/transport'
+      path: '/transport'
+      fullPath: '/transport'
+      preLoaderRoute: typeof AuthenticatedTransportRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/super-admin': {
       id: '/_authenticated/super-admin'
@@ -565,6 +596,13 @@ declare module '@tanstack/react-router' {
       path: '/journal'
       fullPath: '/journal'
       preLoaderRoute: typeof AuthenticatedJournalRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/infirmerie': {
+      id: '/_authenticated/infirmerie'
+      path: '/infirmerie'
+      fullPath: '/infirmerie'
+      preLoaderRoute: typeof AuthenticatedInfirmerieRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/examens': {
@@ -683,6 +721,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedEmploiDuTempsRoute: typeof AuthenticatedEmploiDuTempsRoute
   AuthenticatedEnseignantsRoute: typeof AuthenticatedEnseignantsRoute
   AuthenticatedExamensRoute: typeof AuthenticatedExamensRoute
+  AuthenticatedInfirmerieRoute: typeof AuthenticatedInfirmerieRoute
   AuthenticatedJournalRoute: typeof AuthenticatedJournalRoute
   AuthenticatedMatieresRoute: typeof AuthenticatedMatieresRoute
   AuthenticatedMessagerieRoute: typeof AuthenticatedMessagerieRoute
@@ -698,6 +737,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSauvegardeRoute: typeof AuthenticatedSauvegardeRoute
   AuthenticatedSouscriptionRoute: typeof AuthenticatedSouscriptionRoute
   AuthenticatedSuperAdminRoute: typeof AuthenticatedSuperAdminRoute
+  AuthenticatedTransportRoute: typeof AuthenticatedTransportRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -715,6 +755,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedEmploiDuTempsRoute: AuthenticatedEmploiDuTempsRoute,
   AuthenticatedEnseignantsRoute: AuthenticatedEnseignantsRoute,
   AuthenticatedExamensRoute: AuthenticatedExamensRoute,
+  AuthenticatedInfirmerieRoute: AuthenticatedInfirmerieRoute,
   AuthenticatedJournalRoute: AuthenticatedJournalRoute,
   AuthenticatedMatieresRoute: AuthenticatedMatieresRoute,
   AuthenticatedMessagerieRoute: AuthenticatedMessagerieRoute,
@@ -731,6 +772,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSauvegardeRoute: AuthenticatedSauvegardeRoute,
   AuthenticatedSouscriptionRoute: AuthenticatedSouscriptionRoute,
   AuthenticatedSuperAdminRoute: AuthenticatedSuperAdminRoute,
+  AuthenticatedTransportRoute: AuthenticatedTransportRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -745,13 +787,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
