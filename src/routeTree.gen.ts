@@ -28,6 +28,7 @@ import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedMessagerieRouteImport } from './routes/_authenticated/messagerie'
 import { Route as AuthenticatedMatieresRouteImport } from './routes/_authenticated/matieres'
 import { Route as AuthenticatedJournalRouteImport } from './routes/_authenticated/journal'
+import { Route as AuthenticatedInfirmerieRouteImport } from './routes/_authenticated/infirmerie'
 import { Route as AuthenticatedExamensRouteImport } from './routes/_authenticated/examens'
 import { Route as AuthenticatedEnseignantsRouteImport } from './routes/_authenticated/enseignants'
 import { Route as AuthenticatedEmploiDuTempsRouteImport } from './routes/_authenticated/emploi-du-temps'
@@ -139,6 +140,11 @@ const AuthenticatedJournalRoute = AuthenticatedJournalRouteImport.update({
   path: '/journal',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedInfirmerieRoute = AuthenticatedInfirmerieRouteImport.update({
+  id: '/infirmerie',
+  path: '/infirmerie',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedExamensRoute = AuthenticatedExamensRouteImport.update({
   id: '/examens',
   path: '/examens',
@@ -232,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/emploi-du-temps': typeof AuthenticatedEmploiDuTempsRoute
   '/enseignants': typeof AuthenticatedEnseignantsRoute
   '/examens': typeof AuthenticatedExamensRoute
+  '/infirmerie': typeof AuthenticatedInfirmerieRoute
   '/journal': typeof AuthenticatedJournalRoute
   '/matieres': typeof AuthenticatedMatieresRoute
   '/messagerie': typeof AuthenticatedMessagerieRoute
@@ -266,6 +273,7 @@ export interface FileRoutesByTo {
   '/emploi-du-temps': typeof AuthenticatedEmploiDuTempsRoute
   '/enseignants': typeof AuthenticatedEnseignantsRoute
   '/examens': typeof AuthenticatedExamensRoute
+  '/infirmerie': typeof AuthenticatedInfirmerieRoute
   '/journal': typeof AuthenticatedJournalRoute
   '/matieres': typeof AuthenticatedMatieresRoute
   '/messagerie': typeof AuthenticatedMessagerieRoute
@@ -302,6 +310,7 @@ export interface FileRoutesById {
   '/_authenticated/emploi-du-temps': typeof AuthenticatedEmploiDuTempsRoute
   '/_authenticated/enseignants': typeof AuthenticatedEnseignantsRoute
   '/_authenticated/examens': typeof AuthenticatedExamensRoute
+  '/_authenticated/infirmerie': typeof AuthenticatedInfirmerieRoute
   '/_authenticated/journal': typeof AuthenticatedJournalRoute
   '/_authenticated/matieres': typeof AuthenticatedMatieresRoute
   '/_authenticated/messagerie': typeof AuthenticatedMessagerieRoute
@@ -338,6 +347,7 @@ export interface FileRouteTypes {
     | '/emploi-du-temps'
     | '/enseignants'
     | '/examens'
+    | '/infirmerie'
     | '/journal'
     | '/matieres'
     | '/messagerie'
@@ -372,6 +382,7 @@ export interface FileRouteTypes {
     | '/emploi-du-temps'
     | '/enseignants'
     | '/examens'
+    | '/infirmerie'
     | '/journal'
     | '/matieres'
     | '/messagerie'
@@ -407,6 +418,7 @@ export interface FileRouteTypes {
     | '/_authenticated/emploi-du-temps'
     | '/_authenticated/enseignants'
     | '/_authenticated/examens'
+    | '/_authenticated/infirmerie'
     | '/_authenticated/journal'
     | '/_authenticated/matieres'
     | '/_authenticated/messagerie'
@@ -567,6 +579,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedJournalRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/infirmerie': {
+      id: '/_authenticated/infirmerie'
+      path: '/infirmerie'
+      fullPath: '/infirmerie'
+      preLoaderRoute: typeof AuthenticatedInfirmerieRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/examens': {
       id: '/_authenticated/examens'
       path: '/examens'
@@ -683,6 +702,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedEmploiDuTempsRoute: typeof AuthenticatedEmploiDuTempsRoute
   AuthenticatedEnseignantsRoute: typeof AuthenticatedEnseignantsRoute
   AuthenticatedExamensRoute: typeof AuthenticatedExamensRoute
+  AuthenticatedInfirmerieRoute: typeof AuthenticatedInfirmerieRoute
   AuthenticatedJournalRoute: typeof AuthenticatedJournalRoute
   AuthenticatedMatieresRoute: typeof AuthenticatedMatieresRoute
   AuthenticatedMessagerieRoute: typeof AuthenticatedMessagerieRoute
@@ -715,6 +735,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedEmploiDuTempsRoute: AuthenticatedEmploiDuTempsRoute,
   AuthenticatedEnseignantsRoute: AuthenticatedEnseignantsRoute,
   AuthenticatedExamensRoute: AuthenticatedExamensRoute,
+  AuthenticatedInfirmerieRoute: AuthenticatedInfirmerieRoute,
   AuthenticatedJournalRoute: AuthenticatedJournalRoute,
   AuthenticatedMatieresRoute: AuthenticatedMatieresRoute,
   AuthenticatedMessagerieRoute: AuthenticatedMessagerieRoute,
