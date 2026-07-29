@@ -33,6 +33,10 @@ export interface CrudField {
   full?: boolean;
   default?: any;
   help?: string;
+  /** Transforme la valeur du formulaire avant enregistrement. */
+  parse?: (v: any) => any;
+  /** Transforme la valeur de la base avant affichage dans le formulaire. */
+  serialize?: (v: any) => any;
 }
 
 export interface CrudColumn {
