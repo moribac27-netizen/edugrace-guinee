@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VerifierRecuNumberRouteImport } from './routes/verifier-recu.$number'
+import { Route as AuthenticatedTransportRouteImport } from './routes/_authenticated/transport'
 import { Route as AuthenticatedSuperAdminRouteImport } from './routes/_authenticated/super-admin'
 import { Route as AuthenticatedSouscriptionRouteImport } from './routes/_authenticated/souscription'
 import { Route as AuthenticatedSauvegardeRouteImport } from './routes/_authenticated/sauvegarde'
@@ -62,6 +63,11 @@ const VerifierRecuNumberRoute = VerifierRecuNumberRouteImport.update({
   id: '/verifier-recu/$number',
   path: '/verifier-recu/$number',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedTransportRoute = AuthenticatedTransportRouteImport.update({
+  id: '/transport',
+  path: '/transport',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSuperAdminRoute = AuthenticatedSuperAdminRouteImport.update({
   id: '/super-admin',
@@ -254,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/sauvegarde': typeof AuthenticatedSauvegardeRoute
   '/souscription': typeof AuthenticatedSouscriptionRoute
   '/super-admin': typeof AuthenticatedSuperAdminRoute
+  '/transport': typeof AuthenticatedTransportRoute
   '/verifier-recu/$number': typeof VerifierRecuNumberRoute
 }
 export interface FileRoutesByTo {
@@ -289,6 +296,7 @@ export interface FileRoutesByTo {
   '/sauvegarde': typeof AuthenticatedSauvegardeRoute
   '/souscription': typeof AuthenticatedSouscriptionRoute
   '/super-admin': typeof AuthenticatedSuperAdminRoute
+  '/transport': typeof AuthenticatedTransportRoute
   '/verifier-recu/$number': typeof VerifierRecuNumberRoute
 }
 export interface FileRoutesById {
@@ -326,6 +334,7 @@ export interface FileRoutesById {
   '/_authenticated/sauvegarde': typeof AuthenticatedSauvegardeRoute
   '/_authenticated/souscription': typeof AuthenticatedSouscriptionRoute
   '/_authenticated/super-admin': typeof AuthenticatedSuperAdminRoute
+  '/_authenticated/transport': typeof AuthenticatedTransportRoute
   '/verifier-recu/$number': typeof VerifierRecuNumberRoute
 }
 export interface FileRouteTypes {
@@ -363,6 +372,7 @@ export interface FileRouteTypes {
     | '/sauvegarde'
     | '/souscription'
     | '/super-admin'
+    | '/transport'
     | '/verifier-recu/$number'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -398,6 +408,7 @@ export interface FileRouteTypes {
     | '/sauvegarde'
     | '/souscription'
     | '/super-admin'
+    | '/transport'
     | '/verifier-recu/$number'
   id:
     | '__root__'
@@ -434,6 +445,7 @@ export interface FileRouteTypes {
     | '/_authenticated/sauvegarde'
     | '/_authenticated/souscription'
     | '/_authenticated/super-admin'
+    | '/_authenticated/transport'
     | '/verifier-recu/$number'
   fileRoutesById: FileRoutesById
 }
@@ -473,6 +485,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/verifier-recu/$number'
       preLoaderRoute: typeof VerifierRecuNumberRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/transport': {
+      id: '/_authenticated/transport'
+      path: '/transport'
+      fullPath: '/transport'
+      preLoaderRoute: typeof AuthenticatedTransportRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/super-admin': {
       id: '/_authenticated/super-admin'
@@ -718,6 +737,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSauvegardeRoute: typeof AuthenticatedSauvegardeRoute
   AuthenticatedSouscriptionRoute: typeof AuthenticatedSouscriptionRoute
   AuthenticatedSuperAdminRoute: typeof AuthenticatedSuperAdminRoute
+  AuthenticatedTransportRoute: typeof AuthenticatedTransportRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -752,6 +772,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSauvegardeRoute: AuthenticatedSauvegardeRoute,
   AuthenticatedSouscriptionRoute: AuthenticatedSouscriptionRoute,
   AuthenticatedSuperAdminRoute: AuthenticatedSuperAdminRoute,
+  AuthenticatedTransportRoute: AuthenticatedTransportRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
