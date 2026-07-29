@@ -74,6 +74,7 @@ function emptyForm(fields: CrudField[]) {
 }
 
 function toDbValue(field: CrudField, v: any) {
+  if (field.parse) return field.parse(v);
   if (field.type === "checkbox") return !!v;
   if (v === "" || v === undefined) return null;
   if (field.type === "number") return Number(v);
@@ -81,6 +82,7 @@ function toDbValue(field: CrudField, v: any) {
 }
 
 function fromDbValue(field: CrudField, v: any) {
+  if (field.serialize) return field.serialize(v);
   if (field.type === "checkbox") return !!v;
   if (v === null || v === undefined) return "";
   if (field.type === "datetime") return String(v).slice(0, 16);
