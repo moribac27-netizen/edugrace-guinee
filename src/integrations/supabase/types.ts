@@ -14,6 +14,65 @@ export type Database = {
   }
   public: {
     Tables: {
+      accidents: {
+        Row: {
+          actions_taken: string | null
+          created_at: string
+          description: string
+          hospital_transfer: boolean
+          id: string
+          location: string | null
+          occurred_at: string
+          parents_notified: boolean
+          recorded_by: string | null
+          school_id: string
+          severity: string
+          student_id: string | null
+          updated_at: string
+          witnesses: string | null
+        }
+        Insert: {
+          actions_taken?: string | null
+          created_at?: string
+          description: string
+          hospital_transfer?: boolean
+          id?: string
+          location?: string | null
+          occurred_at?: string
+          parents_notified?: boolean
+          recorded_by?: string | null
+          school_id: string
+          severity?: string
+          student_id?: string | null
+          updated_at?: string
+          witnesses?: string | null
+        }
+        Update: {
+          actions_taken?: string | null
+          created_at?: string
+          description?: string
+          hospital_transfer?: boolean
+          id?: string
+          location?: string | null
+          occurred_at?: string
+          parents_notified?: boolean
+          recorded_by?: string | null
+          school_id?: string
+          severity?: string
+          student_id?: string | null
+          updated_at?: string
+          witnesses?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accidents_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       activity_logs: {
         Row: {
           action: string
@@ -295,6 +354,306 @@ export type Database = {
             columns: ["school_id"]
             isOneToOne: false
             referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      canteen_consumption: {
+        Row: {
+          amount: number
+          consumed: boolean
+          created_at: string
+          date: string
+          id: string
+          meal_type: string
+          menu_id: string | null
+          recorded_by: string | null
+          school_id: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          consumed?: boolean
+          created_at?: string
+          date?: string
+          id?: string
+          meal_type?: string
+          menu_id?: string | null
+          recorded_by?: string | null
+          school_id: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          consumed?: boolean
+          created_at?: string
+          date?: string
+          id?: string
+          meal_type?: string
+          menu_id?: string | null
+          recorded_by?: string | null
+          school_id?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "canteen_consumption_menu_id_fkey"
+            columns: ["menu_id"]
+            isOneToOne: false
+            referencedRelation: "canteen_menus"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "canteen_consumption_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      canteen_menus: {
+        Row: {
+          created_at: string
+          dessert: string | null
+          drink: string | null
+          id: string
+          main_dish: string
+          meal_type: string
+          menu_date: string
+          notes: string | null
+          price: number
+          school_id: string
+          starter: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dessert?: string | null
+          drink?: string | null
+          id?: string
+          main_dish: string
+          meal_type?: string
+          menu_date: string
+          notes?: string | null
+          price?: number
+          school_id: string
+          starter?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dessert?: string | null
+          drink?: string | null
+          id?: string
+          main_dish?: string
+          meal_type?: string
+          menu_date?: string
+          notes?: string | null
+          price?: number
+          school_id?: string
+          starter?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      canteen_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          method: string
+          notes: string | null
+          paid_at: string
+          period: string | null
+          recorded_by: string | null
+          reference: string | null
+          school_id: string
+          student_id: string
+          subscription_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          method?: string
+          notes?: string | null
+          paid_at?: string
+          period?: string | null
+          recorded_by?: string | null
+          reference?: string | null
+          school_id: string
+          student_id: string
+          subscription_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          method?: string
+          notes?: string | null
+          paid_at?: string
+          period?: string | null
+          recorded_by?: string | null
+          reference?: string | null
+          school_id?: string
+          student_id?: string
+          subscription_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "canteen_payments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "canteen_payments_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "canteen_subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      canteen_subscriptions: {
+        Row: {
+          amount: number
+          created_at: string
+          end_date: string | null
+          id: string
+          notes: string | null
+          plan: string
+          school_id: string
+          start_date: string
+          status: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          notes?: string | null
+          plan?: string
+          school_id: string
+          start_date?: string
+          status?: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          notes?: string | null
+          plan?: string
+          school_id?: string
+          start_date?: string
+          status?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "canteen_subscriptions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      circular_reads: {
+        Row: {
+          circular_id: string
+          id: string
+          read_at: string
+          user_id: string
+        }
+        Insert: {
+          circular_id: string
+          id?: string
+          read_at?: string
+          user_id: string
+        }
+        Update: {
+          circular_id?: string
+          id?: string
+          read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "circular_reads_circular_id_fkey"
+            columns: ["circular_id"]
+            isOneToOne: false
+            referencedRelation: "circulars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      circulars: {
+        Row: {
+          attachment_url: string | null
+          author_id: string | null
+          content: string
+          created_at: string
+          id: string
+          published: boolean
+          published_at: string
+          reference: string | null
+          school_id: string
+          target_class_id: string | null
+          target_roles: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          attachment_url?: string | null
+          author_id?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          published?: boolean
+          published_at?: string
+          reference?: string | null
+          school_id: string
+          target_class_id?: string | null
+          target_roles?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          attachment_url?: string | null
+          author_id?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          published?: boolean
+          published_at?: string
+          reference?: string | null
+          school_id?: string
+          target_class_id?: string | null
+          target_roles?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "circulars_target_class_id_fkey"
+            columns: ["target_class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
             referencedColumns: ["id"]
           },
         ]
@@ -874,6 +1233,163 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      medical_records: {
+        Row: {
+          allergies: string | null
+          blood_type: string | null
+          chronic_conditions: string | null
+          created_at: string
+          doctor_name: string | null
+          doctor_phone: string | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          id: string
+          medications: string | null
+          notes: string | null
+          school_id: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          allergies?: string | null
+          blood_type?: string | null
+          chronic_conditions?: string | null
+          created_at?: string
+          doctor_name?: string | null
+          doctor_phone?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          id?: string
+          medications?: string | null
+          notes?: string | null
+          school_id: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          allergies?: string | null
+          blood_type?: string | null
+          chronic_conditions?: string | null
+          created_at?: string
+          doctor_name?: string | null
+          doctor_phone?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          id?: string
+          medications?: string | null
+          notes?: string | null
+          school_id?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medical_records_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: true
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      medical_visits: {
+        Row: {
+          created_at: string
+          diagnosis: string | null
+          id: string
+          notes: string | null
+          outcome: string
+          reason: string
+          recorded_by: string | null
+          school_id: string
+          student_id: string
+          symptoms: string | null
+          temperature: number | null
+          updated_at: string
+          visit_date: string
+        }
+        Insert: {
+          created_at?: string
+          diagnosis?: string | null
+          id?: string
+          notes?: string | null
+          outcome?: string
+          reason: string
+          recorded_by?: string | null
+          school_id: string
+          student_id: string
+          symptoms?: string | null
+          temperature?: number | null
+          updated_at?: string
+          visit_date?: string
+        }
+        Update: {
+          created_at?: string
+          diagnosis?: string | null
+          id?: string
+          notes?: string | null
+          outcome?: string
+          reason?: string
+          recorded_by?: string | null
+          school_id?: string
+          student_id?: string
+          symptoms?: string | null
+          temperature?: number | null
+          updated_at?: string
+          visit_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medical_visits_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      medicines: {
+        Row: {
+          alert_threshold: number
+          created_at: string
+          expiry_date: string | null
+          form: string | null
+          id: string
+          name: string
+          notes: string | null
+          quantity: number
+          school_id: string
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          alert_threshold?: number
+          created_at?: string
+          expiry_date?: string | null
+          form?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          quantity?: number
+          school_id: string
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          alert_threshold?: number
+          created_at?: string
+          expiry_date?: string | null
+          form?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          quantity?: number
+          school_id?: string
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       message_broadcasts: {
         Row: {
@@ -2034,6 +2550,367 @@ export type Database = {
             columns: ["school_id"]
             isOneToOne: false
             referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transport_attendance: {
+        Row: {
+          created_at: string
+          date: string
+          direction: string
+          id: string
+          notes: string | null
+          recorded_by: string | null
+          route_id: string | null
+          school_id: string
+          status: string
+          student_id: string
+          subscription_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          direction?: string
+          id?: string
+          notes?: string | null
+          recorded_by?: string | null
+          route_id?: string | null
+          school_id: string
+          status?: string
+          student_id: string
+          subscription_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          direction?: string
+          id?: string
+          notes?: string | null
+          recorded_by?: string | null
+          route_id?: string | null
+          school_id?: string
+          status?: string
+          student_id?: string
+          subscription_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transport_attendance_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "transport_routes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transport_attendance_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transport_attendance_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "transport_subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transport_buses: {
+        Row: {
+          capacity: number
+          created_at: string
+          driver_id: string | null
+          id: string
+          model: string | null
+          name: string
+          notes: string | null
+          plate_number: string
+          school_id: string
+          status: string
+          updated_at: string
+          year: number | null
+        }
+        Insert: {
+          capacity?: number
+          created_at?: string
+          driver_id?: string | null
+          id?: string
+          model?: string | null
+          name: string
+          notes?: string | null
+          plate_number: string
+          school_id: string
+          status?: string
+          updated_at?: string
+          year?: number | null
+        }
+        Update: {
+          capacity?: number
+          created_at?: string
+          driver_id?: string | null
+          id?: string
+          model?: string | null
+          name?: string
+          notes?: string | null
+          plate_number?: string
+          school_id?: string
+          status?: string
+          updated_at?: string
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transport_buses_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "transport_drivers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transport_drivers: {
+        Row: {
+          created_at: string
+          full_name: string
+          hire_date: string | null
+          id: string
+          license_expiry: string | null
+          license_number: string | null
+          notes: string | null
+          phone: string | null
+          school_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name: string
+          hire_date?: string | null
+          id?: string
+          license_expiry?: string | null
+          license_number?: string | null
+          notes?: string | null
+          phone?: string | null
+          school_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string
+          hire_date?: string | null
+          id?: string
+          license_expiry?: string | null
+          license_number?: string | null
+          notes?: string | null
+          phone?: string | null
+          school_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      transport_routes: {
+        Row: {
+          bus_id: string | null
+          created_at: string
+          departure_time: string | null
+          description: string | null
+          driver_id: string | null
+          id: string
+          monthly_fee: number
+          name: string
+          return_time: string | null
+          school_id: string
+          status: string
+          stops: Json
+          updated_at: string
+        }
+        Insert: {
+          bus_id?: string | null
+          created_at?: string
+          departure_time?: string | null
+          description?: string | null
+          driver_id?: string | null
+          id?: string
+          monthly_fee?: number
+          name: string
+          return_time?: string | null
+          school_id: string
+          status?: string
+          stops?: Json
+          updated_at?: string
+        }
+        Update: {
+          bus_id?: string | null
+          created_at?: string
+          departure_time?: string | null
+          description?: string | null
+          driver_id?: string | null
+          id?: string
+          monthly_fee?: number
+          name?: string
+          return_time?: string | null
+          school_id?: string
+          status?: string
+          stops?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transport_routes_bus_id_fkey"
+            columns: ["bus_id"]
+            isOneToOne: false
+            referencedRelation: "transport_buses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transport_routes_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "transport_drivers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transport_subscriptions: {
+        Row: {
+          created_at: string
+          direction: string
+          end_date: string | null
+          id: string
+          monthly_fee: number
+          notes: string | null
+          route_id: string
+          school_id: string
+          start_date: string
+          status: string
+          stop_name: string | null
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          direction?: string
+          end_date?: string | null
+          id?: string
+          monthly_fee?: number
+          notes?: string | null
+          route_id: string
+          school_id: string
+          start_date?: string
+          status?: string
+          stop_name?: string | null
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          direction?: string
+          end_date?: string | null
+          id?: string
+          monthly_fee?: number
+          notes?: string | null
+          route_id?: string
+          school_id?: string
+          start_date?: string
+          status?: string
+          stop_name?: string | null
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transport_subscriptions_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "transport_routes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transport_subscriptions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      treatments: {
+        Row: {
+          created_at: string
+          dosage: string | null
+          end_date: string | null
+          frequency: string | null
+          id: string
+          medicine_id: string | null
+          medicine_name: string
+          notes: string | null
+          school_id: string
+          start_date: string
+          status: string
+          student_id: string
+          updated_at: string
+          visit_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          dosage?: string | null
+          end_date?: string | null
+          frequency?: string | null
+          id?: string
+          medicine_id?: string | null
+          medicine_name: string
+          notes?: string | null
+          school_id: string
+          start_date?: string
+          status?: string
+          student_id: string
+          updated_at?: string
+          visit_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          dosage?: string | null
+          end_date?: string | null
+          frequency?: string | null
+          id?: string
+          medicine_id?: string | null
+          medicine_name?: string
+          notes?: string | null
+          school_id?: string
+          start_date?: string
+          status?: string
+          student_id?: string
+          updated_at?: string
+          visit_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "treatments_medicine_id_fkey"
+            columns: ["medicine_id"]
+            isOneToOne: false
+            referencedRelation: "medicines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "treatments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "treatments_visit_id_fkey"
+            columns: ["visit_id"]
+            isOneToOne: false
+            referencedRelation: "medical_visits"
             referencedColumns: ["id"]
           },
         ]
