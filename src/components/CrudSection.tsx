@@ -78,7 +78,7 @@ function toDbValue(field: CrudField, v: any) {
 
 function fromDbValue(field: CrudField, v: any) {
   if (field.type === "checkbox") return !!v;
-  if (v === null || v === undefined) return field.type === "checkbox" ? false : "";
+  if (v === null || v === undefined) return "";
   if (field.type === "datetime") return String(v).slice(0, 16);
   if (field.type === "date") return String(v).slice(0, 10);
   if (field.type === "time") return String(v).slice(0, 5);
