@@ -187,18 +187,20 @@ function ElevesReport() {
       setLoading(true);
       let q = supabase
         .from("students")
-        .select("first_name,last_name,gender,birth_date,matricule,status,classes(name)")
-        .order("last_name");
+        .select("full_name,gender,birth_date,birth_place,matricule,status,parent_name,parent_phone,classes(name)")
+        .order("full_name");
       if (classId !== "all") q = q.eq("class_id", classId);
       const { data } = await q;
       setRows(
         (data || []).map((s: any) => ({
           matricule: s.matricule,
-          nom: s.last_name,
-          prenom: s.first_name,
+          nom: s.full_name,
           genre: s.gender,
           naissance: s.birth_date,
+          lieu: s.birth_place,
           classe: s.classes?.name,
+          parent: s.parent_name,
+          telephone: s.parent_phone,
           statut: s.status,
         })),
       );
@@ -208,13 +210,16 @@ function ElevesReport() {
 
   const columns = [
     { key: "matricule", label: "Matricule" },
-    { key: "nom", label: "Nom" },
-    { key: "prenom", label: "Prénom" },
+    { key: "nom", label: "Nom et prénoms" },
     { key: "genre", label: "Genre" },
     { key: "naissance", label: "Naissance" },
+    { key: "lieu", label: "Lieu" },
     { key: "classe", label: "Classe" },
+    { key: "parent", label: "Parent" },
+    { key: "telephone", label: "Téléphone" },
     { key: "statut", label: "Statut" },
   ];
+
 
   return (
     <ReportShell
