@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Printer, FileSpreadsheet, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { maxScoreForLevel } from "@/lib/grading";
+import { exportExcel, exportPDF } from "@/lib/reports";
+
 
 export const Route = createFileRoute("/_authenticated/rapports")({
   component: RapportsPage,
@@ -58,18 +60,25 @@ function RapportsPage() {
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="flex flex-wrap h-auto print:hidden">
           <TabsTrigger value="eleves">Élèves</TabsTrigger>
+          <TabsTrigger value="enseignants">Enseignants</TabsTrigger>
+          <TabsTrigger value="classes">Classes</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
+          <TabsTrigger value="bulletins">Bulletins</TabsTrigger>
           <TabsTrigger value="paiements">Paiements</TabsTrigger>
           <TabsTrigger value="presences">Présences</TabsTrigger>
-          <TabsTrigger value="finance">Finance</TabsTrigger>
+          <TabsTrigger value="finance">Comptabilité</TabsTrigger>
           <TabsTrigger value="salaires">Salaires</TabsTrigger>
         </TabsList>
         <TabsContent value="eleves"><ElevesReport /></TabsContent>
+        <TabsContent value="enseignants"><EnseignantsReport /></TabsContent>
+        <TabsContent value="classes"><ClassesReport /></TabsContent>
         <TabsContent value="notes"><NotesReport /></TabsContent>
+        <TabsContent value="bulletins"><BulletinsReport /></TabsContent>
         <TabsContent value="paiements"><PaiementsReport /></TabsContent>
         <TabsContent value="presences"><PresencesReport /></TabsContent>
         <TabsContent value="finance"><FinanceReport /></TabsContent>
         <TabsContent value="salaires"><SalairesReport /></TabsContent>
+
       </Tabs>
     </div>
   );
@@ -97,14 +106,26 @@ function ReportShell({
       <CardHeader className="print:hidden">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <CardTitle>{title}</CardTitle>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => window.print()}>
-              <Printer className="size-4 mr-2" /> Imprimer / PDF
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              variant="outline"
+              disabled={!rows.length}
+              onClick={() => exportPDF(title, rows, columns.map((c) => ({ key: c.key, label: c.label })))}
+            >
+              <Printer className="size-4 mr-2" /> PDF
             </Button>
-            <Button onClick={onExportCSV} disabled={!rows.length}>
-              <FileSpreadsheet className="size-4 mr-2" /> Exporter CSV
+            <Button
+              variant="outline"
+              disabled={!rows.length}
+              onClick={() => exportExcel(title, rows, columns.map((c) => ({ key: c.key, label: c.label })), title)}
+            >
+              <FileSpreadsheet className="size-4 mr-2" /> Excel
+            </Button>
+            <Button variant="outline" onClick={onExportCSV} disabled={!rows.length}>
+              <FileSpreadsheet className="size-4 mr-2" /> CSV
             </Button>
           </div>
+
         </div>
         {filters && <div className="grid gap-3 md:grid-cols-4 mt-4">{filters}</div>}
       </CardHeader>
@@ -166,18 +187,20 @@ function ElevesReport() {
       setLoading(true);
       let q = supabase
         .from("students")
-        .select("first_name,last_name,gender,birth_date,matricule,status,classes(name)")
-        .order("last_name");
+        .select("full_name,gender,birth_date,birth_place,matricule,status,parent_name,parent_phone,classes(name)")
+        .order("full_name");
       if (classId !== "all") q = q.eq("class_id", classId);
       const { data } = await q;
       setRows(
         (data || []).map((s: any) => ({
           matricule: s.matricule,
-          nom: s.last_name,
-          prenom: s.first_name,
+          nom: s.full_name,
           genre: s.gender,
           naissance: s.birth_date,
+          lieu: s.birth_place,
           classe: s.classes?.name,
+          parent: s.parent_name,
+          telephone: s.parent_phone,
           statut: s.status,
         })),
       );
@@ -187,13 +210,16 @@ function ElevesReport() {
 
   const columns = [
     { key: "matricule", label: "Matricule" },
-    { key: "nom", label: "Nom" },
-    { key: "prenom", label: "Prénom" },
+    { key: "nom", label: "Nom et prénoms" },
     { key: "genre", label: "Genre" },
     { key: "naissance", label: "Naissance" },
+    { key: "lieu", label: "Lieu" },
     { key: "classe", label: "Classe" },
+    { key: "parent", label: "Parent" },
+    { key: "telephone", label: "Téléphone" },
     { key: "statut", label: "Statut" },
   ];
+
 
   return (
     <ReportShell
@@ -235,7 +261,7 @@ function NotesReport() {
       setLoading(true);
       let q = supabase
         .from("grades")
-        .select("score,max_score,period,evaluation_type,students(first_name,last_name,class_id,classes(name,level)),subjects(name)")
+        .select("score,max_score,period,evaluation_type,students(full_name,class_id,classes(name,level)),subjects(name)")
         .order("created_at", { ascending: false });
       if (term !== "all") q = q.eq("period", term);
       const { data } = await q;
@@ -243,7 +269,7 @@ function NotesReport() {
         const level = g.students?.classes?.level;
         const base = maxScoreForLevel(level);
         return {
-          eleve: `${g.students?.last_name ?? ""} ${g.students?.first_name ?? ""}`.trim(),
+          eleve: g.students?.full_name ?? "",
           classe: g.students?.classes?.name,
           niveau: level ?? "",
           classId: g.students?.class_id,
@@ -324,7 +350,7 @@ function PaiementsReport() {
       setLoading(true);
       const { data } = await supabase
         .from("payments")
-        .select("amount,paid_at,payment_method,status,receipt_number,payment_type,students(first_name,last_name,classes(name))")
+        .select("amount,paid_at,payment_method,status,receipt_number,payment_type,students(full_name,classes(name))")
         .gte("paid_at", from)
         .lte("paid_at", to + "T23:59:59")
         .order("paid_at", { ascending: false });
@@ -332,7 +358,7 @@ function PaiementsReport() {
         (data || []).map((p: any) => ({
           date: p.paid_at?.slice(0, 10),
           reference: p.receipt_number,
-          eleve: `${p.students?.last_name ?? ""} ${p.students?.first_name ?? ""}`.trim(),
+          eleve: p.students?.full_name ?? "",
           classe: p.students?.classes?.name,
           type: p.payment_type,
           methode: p.payment_method,
@@ -397,14 +423,14 @@ function PresencesReport() {
       setLoading(true);
       let q = supabase
         .from("student_attendance")
-        .select("date,status,students(first_name,last_name,class_id,classes(name))")
+        .select("date,status,students(full_name,class_id,classes(name))")
         .gte("date", from)
         .lte("date", to)
         .order("date", { ascending: false });
       const { data } = await q;
       let mapped = (data || []).map((a: any) => ({
         date: a.date,
-        eleve: `${a.students?.last_name ?? ""} ${a.students?.first_name ?? ""}`.trim(),
+        eleve: a.students?.full_name ?? "",
         classId: a.students?.class_id,
         classe: a.students?.classes?.name,
         statut: a.status,
@@ -603,6 +629,231 @@ function SalairesReport() {
         <div className="mb-3 p-3 rounded-lg bg-muted/50 text-sm">
           <strong>Masse salariale nette :</strong> {fmtGNF(total)}
         </div>
+      }
+    />
+  );
+}
+
+/* ---------------- Enseignants ---------------- */
+function EnseignantsReport() {
+  const [rows, setRows] = useState<Row[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const [{ data: teachers, error }, { data: assigns }] = await Promise.all([
+        supabase.from("teachers").select("id,matricule,full_name,email,phone,subjects,hire_date,monthly_salary").order("full_name"),
+        supabase.from("teacher_class_assignments").select("teacher_id, classes(name)"),
+      ]);
+      if (error) toast.error(error.message);
+      setRows(
+        (teachers || []).map((t: any) => ({
+          matricule: t.matricule,
+          nom: t.full_name,
+          email: t.email ?? "",
+          telephone: t.phone ?? "",
+          matieres: (t.subjects ?? []).join(", "),
+          classes: (assigns || [])
+            .filter((a: any) => a.teacher_id === t.id)
+            .map((a: any) => a.classes?.name)
+            .filter(Boolean)
+            .join(", "),
+          embauche: t.hire_date ?? "",
+          salaire: t.monthly_salary ?? 0,
+        })),
+      );
+      setLoading(false);
+    })();
+  }, []);
+
+  const columns = [
+    { key: "matricule", label: "Matricule" },
+    { key: "nom", label: "Nom et prénoms" },
+    { key: "email", label: "Email" },
+    { key: "telephone", label: "Téléphone" },
+    { key: "matieres", label: "Matières" },
+    { key: "classes", label: "Classes" },
+    { key: "embauche", label: "Embauche" },
+    { key: "salaire", label: "Salaire mensuel", render: (v: number) => fmtGNF(v) },
+  ];
+
+  return (
+    <ReportShell
+      title="Liste des enseignants"
+      loading={loading}
+      rows={rows}
+      columns={columns}
+      onExportCSV={() => downloadCSV("enseignants.csv", toCSV(rows, columns))}
+    />
+  );
+}
+
+/* ---------------- Classes ---------------- */
+function ClassesReport() {
+  const [rows, setRows] = useState<Row[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const [{ data: classes, error }, { data: students }] = await Promise.all([
+        supabase.from("classes").select("id,name,level,annual_fee,teachers(full_name)").order("name"),
+        supabase.from("students").select("class_id,gender,status"),
+      ]);
+      if (error) toast.error(error.message);
+      setRows(
+        (classes || []).map((c: any) => {
+          const list = (students || []).filter((s: any) => s.class_id === c.id);
+          const actifs = list.filter((s: any) => s.status === "actif");
+          return {
+            classe: c.name,
+            niveau: c.level,
+            titulaire: c.teachers?.full_name ?? "—",
+            effectif: list.length,
+            garcons: list.filter((s: any) => s.gender === "M").length,
+            filles: list.filter((s: any) => s.gender === "F").length,
+            actifs: actifs.length,
+            frais: c.annual_fee ?? 0,
+            attendu: (c.annual_fee ?? 0) * actifs.length,
+          };
+        }),
+      );
+      setLoading(false);
+    })();
+  }, []);
+
+  const columns = [
+    { key: "classe", label: "Classe" },
+    { key: "niveau", label: "Niveau" },
+    { key: "titulaire", label: "Titulaire" },
+    { key: "effectif", label: "Effectif" },
+    { key: "garcons", label: "Garçons" },
+    { key: "filles", label: "Filles" },
+    { key: "actifs", label: "Actifs" },
+    { key: "frais", label: "Frais annuels", render: (v: number) => fmtGNF(v) },
+    { key: "attendu", label: "Recette attendue", render: (v: number) => fmtGNF(v) },
+  ];
+
+  return (
+    <ReportShell
+      title="Rapport des classes"
+      loading={loading}
+      rows={rows}
+      columns={columns}
+      onExportCSV={() => downloadCSV("classes.csv", toCSV(rows, columns))}
+    />
+  );
+}
+
+/* ---------------- Bulletins (synthèse) ---------------- */
+function BulletinsReport() {
+  const [rows, setRows] = useState<Row[]>([]);
+  const [classes, setClasses] = useState<Row[]>([]);
+  const [classId, setClassId] = useState<string>("all");
+  const [term, setTerm] = useState<string>("Trimestre 1");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    supabase.from("classes").select("id,name,level").order("name").then(({ data }) => setClasses(data || []));
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("grades")
+        .select("score,max_score,period,student_id,students(full_name,class_id,classes(name,level)),subjects(name,coefficient)")
+        .eq("period", term);
+      if (error) toast.error(error.message);
+      const acc = new Map<string, any>();
+      (data || []).forEach((g: any) => {
+        if (classId !== "all" && g.students?.class_id !== classId) return;
+        const level = g.students?.classes?.level;
+        const base = maxScoreForLevel(level);
+        const max = Number(g.max_score || base) || base;
+        const coef = Number(g.subjects?.coefficient ?? 1) || 1;
+        const normalized = (Number(g.score || 0) / max) * base;
+        const key = g.student_id;
+        const cur = acc.get(key) ?? {
+          eleve: g.students?.full_name ?? "—",
+          classe: g.students?.classes?.name ?? "—",
+          base,
+          sum: 0,
+          coefs: 0,
+          count: 0,
+        };
+        cur.sum += normalized * coef;
+        cur.coefs += coef;
+        cur.count += 1;
+        acc.set(key, cur);
+      });
+      const list = Array.from(acc.values()).map((r) => ({
+        ...r,
+        moyenne: r.coefs ? Number((r.sum / r.coefs).toFixed(2)) : 0,
+      }));
+      list.sort((a, b) => b.moyenne - a.moyenne);
+      setRows(
+        list.map((r, i) => ({
+          rang: i + 1,
+          eleve: r.eleve,
+          classe: r.classe,
+          notes: r.count,
+          moyenne: r.moyenne,
+          bareme: `/${r.base}`,
+          mention:
+            r.moyenne >= r.base * 0.8 ? "Excellent"
+            : r.moyenne >= r.base * 0.7 ? "Très bien"
+            : r.moyenne >= r.base * 0.6 ? "Bien"
+            : r.moyenne >= r.base * 0.5 ? "Passable"
+            : "Insuffisant",
+        })),
+      );
+      setLoading(false);
+    })();
+  }, [classId, term]);
+
+  const columns = [
+    { key: "rang", label: "Rang" },
+    { key: "eleve", label: "Élève" },
+    { key: "classe", label: "Classe" },
+    { key: "notes", label: "Nb notes" },
+    { key: "moyenne", label: "Moyenne" },
+    { key: "bareme", label: "Barème" },
+    { key: "mention", label: "Mention" },
+  ];
+
+  return (
+    <ReportShell
+      title={`Synthèse des bulletins — ${term}`}
+      loading={loading}
+      rows={rows}
+      columns={columns}
+      onExportCSV={() => downloadCSV(`bulletins-${term}.csv`, toCSV(rows, columns))}
+      filters={
+        <>
+          <div>
+            <Label>Classe</Label>
+            <Select value={classId} onValueChange={setClassId}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toutes les classes</SelectItem>
+                {classes.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Période</Label>
+            <Select value={term} onValueChange={setTerm}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Trimestre 1">Trimestre 1</SelectItem>
+                <SelectItem value="Trimestre 2">Trimestre 2</SelectItem>
+                <SelectItem value="Trimestre 3">Trimestre 3</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </>
       }
     />
   );

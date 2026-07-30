@@ -12,7 +12,10 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Inbox, Send, Megaphone, MailPlus, Trash2, MailOpen } from "lucide-react";
+import { Inbox, Send, Megaphone, MailPlus, Trash2, MailOpen, ScrollText, Mail } from "lucide-react";
+import { CircularsPanel } from "@/components/communication/CircularsPanel";
+import { EmailsPanel } from "@/components/communication/EmailsPanel";
+
 
 export const Route = createFileRoute("/_authenticated/messagerie")({
   head: () => ({ meta: [{ title: "Messagerie — MBGEduGuinée" }] }),
@@ -151,7 +154,10 @@ function MessageriePage() {
           </TabsTrigger>
           <TabsTrigger value="sent" className="gap-2"><Send className="size-4" /> Envoyés</TabsTrigger>
           <TabsTrigger value="broadcasts" className="gap-2"><Megaphone className="size-4" /> Diffusions</TabsTrigger>
+          <TabsTrigger value="circulaires" className="gap-2"><ScrollText className="size-4" /> Circulaires</TabsTrigger>
+          <TabsTrigger value="emails" className="gap-2"><Mail className="size-4" /> Emails</TabsTrigger>
         </TabsList>
+
 
         <TabsContent value="inbox" className="mt-4">
           <Card>
@@ -255,7 +261,16 @@ function MessageriePage() {
             ))}
           </div>
         </TabsContent>
+
+        <TabsContent value="circulaires" className="mt-4">
+          <CircularsPanel uid={uid} />
+        </TabsContent>
+
+        <TabsContent value="emails" className="mt-4">
+          <EmailsPanel uid={uid} />
+        </TabsContent>
       </Tabs>
+
     </div>
   );
 }
