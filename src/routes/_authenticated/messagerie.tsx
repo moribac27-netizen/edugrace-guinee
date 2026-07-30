@@ -12,7 +12,10 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Inbox, Send, Megaphone, MailPlus, Trash2, MailOpen } from "lucide-react";
+import { Inbox, Send, Megaphone, MailPlus, Trash2, MailOpen, ScrollText, Mail } from "lucide-react";
+import { CircularsPanel } from "@/components/communication/CircularsPanel";
+import { EmailsPanel } from "@/components/communication/EmailsPanel";
+
 
 export const Route = createFileRoute("/_authenticated/messagerie")({
   head: () => ({ meta: [{ title: "Messagerie — MBGEduGuinée" }] }),
