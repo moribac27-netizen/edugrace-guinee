@@ -261,7 +261,16 @@ function MessageriePage() {
             ))}
           </div>
         </TabsContent>
+
+        <TabsContent value="circulaires" className="mt-4">
+          <CircularsPanel uid={uid} />
+        </TabsContent>
+
+        <TabsContent value="emails" className="mt-4">
+          <EmailsPanel uid={uid} />
+        </TabsContent>
       </Tabs>
+
     </div>
   );
 }
