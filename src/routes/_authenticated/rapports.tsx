@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Printer, FileSpreadsheet, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { maxScoreForLevel } from "@/lib/grading";
+import { exportExcel, exportPDF } from "@/lib/reports";
+
 
 export const Route = createFileRoute("/_authenticated/rapports")({
   component: RapportsPage,
@@ -58,18 +60,25 @@ function RapportsPage() {
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="flex flex-wrap h-auto print:hidden">
           <TabsTrigger value="eleves">Élèves</TabsTrigger>
+          <TabsTrigger value="enseignants">Enseignants</TabsTrigger>
+          <TabsTrigger value="classes">Classes</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
+          <TabsTrigger value="bulletins">Bulletins</TabsTrigger>
           <TabsTrigger value="paiements">Paiements</TabsTrigger>
           <TabsTrigger value="presences">Présences</TabsTrigger>
-          <TabsTrigger value="finance">Finance</TabsTrigger>
+          <TabsTrigger value="finance">Comptabilité</TabsTrigger>
           <TabsTrigger value="salaires">Salaires</TabsTrigger>
         </TabsList>
         <TabsContent value="eleves"><ElevesReport /></TabsContent>
+        <TabsContent value="enseignants"><EnseignantsReport /></TabsContent>
+        <TabsContent value="classes"><ClassesReport /></TabsContent>
         <TabsContent value="notes"><NotesReport /></TabsContent>
+        <TabsContent value="bulletins"><BulletinsReport /></TabsContent>
         <TabsContent value="paiements"><PaiementsReport /></TabsContent>
         <TabsContent value="presences"><PresencesReport /></TabsContent>
         <TabsContent value="finance"><FinanceReport /></TabsContent>
         <TabsContent value="salaires"><SalairesReport /></TabsContent>
+
       </Tabs>
     </div>
   );
@@ -97,14 +106,26 @@ function ReportShell({
       <CardHeader className="print:hidden">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <CardTitle>{title}</CardTitle>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => window.print()}>
-              <Printer className="size-4 mr-2" /> Imprimer / PDF
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              variant="outline"
+              disabled={!rows.length}
+              onClick={() => exportPDF(title, rows, columns.map((c) => ({ key: c.key, label: c.label })))}
+            >
+              <Printer className="size-4 mr-2" /> PDF
             </Button>
-            <Button onClick={onExportCSV} disabled={!rows.length}>
-              <FileSpreadsheet className="size-4 mr-2" /> Exporter CSV
+            <Button
+              variant="outline"
+              disabled={!rows.length}
+              onClick={() => exportExcel(title, rows, columns.map((c) => ({ key: c.key, label: c.label })), title)}
+            >
+              <FileSpreadsheet className="size-4 mr-2" /> Excel
+            </Button>
+            <Button variant="outline" onClick={onExportCSV} disabled={!rows.length}>
+              <FileSpreadsheet className="size-4 mr-2" /> CSV
             </Button>
           </div>
+
         </div>
         {filters && <div className="grid gap-3 md:grid-cols-4 mt-4">{filters}</div>}
       </CardHeader>
