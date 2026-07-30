@@ -39,6 +39,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedComptabiliteRouteImport } from './routes/_authenticated/comptabilite'
 import { Route as AuthenticatedClassesRouteImport } from './routes/_authenticated/classes'
 import { Route as AuthenticatedCartesRouteImport } from './routes/_authenticated/cartes'
+import { Route as AuthenticatedCantineRouteImport } from './routes/_authenticated/cantine'
 import { Route as AuthenticatedCalendrierRouteImport } from './routes/_authenticated/calendrier'
 import { Route as AuthenticatedBulletinsRouteImport } from './routes/_authenticated/bulletins'
 import { Route as AuthenticatedBibliothequeRouteImport } from './routes/_authenticated/bibliotheque'
@@ -199,6 +200,11 @@ const AuthenticatedCartesRoute = AuthenticatedCartesRouteImport.update({
   path: '/cartes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCantineRoute = AuthenticatedCantineRouteImport.update({
+  id: '/cantine',
+  path: '/cantine',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedCalendrierRoute = AuthenticatedCalendrierRouteImport.update({
   id: '/calendrier',
   path: '/calendrier',
@@ -235,6 +241,7 @@ export interface FileRoutesByFullPath {
   '/bibliotheque': typeof AuthenticatedBibliothequeRoute
   '/bulletins': typeof AuthenticatedBulletinsRoute
   '/calendrier': typeof AuthenticatedCalendrierRoute
+  '/cantine': typeof AuthenticatedCantineRoute
   '/cartes': typeof AuthenticatedCartesRoute
   '/classes': typeof AuthenticatedClassesRoute
   '/comptabilite': typeof AuthenticatedComptabiliteRoute
@@ -271,6 +278,7 @@ export interface FileRoutesByTo {
   '/bibliotheque': typeof AuthenticatedBibliothequeRoute
   '/bulletins': typeof AuthenticatedBulletinsRoute
   '/calendrier': typeof AuthenticatedCalendrierRoute
+  '/cantine': typeof AuthenticatedCantineRoute
   '/cartes': typeof AuthenticatedCartesRoute
   '/classes': typeof AuthenticatedClassesRoute
   '/comptabilite': typeof AuthenticatedComptabiliteRoute
@@ -309,6 +317,7 @@ export interface FileRoutesById {
   '/_authenticated/bibliotheque': typeof AuthenticatedBibliothequeRoute
   '/_authenticated/bulletins': typeof AuthenticatedBulletinsRoute
   '/_authenticated/calendrier': typeof AuthenticatedCalendrierRoute
+  '/_authenticated/cantine': typeof AuthenticatedCantineRoute
   '/_authenticated/cartes': typeof AuthenticatedCartesRoute
   '/_authenticated/classes': typeof AuthenticatedClassesRoute
   '/_authenticated/comptabilite': typeof AuthenticatedComptabiliteRoute
@@ -347,6 +356,7 @@ export interface FileRouteTypes {
     | '/bibliotheque'
     | '/bulletins'
     | '/calendrier'
+    | '/cantine'
     | '/cartes'
     | '/classes'
     | '/comptabilite'
@@ -383,6 +393,7 @@ export interface FileRouteTypes {
     | '/bibliotheque'
     | '/bulletins'
     | '/calendrier'
+    | '/cantine'
     | '/cartes'
     | '/classes'
     | '/comptabilite'
@@ -420,6 +431,7 @@ export interface FileRouteTypes {
     | '/_authenticated/bibliotheque'
     | '/_authenticated/bulletins'
     | '/_authenticated/calendrier'
+    | '/_authenticated/cantine'
     | '/_authenticated/cartes'
     | '/_authenticated/classes'
     | '/_authenticated/comptabilite'
@@ -668,6 +680,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCartesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/cantine': {
+      id: '/_authenticated/cantine'
+      path: '/cantine'
+      fullPath: '/cantine'
+      preLoaderRoute: typeof AuthenticatedCantineRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/calendrier': {
       id: '/_authenticated/calendrier'
       path: '/calendrier'
@@ -712,6 +731,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedBibliothequeRoute: typeof AuthenticatedBibliothequeRoute
   AuthenticatedBulletinsRoute: typeof AuthenticatedBulletinsRoute
   AuthenticatedCalendrierRoute: typeof AuthenticatedCalendrierRoute
+  AuthenticatedCantineRoute: typeof AuthenticatedCantineRoute
   AuthenticatedCartesRoute: typeof AuthenticatedCartesRoute
   AuthenticatedClassesRoute: typeof AuthenticatedClassesRoute
   AuthenticatedComptabiliteRoute: typeof AuthenticatedComptabiliteRoute
@@ -746,6 +766,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBibliothequeRoute: AuthenticatedBibliothequeRoute,
   AuthenticatedBulletinsRoute: AuthenticatedBulletinsRoute,
   AuthenticatedCalendrierRoute: AuthenticatedCalendrierRoute,
+  AuthenticatedCantineRoute: AuthenticatedCantineRoute,
   AuthenticatedCartesRoute: AuthenticatedCartesRoute,
   AuthenticatedClassesRoute: AuthenticatedClassesRoute,
   AuthenticatedComptabiliteRoute: AuthenticatedComptabiliteRoute,
@@ -787,3 +808,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
