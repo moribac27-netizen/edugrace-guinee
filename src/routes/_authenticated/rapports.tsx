@@ -261,7 +261,7 @@ function NotesReport() {
       setLoading(true);
       let q = supabase
         .from("grades")
-        .select("score,max_score,period,evaluation_type,students(first_name,last_name,class_id,classes(name,level)),subjects(name)")
+        .select("score,max_score,period,evaluation_type,students(full_name,class_id,classes(name,level)),subjects(name)")
         .order("created_at", { ascending: false });
       if (term !== "all") q = q.eq("period", term);
       const { data } = await q;
@@ -269,7 +269,7 @@ function NotesReport() {
         const level = g.students?.classes?.level;
         const base = maxScoreForLevel(level);
         return {
-          eleve: `${g.students?.last_name ?? ""} ${g.students?.first_name ?? ""}`.trim(),
+          eleve: g.students?.full_name ?? "",
           classe: g.students?.classes?.name,
           niveau: level ?? "",
           classId: g.students?.class_id,
@@ -350,7 +350,7 @@ function PaiementsReport() {
       setLoading(true);
       const { data } = await supabase
         .from("payments")
-        .select("amount,paid_at,payment_method,status,receipt_number,payment_type,students(first_name,last_name,classes(name))")
+        .select("amount,paid_at,payment_method,status,receipt_number,payment_type,students(full_name,classes(name))")
         .gte("paid_at", from)
         .lte("paid_at", to + "T23:59:59")
         .order("paid_at", { ascending: false });
@@ -358,7 +358,7 @@ function PaiementsReport() {
         (data || []).map((p: any) => ({
           date: p.paid_at?.slice(0, 10),
           reference: p.receipt_number,
-          eleve: `${p.students?.last_name ?? ""} ${p.students?.first_name ?? ""}`.trim(),
+          eleve: p.students?.full_name ?? "",
           classe: p.students?.classes?.name,
           type: p.payment_type,
           methode: p.payment_method,
@@ -423,14 +423,14 @@ function PresencesReport() {
       setLoading(true);
       let q = supabase
         .from("student_attendance")
-        .select("date,status,students(first_name,last_name,class_id,classes(name))")
+        .select("date,status,students(full_name,class_id,classes(name))")
         .gte("date", from)
         .lte("date", to)
         .order("date", { ascending: false });
       const { data } = await q;
       let mapped = (data || []).map((a: any) => ({
         date: a.date,
-        eleve: `${a.students?.last_name ?? ""} ${a.students?.first_name ?? ""}`.trim(),
+        eleve: a.students?.full_name ?? "",
         classId: a.students?.class_id,
         classe: a.students?.classes?.name,
         statut: a.status,
