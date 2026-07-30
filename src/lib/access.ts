@@ -28,6 +28,8 @@ export const ROUTE_ACCESS: Array<{ prefix: string; roles: AppRole[] | "*" }> = [
   { prefix: "/bibliotheque", roles: ["admin", "directeur", "enseignant"] },
   { prefix: "/infirmerie", roles: ["admin", "directeur", "enseignant"] },
   { prefix: "/transport", roles: ["admin", "directeur", "comptable"] },
+  { prefix: "/cantine", roles: ["admin", "directeur", "comptable"] },
+
   { prefix: "/annonces", roles: ["admin", "directeur", "enseignant"] },
   { prefix: "/dashboard", roles: ["admin", "directeur", "enseignant", "comptable"] },
   { prefix: "/parent", roles: ["parent"] },

@@ -151,7 +151,10 @@ function MessageriePage() {
           </TabsTrigger>
           <TabsTrigger value="sent" className="gap-2"><Send className="size-4" /> Envoyés</TabsTrigger>
           <TabsTrigger value="broadcasts" className="gap-2"><Megaphone className="size-4" /> Diffusions</TabsTrigger>
+          <TabsTrigger value="circulaires" className="gap-2"><ScrollText className="size-4" /> Circulaires</TabsTrigger>
+          <TabsTrigger value="emails" className="gap-2"><Mail className="size-4" /> Emails</TabsTrigger>
         </TabsList>
+
 
         <TabsContent value="inbox" className="mt-4">
           <Card>

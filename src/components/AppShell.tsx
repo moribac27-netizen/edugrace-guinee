@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, GraduationCap, BookOpen, ClipboardList,
   CreditCard, Megaphone, LogOut, Menu, X, School, FileText, CalendarDays, UserCheck,
   Calculator, Wallet, ScrollText, Library, Link2, Settings, MessageSquare, BarChart3, History, DatabaseBackup, Sparkles, Package, ShieldCheck,
-  Home, IdCard, BookMarked, HeartPulse, Bus,
+  Home, IdCard, BookMarked, HeartPulse, Bus, UtensilsCrossed,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,8 @@ const STAFF_NAV = [
   { to: "/bibliotheque", label: "Bibliothèque", icon: Library },
   { to: "/infirmerie", label: "Infirmerie", icon: HeartPulse },
   { to: "/transport", label: "Transport", icon: Bus },
+  { to: "/cantine", label: "Cantine", icon: UtensilsCrossed },
+
   { to: "/annonces", label: "Annonces", icon: Megaphone },
   { to: "/messagerie", label: "Messagerie", icon: MessageSquare },
   { to: "/rapports", label: "Rapports", icon: BarChart3 },
