@@ -13,6 +13,8 @@ import { useAuth, useRoles, primaryRole } from "@/hooks/useAuth";
 import { useSuperAdmin } from "@/hooks/useSuperAdmin";
 import { canAccess, homeForRoles } from "@/lib/access";
 import { NotificationsBell } from "@/components/NotificationsBell";
+import { logLogout } from "@/lib/audit";
+
 
 const STAFF_NAV = [
   { to: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
