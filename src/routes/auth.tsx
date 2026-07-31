@@ -65,7 +65,9 @@ function AuthPage() {
     }
     setUnconfirmedEmail(null);
     toast.success("Connexion réussie");
+    void logLogin(signIn.email.trim());
     afterAuth();
+
   }
 
   async function handleResend() {
