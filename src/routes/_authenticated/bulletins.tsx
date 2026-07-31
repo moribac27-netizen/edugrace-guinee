@@ -113,8 +113,16 @@ function BulletinsPage() {
   const periodLabel = PERIODS.find(p => p.v === period)?.l ?? period;
 
   function handlePrint() {
+    void logActivity({
+      action: "print",
+      entity_type: "bulletin",
+      entity_id: selected?.student.id ?? null,
+      entity_label: selected?.student.full_name ?? null,
+      metadata: { periode: periodLabel },
+    });
     window.print();
   }
+
 
   return (
     <div className="space-y-6">
