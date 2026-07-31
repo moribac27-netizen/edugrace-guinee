@@ -13,6 +13,8 @@ import { useAuth, useRoles, primaryRole } from "@/hooks/useAuth";
 import { useSuperAdmin } from "@/hooks/useSuperAdmin";
 import { canAccess, homeForRoles } from "@/lib/access";
 import { NotificationsBell } from "@/components/NotificationsBell";
+import { logLogout } from "@/lib/audit";
+
 
 const STAFF_NAV = [
   { to: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
@@ -73,9 +75,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   const homePath = homeForRoles(roles, isSuperAdmin);
 
   async function handleSignOut() {
+    await logLogout();
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   }
+
 
   return (
     <div className="min-h-screen bg-background flex">
