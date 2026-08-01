@@ -86,7 +86,9 @@ function BulletinsPage() {
             <Button onClick={handlePrint} variant="outline" className="gap-2"><FileDown className="size-4" />Télécharger PDF</Button>
           </div>
 
-          <BulletinDocument studentId={studentId} classId={classId} period={period} />
+          <div className={preview ? "no-print" : undefined}>
+            <BulletinDocument studentId={studentId} classId={classId} period={period} />
+          </div>
 
           <BulletinPreviewDialog
             open={preview}
