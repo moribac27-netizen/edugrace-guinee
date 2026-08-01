@@ -1,14 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { GraduationCap, CreditCard, UserCheck, CalendarDays, Megaphone, FileText } from "lucide-react";
+import { Eye, GraduationCap, CreditCard, UserCheck, CalendarDays, Megaphone, FileText } from "lucide-react";
 import { maxScoreForLevel } from "@/lib/grading";
 import { StudentPhoto } from "@/components/StudentPhoto";
 import { BulletinAnalytics } from "@/components/BulletinAnalytics";
+import { BulletinPreviewDialog } from "@/components/BulletinPreviewDialog";
 
 export const Route = createFileRoute("/_authenticated/eleve")({
   head: () => ({ meta: [{ title: "Espace Élève — MBGEduGuinée" }] }),
@@ -195,9 +197,21 @@ function StudentDashboard({ student }: { student: any }) {
 
         <TabsContent value="bulletin">
           <Card><CardHeader><CardTitle>Mon bulletin</CardTitle></CardHeader><CardContent>
-            <Button asChild><Link to="/bulletins" search={{ studentId } as any}>Ouvrir mon bulletin</Link></Button>
+            <p className="text-muted-foreground mb-3">Aperçu A4 identique au PDF imprimé.</p>
+            <Button onClick={() => setPreview(true)} disabled={!student.class_id} className="gap-2">
+              <Eye className="size-4" /> Aperçu avant impression
+            </Button>
             {student.class_id && (
               <BulletinAnalytics studentId={studentId} classId={student.class_id} maxScore={max} variant="screen" />
+            )}
+            {student.class_id && (
+              <BulletinPreviewDialog
+                open={preview}
+                onOpenChange={setPreview}
+                studentId={studentId}
+                studentName={student.full_name}
+                classId={student.class_id}
+              />
             )}
           </CardContent></Card>
         </TabsContent>
