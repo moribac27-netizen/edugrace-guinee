@@ -196,6 +196,9 @@ function StudentDashboard({ student }: { student: any }) {
         <TabsContent value="bulletin">
           <Card><CardHeader><CardTitle>Mon bulletin</CardTitle></CardHeader><CardContent>
             <Button asChild><Link to="/bulletins" search={{ studentId } as any}>Ouvrir mon bulletin</Link></Button>
+            {student.class_id && (
+              <BulletinAnalytics studentId={studentId} classId={student.class_id} maxScore={max} variant="screen" />
+            )}
           </CardContent></Card>
         </TabsContent>
 
