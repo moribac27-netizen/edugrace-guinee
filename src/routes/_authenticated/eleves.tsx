@@ -10,10 +10,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Trash2, Pencil } from "lucide-react";
+import { Plus, Search, Trash2, Pencil, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { StudentPhoto } from "@/components/StudentPhoto";
 import { StudentPhotoUpload } from "@/components/StudentPhotoUpload";
+import { BulletinPreviewDialog } from "@/components/BulletinPreviewDialog";
 
 
 export const Route = createFileRoute("/_authenticated/eleves")({
@@ -104,6 +105,7 @@ function ElevesPage() {
                     <TableCell><div className="text-sm">{s.parent_name}</div><div className="text-xs text-muted-foreground">{s.parent_phone}</div></TableCell>
                     <TableCell><Badge variant={s.status === "actif" ? "default" : "secondary"}>{s.status}</Badge></TableCell>
                     <TableCell className="text-right">
+                      <Button variant="ghost" size="icon" title="Aperçu du bulletin" disabled={!s.class_id} onClick={() => setPreviewStudent(s)}><Eye className="size-4" /></Button>
                       <Button variant="ghost" size="icon" onClick={() => { setEditing(s); setOpen(true); }}><Pencil className="size-4" /></Button>
                       <Button variant="ghost" size="icon" onClick={() => handleDelete(s.id)}><Trash2 className="size-4 text-destructive" /></Button>
                     </TableCell>
