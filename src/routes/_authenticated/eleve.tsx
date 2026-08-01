@@ -51,6 +51,7 @@ function StudentPortal() {
 
 function StudentDashboard({ student }: { student: any }) {
   const studentId = student.id;
+  const [preview, setPreview] = useState(false);
   const max = maxScoreForLevel(student.classes?.level) as 10 | 20;
   const days = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
 
