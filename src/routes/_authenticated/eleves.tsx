@@ -29,6 +29,7 @@ function ElevesPage() {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Student | null>(null);
+  const [previewStudent, setPreviewStudent] = useState<any | null>(null);
 
   const { data: students = [] } = useQuery({
     queryKey: ["students"],
@@ -116,6 +117,16 @@ function ElevesPage() {
           </div>
         </CardContent>
       </Card>
+      {previewStudent && (
+        <BulletinPreviewDialog
+          open={!!previewStudent}
+          onOpenChange={(v) => !v && setPreviewStudent(null)}
+          studentId={previewStudent.id}
+          studentName={previewStudent.full_name}
+          classId={previewStudent.class_id}
+        />
+      )}
+
     </div>
   );
 }
