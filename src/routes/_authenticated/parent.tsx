@@ -7,10 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Users, GraduationCap, CreditCard, UserCheck, CalendarDays, Megaphone, FileText } from "lucide-react";
+import { Users, GraduationCap, CreditCard, UserCheck, CalendarDays, Megaphone, FileText, Eye } from "lucide-react";
 import { maxScoreForLevel } from "@/lib/grading";
 import { StudentPhoto } from "@/components/StudentPhoto";
 import { BulletinAnalytics } from "@/components/BulletinAnalytics";
+import { BulletinPreviewDialog } from "@/components/BulletinPreviewDialog";
 
 export const Route = createFileRoute("/_authenticated/parent")({
   head: () => ({ meta: [{ title: "Espace Parent — MBGEduGuinée" }] }),
@@ -101,6 +102,7 @@ function ParentPortal() {
 
 function ChildDetails({ student }: { student: any }) {
   const studentId = student.id;
+  const [preview, setPreview] = useState(false);
   const max = maxScoreForLevel(student.classes?.level) as 10 | 20;
 
   const { data: grades = [] } = useQuery({
@@ -300,13 +302,27 @@ function ChildDetails({ student }: { student: any }) {
 
         <TabsContent value="bulletin">
           <Card><CardHeader><CardTitle>Bulletin</CardTitle></CardHeader><CardContent>
-            <p className="text-muted-foreground mb-3">Générez le bulletin PDF complet de votre enfant.</p>
-            <Button asChild><Link to="/bulletins" search={{ studentId } as any}>Ouvrir le bulletin</Link></Button>
+            <p className="text-muted-foreground mb-3">Consultez l'aperçu A4 exact du bulletin, puis imprimez-le ou enregistrez-le en PDF.</p>
+            <div className="flex flex-wrap gap-2">
+              <Button onClick={() => setPreview(true)} disabled={!student.class_id} className="gap-2">
+                <Eye className="size-4" /> Aperçu avant impression
+              </Button>
+            </div>
             {student.class_id && (
               <BulletinAnalytics studentId={studentId} classId={student.class_id} maxScore={max} variant="screen" />
             )}
+            {student.class_id && (
+              <BulletinPreviewDialog
+                open={preview}
+                onOpenChange={setPreview}
+                studentId={studentId}
+                studentName={student.full_name}
+                classId={student.class_id}
+              />
+            )}
           </CardContent></Card>
         </TabsContent>
+
 
         <TabsContent value="annonces">
           <Card><CardHeader><CardTitle>Annonces</CardTitle></CardHeader><CardContent>
