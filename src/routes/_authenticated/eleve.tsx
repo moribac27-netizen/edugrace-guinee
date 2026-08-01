@@ -8,6 +8,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { GraduationCap, CreditCard, UserCheck, CalendarDays, Megaphone, FileText } from "lucide-react";
 import { maxScoreForLevel } from "@/lib/grading";
 import { StudentPhoto } from "@/components/StudentPhoto";
+import { BulletinAnalytics } from "@/components/BulletinAnalytics";
 
 export const Route = createFileRoute("/_authenticated/eleve")({
   head: () => ({ meta: [{ title: "Espace Élève — MBGEduGuinée" }] }),
@@ -195,6 +196,9 @@ function StudentDashboard({ student }: { student: any }) {
         <TabsContent value="bulletin">
           <Card><CardHeader><CardTitle>Mon bulletin</CardTitle></CardHeader><CardContent>
             <Button asChild><Link to="/bulletins" search={{ studentId } as any}>Ouvrir mon bulletin</Link></Button>
+            {student.class_id && (
+              <BulletinAnalytics studentId={studentId} classId={student.class_id} maxScore={max} variant="screen" />
+            )}
           </CardContent></Card>
         </TabsContent>
 

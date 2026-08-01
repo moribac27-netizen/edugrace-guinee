@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Users, GraduationCap, CreditCard, UserCheck, CalendarDays, Megaphone, FileText } from "lucide-react";
 import { maxScoreForLevel } from "@/lib/grading";
 import { StudentPhoto } from "@/components/StudentPhoto";
+import { BulletinAnalytics } from "@/components/BulletinAnalytics";
 
 export const Route = createFileRoute("/_authenticated/parent")({
   head: () => ({ meta: [{ title: "Espace Parent — MBGEduGuinée" }] }),
@@ -301,6 +302,9 @@ function ChildDetails({ student }: { student: any }) {
           <Card><CardHeader><CardTitle>Bulletin</CardTitle></CardHeader><CardContent>
             <p className="text-muted-foreground mb-3">Générez le bulletin PDF complet de votre enfant.</p>
             <Button asChild><Link to="/bulletins" search={{ studentId } as any}>Ouvrir le bulletin</Link></Button>
+            {student.class_id && (
+              <BulletinAnalytics studentId={studentId} classId={student.class_id} maxScore={max} variant="screen" />
+            )}
           </CardContent></Card>
         </TabsContent>
 

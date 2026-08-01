@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Printer, FileDown, School } from "lucide-react";
 import { maxScoreForLevel } from "@/lib/grading";
 import { StudentPhoto } from "@/components/StudentPhoto";
+import { BulletinAnalytics } from "@/components/BulletinAnalytics";
 import { logActivity } from "@/lib/audit";
 
 
@@ -253,6 +254,9 @@ function BulletinsPage() {
               <span className="font-bold">{decision(selected.avg, cls.level, maxScore)}</span>
             </div>
 
+            <BulletinAnalytics studentId={selected.student.id} classId={classId} maxScore={maxScore} />
+
+
             {/* Signatures */}
             <div className="grid grid-cols-3 gap-4 text-xs text-center mt-8">
               <div>
@@ -279,11 +283,15 @@ function BulletinsPage() {
       )}
 
       <style>{`
+        .bulletin-analytics .recharts-surface { overflow: visible; }
         @media print {
           body * { visibility: hidden; }
           .bulletin, .bulletin * { visibility: visible; }
           .bulletin { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; }
           .no-print { display: none !important; }
+          .bulletin-analytics { page-break-inside: auto; }
+          .bulletin-analytics .break-inside-avoid { page-break-inside: avoid; break-inside: avoid; }
+          .bulletin-analytics * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           @page { size: A4; margin: 1cm; }
         }
       `}</style>
