@@ -254,6 +254,9 @@ function BulletinsPage() {
               <span className="font-bold">{decision(selected.avg, cls.level, maxScore)}</span>
             </div>
 
+            <BulletinAnalytics studentId={selected.student.id} classId={classId} maxScore={maxScore} />
+
+
             {/* Signatures */}
             <div className="grid grid-cols-3 gap-4 text-xs text-center mt-8">
               <div>
