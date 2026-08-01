@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Printer, FileDown, School } from "lucide-react";
 import { maxScoreForLevel } from "@/lib/grading";
 import { StudentPhoto } from "@/components/StudentPhoto";
+import { BulletinAnalytics } from "@/components/BulletinAnalytics";
 import { logActivity } from "@/lib/audit";
 
 

@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Users, GraduationCap, CreditCard, UserCheck, CalendarDays, Megaphone, FileText } from "lucide-react";
 import { maxScoreForLevel } from "@/lib/grading";
 import { StudentPhoto } from "@/components/StudentPhoto";
+import { BulletinAnalytics } from "@/components/BulletinAnalytics";
 
 export const Route = createFileRoute("/_authenticated/parent")({
   head: () => ({ meta: [{ title: "Espace Parent — MBGEduGuinée" }] }),
