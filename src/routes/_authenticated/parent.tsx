@@ -301,6 +301,9 @@ function ChildDetails({ student }: { student: any }) {
           <Card><CardHeader><CardTitle>Bulletin</CardTitle></CardHeader><CardContent>
             <p className="text-muted-foreground mb-3">Générez le bulletin PDF complet de votre enfant.</p>
             <Button asChild><Link to="/bulletins" search={{ studentId } as any}>Ouvrir le bulletin</Link></Button>
+            {student.class_id && (
+              <BulletinAnalytics studentId={studentId} classId={student.class_id} maxScore={max} variant="screen" />
+            )}
           </CardContent></Card>
         </TabsContent>
 
