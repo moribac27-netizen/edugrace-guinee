@@ -263,9 +263,17 @@ function Landing() {
                     : `Valide jusqu'au ${formatDate(currentSub.current_period_end)}`}
                 </div>
               </div>
-              <Link to="/souscription">
-                <Button>{currentSub.status === "trial" ? "Choisir une offre" : "Renouveler / Changer d'offre"}</Button>
-              </Link>
+              <Button
+                onClick={() => {
+                  setRenewPlanId(
+                    plans.find((p) => p.code === currentSub.plan?.code)?.id ?? plans[0]?.id ?? "",
+                  );
+                  setRenewOpen(true);
+                }}
+              >
+                {currentSub.status === "trial" ? "Choisir une offre" : "Renouveler / Changer d'offre"}
+              </Button>
+
             </div>
           )}
 
