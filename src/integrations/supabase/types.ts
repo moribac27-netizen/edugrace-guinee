@@ -2316,6 +2316,79 @@ export type Database = {
           },
         ]
       }
+      subscription_history: {
+        Row: {
+          action: string
+          amount: number | null
+          billing_cycle: string
+          created_at: string
+          currency: string | null
+          id: string
+          new_plan_id: string
+          performed_by: string | null
+          period_end: string
+          period_start: string
+          previous_plan_id: string | null
+          school_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          action?: string
+          amount?: number | null
+          billing_cycle: string
+          created_at?: string
+          currency?: string | null
+          id?: string
+          new_plan_id: string
+          performed_by?: string | null
+          period_end: string
+          period_start: string
+          previous_plan_id?: string | null
+          school_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          action?: string
+          amount?: number | null
+          billing_cycle?: string
+          created_at?: string
+          currency?: string | null
+          id?: string
+          new_plan_id?: string
+          performed_by?: string | null
+          period_end?: string
+          period_start?: string
+          previous_plan_id?: string | null
+          school_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_history_new_plan_id_fkey"
+            columns: ["new_plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_history_previous_plan_id_fkey"
+            columns: ["previous_plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_history_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscription_plans: {
         Row: {
           code: string
