@@ -341,12 +341,58 @@ function Landing() {
                 <Button variant="outline" onClick={() => setRenewOpen(false)} disabled={renewing}>
                   Annuler
                 </Button>
-                <Button onClick={confirmRenew} disabled={renewing || !renewPlanId || !schoolId}>
-                  {renewing ? "Traitement…" : "Confirmer"}
+                <Button
+                  onClick={() => { setRenewError(null); setConfirmOpen(true); }}
+                  disabled={renewing || !renewPlanId || !schoolId}
+                >
+                  Continuer
                 </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
+
+          {/* Confirmation récapitulative */}
+          <Dialog open={confirmOpen} onOpenChange={(o) => { if (!renewing) setConfirmOpen(o); }}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Confirmer la modification</DialogTitle>
+                <DialogDescription>
+                  Vérifiez le récapitulatif avant de valider. Cette action met à jour l'abonnement de votre école.
+                </DialogDescription>
+              </DialogHeader>
+              {(() => {
+                const p = plans.find((x) => x.id === renewPlanId);
+                const price = p
+                  ? renewCycle === "yearly"
+                    ? (p as any).price_yearly ?? p.price_monthly * 12
+                    : p.price_monthly
+                  : 0;
+                return (
+                  <div className="rounded-xl border bg-muted/40 p-4 text-sm space-y-2">
+                    <div className="flex justify-between"><span className="text-muted-foreground">Offre</span><span className="font-medium">{p?.name ?? "—"}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Période</span><span className="font-medium">{renewCycle === "yearly" ? "Annuel (yearly)" : "Mensuel (monthly)"}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Montant</span><span className="font-medium">{formatPrice(price)} {p?.currency ?? "GNF"}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Offre actuelle</span><span className="font-medium">{currentSub?.plan?.name ?? "—"}</span></div>
+                  </div>
+                );
+              })()}
+              {renewError && (
+                <div className="text-sm text-destructive">{renewError}</div>
+              )}
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setConfirmOpen(false)} disabled={renewing}>
+                  Annuler
+                </Button>
+                <Button onClick={confirmRenew} disabled={renewing || !renewPlanId || !schoolId}>
+                  {renewing && <Loader2 className="size-4 mr-2 animate-spin" />}
+                  {renewing ? "Traitement en cours…" : renewError ? "Réessayer" : "Valider"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {schoolId && <SubscriptionHistory schoolId={schoolId} refreshKey={historyKey} />}
+
 
 
           <div className="grid md:grid-cols-3 gap-6">
