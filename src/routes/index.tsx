@@ -84,9 +84,12 @@ function Landing() {
   const [schoolId, setSchoolId] = useState<string | null>(null);
   const [currentSub, setCurrentSub] = useState<CurrentSub>(null);
   const [renewOpen, setRenewOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [renewPlanId, setRenewPlanId] = useState<string>("");
   const [renewCycle, setRenewCycle] = useState<"monthly" | "yearly">("monthly");
   const [renewing, setRenewing] = useState(false);
+  const [renewError, setRenewError] = useState<string | null>(null);
+  const [historyKey, setHistoryKey] = useState(0);
 
   async function refreshSubscription(sid: string) {
     const { data: sub } = await (supabase as any)
@@ -95,25 +98,49 @@ function Landing() {
       .eq("school_id", sid)
       .maybeSingle();
     setCurrentSub(sub ?? null);
+    return sub ?? null;
   }
 
   async function confirmRenew() {
     if (!schoolId || !renewPlanId) return;
     setRenewing(true);
-    const { error } = await (supabase as any).rpc("renew_or_change_subscription", {
-      p_school_id: schoolId,
-      p_new_plan_id: renewPlanId,
-      p_billing_cycle: renewCycle,
-    });
-    setRenewing(false);
-    if (error) {
-      toast.error(error.message || "Impossible de mettre à jour l'abonnement.");
-      return;
+    setRenewError(null);
+    try {
+      const { error } = await (supabase as any).rpc("renew_or_change_subscription", {
+        p_school_id: schoolId,
+        p_new_plan_id: renewPlanId,
+        p_billing_cycle: renewCycle,
+      });
+      if (error) throw error;
+
+      toast.success("Abonnement mis à jour avec succès.");
+      setConfirmOpen(false);
+      setRenewOpen(false);
+
+      // Re-fetch immédiat + léger polling pour refléter la mise à jour
+      const expected = renewPlanId;
+      await refreshSubscription(schoolId);
+      for (let i = 0; i < 3; i++) {
+        const sub = await new Promise<any>((r) =>
+          setTimeout(async () => r(await refreshSubscription(schoolId)), 1200),
+        );
+        if (sub?.plan?.code && plans.find((p) => p.id === expected)?.code === sub.plan.code) break;
+      }
+      setHistoryKey((k) => k + 1);
+    } catch (e: any) {
+      const offline = typeof navigator !== "undefined" && !navigator.onLine;
+      const msg = offline
+        ? "Connexion internet indisponible. Vérifiez votre réseau puis réessayez."
+        : /fetch|network|timeout|timed out|failed to fetch/i.test(e?.message ?? "")
+          ? "Le serveur ne répond pas (réseau ou délai dépassé). Veuillez réessayer."
+          : e?.message || "Impossible de mettre à jour l'abonnement.";
+      setRenewError(msg);
+      toast.error(msg, { action: { label: "Réessayer", onClick: () => confirmRenew() } });
+    } finally {
+      setRenewing(false);
     }
-    toast.success("Abonnement mis à jour avec succès.");
-    setRenewOpen(false);
-    await refreshSubscription(schoolId);
   }
+
 
   useEffect(() => {
     (async () => {
