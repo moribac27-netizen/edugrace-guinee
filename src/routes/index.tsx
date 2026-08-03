@@ -9,6 +9,13 @@ import {
   BarChart3, Check, X, ArrowRight, Sparkles,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -74,7 +81,39 @@ function Landing() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+  const [schoolId, setSchoolId] = useState<string | null>(null);
   const [currentSub, setCurrentSub] = useState<CurrentSub>(null);
+  const [renewOpen, setRenewOpen] = useState(false);
+  const [renewPlanId, setRenewPlanId] = useState<string>("");
+  const [renewCycle, setRenewCycle] = useState<"monthly" | "yearly">("monthly");
+  const [renewing, setRenewing] = useState(false);
+
+  async function refreshSubscription(sid: string) {
+    const { data: sub } = await (supabase as any)
+      .from("school_subscriptions")
+      .select("id,status,trial_ends_at,current_period_end,plan:subscription_plans(name,code)")
+      .eq("school_id", sid)
+      .maybeSingle();
+    setCurrentSub(sub ?? null);
+  }
+
+  async function confirmRenew() {
+    if (!schoolId || !renewPlanId) return;
+    setRenewing(true);
+    const { error } = await (supabase as any).rpc("renew_or_change_subscription", {
+      p_school_id: schoolId,
+      p_new_plan_id: renewPlanId,
+      p_billing_cycle: renewCycle,
+    });
+    setRenewing(false);
+    if (error) {
+      toast.error(error.message || "Impossible de mettre à jour l'abonnement.");
+      return;
+    }
+    toast.success("Abonnement mis à jour avec succès.");
+    setRenewOpen(false);
+    await refreshSubscription(schoolId);
+  }
 
   useEffect(() => {
     (async () => {
@@ -99,14 +138,11 @@ function Landing() {
       const { data: prof } = await supabase
         .from("profiles").select("school_id").eq("id", u.user.id).maybeSingle();
       if (!prof?.school_id) return;
-      const { data: sub } = await (supabase as any)
-        .from("school_subscriptions")
-        .select("id,status,trial_ends_at,current_period_end,plan:subscription_plans(name,code)")
-        .eq("school_id", prof.school_id)
-        .maybeSingle();
-      setCurrentSub(sub ?? null);
+      setSchoolId(prof.school_id);
+      await refreshSubscription(prof.school_id);
     })();
   }, []);
+
 
   function handleChoose(planCode: string) {
     if (userId) {
@@ -227,11 +263,64 @@ function Landing() {
                     : `Valide jusqu'au ${formatDate(currentSub.current_period_end)}`}
                 </div>
               </div>
-              <Link to="/souscription">
-                <Button>{currentSub.status === "trial" ? "Choisir une offre" : "Renouveler / Changer d'offre"}</Button>
-              </Link>
+              <Button
+                onClick={() => {
+                  setRenewPlanId(
+                    plans.find((p) => p.code === currentSub.plan?.code)?.id ?? plans[0]?.id ?? "",
+                  );
+                  setRenewOpen(true);
+                }}
+              >
+                {currentSub.status === "trial" ? "Choisir une offre" : "Renouveler / Changer d'offre"}
+              </Button>
+
             </div>
           )}
+
+          <Dialog open={renewOpen} onOpenChange={setRenewOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Renouveler ou changer d'offre</DialogTitle>
+                <DialogDescription>
+                  Sélectionnez l'offre et le cycle de facturation souhaités.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <div className="text-sm font-medium mb-2">Offre</div>
+                  <Select value={renewPlanId} onValueChange={setRenewPlanId}>
+                    <SelectTrigger><SelectValue placeholder="Choisir une offre" /></SelectTrigger>
+                    <SelectContent>
+                      {plans.map((p) => (
+                        <SelectItem key={p.id} value={p.id}>
+                          {p.name} — {formatPrice(p.price_monthly)} {p.currency}/mois
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <div className="text-sm font-medium mb-2">Cycle de facturation</div>
+                  <Select value={renewCycle} onValueChange={(v: any) => setRenewCycle(v)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="monthly">Mensuel</SelectItem>
+                      <SelectItem value="yearly">Annuel</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setRenewOpen(false)} disabled={renewing}>
+                  Annuler
+                </Button>
+                <Button onClick={confirmRenew} disabled={renewing || !renewPlanId || !schoolId}>
+                  {renewing ? "Traitement…" : "Confirmer"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
 
           <div className="grid md:grid-cols-3 gap-6">
             {loading && Array.from({ length: 3 }).map((_, i) => (

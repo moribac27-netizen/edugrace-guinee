@@ -2958,6 +2958,36 @@ export type Database = {
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       is_super_admin: { Args: { _uid: string }; Returns: boolean }
       next_receipt_number: { Args: { _school_id: string }; Returns: string }
+      renew_or_change_subscription: {
+        Args: {
+          p_billing_cycle?: string
+          p_new_plan_id: string
+          p_school_id: string
+        }
+        Returns: {
+          billing_cycle: string
+          created_at: string
+          current_period_end: string
+          current_period_start: string
+          external_reference: string | null
+          id: string
+          last_payment_amount: number | null
+          last_payment_at: string | null
+          metadata: Json
+          payment_provider: string | null
+          plan_id: string
+          school_id: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          trial_ends_at: string | null
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "school_subscriptions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       same_school: { Args: { _school_id: string }; Returns: boolean }
       school_storage_usage: {
         Args: never
