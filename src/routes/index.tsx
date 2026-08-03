@@ -6,10 +6,12 @@ import {
 } from "@/components/ui/accordion";
 import {
   School, Users, GraduationCap, ClipboardList, CreditCard, Megaphone,
-  BarChart3, Check, X, ArrowRight, Sparkles,
+  BarChart3, Check, X, ArrowRight, Sparkles, Loader2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { SubscriptionHistory } from "@/components/SubscriptionHistory";
 import { toast } from "sonner";
+
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
@@ -84,9 +86,12 @@ function Landing() {
   const [schoolId, setSchoolId] = useState<string | null>(null);
   const [currentSub, setCurrentSub] = useState<CurrentSub>(null);
   const [renewOpen, setRenewOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [renewPlanId, setRenewPlanId] = useState<string>("");
   const [renewCycle, setRenewCycle] = useState<"monthly" | "yearly">("monthly");
   const [renewing, setRenewing] = useState(false);
+  const [renewError, setRenewError] = useState<string | null>(null);
+  const [historyKey, setHistoryKey] = useState(0);
 
   async function refreshSubscription(sid: string) {
     const { data: sub } = await (supabase as any)
@@ -95,25 +100,49 @@ function Landing() {
       .eq("school_id", sid)
       .maybeSingle();
     setCurrentSub(sub ?? null);
+    return sub ?? null;
   }
 
   async function confirmRenew() {
     if (!schoolId || !renewPlanId) return;
     setRenewing(true);
-    const { error } = await (supabase as any).rpc("renew_or_change_subscription", {
-      p_school_id: schoolId,
-      p_new_plan_id: renewPlanId,
-      p_billing_cycle: renewCycle,
-    });
-    setRenewing(false);
-    if (error) {
-      toast.error(error.message || "Impossible de mettre à jour l'abonnement.");
-      return;
+    setRenewError(null);
+    try {
+      const { error } = await (supabase as any).rpc("renew_or_change_subscription", {
+        p_school_id: schoolId,
+        p_new_plan_id: renewPlanId,
+        p_billing_cycle: renewCycle,
+      });
+      if (error) throw error;
+
+      toast.success("Abonnement mis à jour avec succès.");
+      setConfirmOpen(false);
+      setRenewOpen(false);
+
+      // Re-fetch immédiat + léger polling pour refléter la mise à jour
+      const expected = renewPlanId;
+      await refreshSubscription(schoolId);
+      for (let i = 0; i < 3; i++) {
+        const sub = await new Promise<any>((r) =>
+          setTimeout(async () => r(await refreshSubscription(schoolId)), 1200),
+        );
+        if (sub?.plan?.code && plans.find((p) => p.id === expected)?.code === sub.plan.code) break;
+      }
+      setHistoryKey((k) => k + 1);
+    } catch (e: any) {
+      const offline = typeof navigator !== "undefined" && !navigator.onLine;
+      const msg = offline
+        ? "Connexion internet indisponible. Vérifiez votre réseau puis réessayez."
+        : /fetch|network|timeout|timed out|failed to fetch/i.test(e?.message ?? "")
+          ? "Le serveur ne répond pas (réseau ou délai dépassé). Veuillez réessayer."
+          : e?.message || "Impossible de mettre à jour l'abonnement.";
+      setRenewError(msg);
+      toast.error(msg, { action: { label: "Réessayer", onClick: () => confirmRenew() } });
+    } finally {
+      setRenewing(false);
     }
-    toast.success("Abonnement mis à jour avec succès.");
-    setRenewOpen(false);
-    await refreshSubscription(schoolId);
   }
+
 
   useEffect(() => {
     (async () => {
@@ -314,12 +343,58 @@ function Landing() {
                 <Button variant="outline" onClick={() => setRenewOpen(false)} disabled={renewing}>
                   Annuler
                 </Button>
-                <Button onClick={confirmRenew} disabled={renewing || !renewPlanId || !schoolId}>
-                  {renewing ? "Traitement…" : "Confirmer"}
+                <Button
+                  onClick={() => { setRenewError(null); setConfirmOpen(true); }}
+                  disabled={renewing || !renewPlanId || !schoolId}
+                >
+                  Continuer
                 </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
+
+          {/* Confirmation récapitulative */}
+          <Dialog open={confirmOpen} onOpenChange={(o) => { if (!renewing) setConfirmOpen(o); }}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Confirmer la modification</DialogTitle>
+                <DialogDescription>
+                  Vérifiez le récapitulatif avant de valider. Cette action met à jour l'abonnement de votre école.
+                </DialogDescription>
+              </DialogHeader>
+              {(() => {
+                const p = plans.find((x) => x.id === renewPlanId);
+                const price = p
+                  ? renewCycle === "yearly"
+                    ? (p as any).price_yearly ?? p.price_monthly * 12
+                    : p.price_monthly
+                  : 0;
+                return (
+                  <div className="rounded-xl border bg-muted/40 p-4 text-sm space-y-2">
+                    <div className="flex justify-between"><span className="text-muted-foreground">Offre</span><span className="font-medium">{p?.name ?? "—"}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Période</span><span className="font-medium">{renewCycle === "yearly" ? "Annuel (yearly)" : "Mensuel (monthly)"}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Montant</span><span className="font-medium">{formatPrice(price)} {p?.currency ?? "GNF"}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Offre actuelle</span><span className="font-medium">{currentSub?.plan?.name ?? "—"}</span></div>
+                  </div>
+                );
+              })()}
+              {renewError && (
+                <div className="text-sm text-destructive">{renewError}</div>
+              )}
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setConfirmOpen(false)} disabled={renewing}>
+                  Annuler
+                </Button>
+                <Button onClick={confirmRenew} disabled={renewing || !renewPlanId || !schoolId}>
+                  {renewing && <Loader2 className="size-4 mr-2 animate-spin" />}
+                  {renewing ? "Traitement en cours…" : renewError ? "Réessayer" : "Valider"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {schoolId && <SubscriptionHistory schoolId={schoolId} refreshKey={historyKey} />}
+
 
 
           <div className="grid md:grid-cols-3 gap-6">
