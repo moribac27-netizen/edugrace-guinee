@@ -277,6 +277,51 @@ function Landing() {
             </div>
           )}
 
+          <Dialog open={renewOpen} onOpenChange={setRenewOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Renouveler ou changer d'offre</DialogTitle>
+                <DialogDescription>
+                  Sélectionnez l'offre et le cycle de facturation souhaités.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <div className="text-sm font-medium mb-2">Offre</div>
+                  <Select value={renewPlanId} onValueChange={setRenewPlanId}>
+                    <SelectTrigger><SelectValue placeholder="Choisir une offre" /></SelectTrigger>
+                    <SelectContent>
+                      {plans.map((p) => (
+                        <SelectItem key={p.id} value={p.id}>
+                          {p.name} — {formatPrice(p.price_monthly)} {p.currency}/mois
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <div className="text-sm font-medium mb-2">Cycle de facturation</div>
+                  <Select value={renewCycle} onValueChange={(v: any) => setRenewCycle(v)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="monthly">Mensuel</SelectItem>
+                      <SelectItem value="yearly">Annuel</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setRenewOpen(false)} disabled={renewing}>
+                  Annuler
+                </Button>
+                <Button onClick={confirmRenew} disabled={renewing || !renewPlanId || !schoolId}>
+                  {renewing ? "Traitement…" : "Confirmer"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+
           <div className="grid md:grid-cols-3 gap-6">
             {loading && Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="p-8 rounded-2xl border bg-card animate-pulse h-96" />
