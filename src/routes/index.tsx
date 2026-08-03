@@ -74,7 +74,39 @@ function Landing() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+  const [schoolId, setSchoolId] = useState<string | null>(null);
   const [currentSub, setCurrentSub] = useState<CurrentSub>(null);
+  const [renewOpen, setRenewOpen] = useState(false);
+  const [renewPlanId, setRenewPlanId] = useState<string>("");
+  const [renewCycle, setRenewCycle] = useState<"monthly" | "yearly">("monthly");
+  const [renewing, setRenewing] = useState(false);
+
+  async function refreshSubscription(sid: string) {
+    const { data: sub } = await (supabase as any)
+      .from("school_subscriptions")
+      .select("id,status,trial_ends_at,current_period_end,plan:subscription_plans(name,code)")
+      .eq("school_id", sid)
+      .maybeSingle();
+    setCurrentSub(sub ?? null);
+  }
+
+  async function confirmRenew() {
+    if (!schoolId || !renewPlanId) return;
+    setRenewing(true);
+    const { error } = await (supabase as any).rpc("renew_or_change_subscription", {
+      p_school_id: schoolId,
+      p_new_plan_id: renewPlanId,
+      p_billing_cycle: renewCycle,
+    });
+    setRenewing(false);
+    if (error) {
+      toast.error(error.message || "Impossible de mettre à jour l'abonnement.");
+      return;
+    }
+    toast.success("Abonnement mis à jour avec succès.");
+    setRenewOpen(false);
+    await refreshSubscription(schoolId);
+  }
 
   useEffect(() => {
     (async () => {
@@ -99,14 +131,11 @@ function Landing() {
       const { data: prof } = await supabase
         .from("profiles").select("school_id").eq("id", u.user.id).maybeSingle();
       if (!prof?.school_id) return;
-      const { data: sub } = await (supabase as any)
-        .from("school_subscriptions")
-        .select("id,status,trial_ends_at,current_period_end,plan:subscription_plans(name,code)")
-        .eq("school_id", prof.school_id)
-        .maybeSingle();
-      setCurrentSub(sub ?? null);
+      setSchoolId(prof.school_id);
+      await refreshSubscription(prof.school_id);
     })();
   }, []);
+
 
   function handleChoose(planCode: string) {
     if (userId) {
