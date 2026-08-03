@@ -6,10 +6,12 @@ import {
 } from "@/components/ui/accordion";
 import {
   School, Users, GraduationCap, ClipboardList, CreditCard, Megaphone,
-  BarChart3, Check, X, ArrowRight, Sparkles,
+  BarChart3, Check, X, ArrowRight, Sparkles, Loader2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { SubscriptionHistory } from "@/components/SubscriptionHistory";
 import { toast } from "sonner";
+
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
