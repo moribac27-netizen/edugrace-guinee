@@ -3116,6 +3116,7 @@ export type Database = {
         | "parent"
         | "eleve"
         | "comptable"
+        | "surveillant"
       contract_status: "actif" | "suspendu" | "termine"
       exam_type: "composition" | "devoir" | "controle" | "examen"
       expense_type:
@@ -3292,6 +3293,7 @@ export const Constants = {
         "parent",
         "eleve",
         "comptable",
+        "surveillant",
       ],
       contract_status: ["actif", "suspendu", "termine"],
       exam_type: ["composition", "devoir", "controle", "examen"],

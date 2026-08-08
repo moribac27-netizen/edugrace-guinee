@@ -5,7 +5,7 @@ import { useClassOptions } from "@/hooks/useOptions";
 import { Badge } from "@/components/ui/badge";
 import { fmtDate } from "@/lib/reports";
 
-const ROLES = ["admin", "directeur", "enseignant", "comptable", "parent", "eleve"];
+const ROLES = ["admin", "directeur", "enseignant", "surveillant", "comptable", "parent", "eleve"];
 
 export function CircularsPanel({ uid }: { uid: string | null }) {
   const { options: classOptions } = useClassOptions();

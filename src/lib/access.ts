@@ -14,14 +14,14 @@ export const ROUTE_ACCESS: Array<{ prefix: string; roles: AppRole[] | "*" }> = [
   { prefix: "/salaires", roles: ["admin", "directeur", "comptable"] },
   { prefix: "/paiements", roles: ["admin", "directeur", "comptable"] },
   { prefix: "/rapports", roles: ["admin", "directeur", "comptable"] },
-  { prefix: "/eleves", roles: ["admin", "directeur", "enseignant"] },
+  { prefix: "/eleves", roles: ["admin", "directeur", "enseignant", "surveillant"] },
   { prefix: "/enseignants", roles: ["admin", "directeur"] },
   { prefix: "/matieres", roles: ["admin", "directeur"] },
-  { prefix: "/cartes", roles: ["admin", "directeur"] },
+  { prefix: "/cartes", roles: ["admin", "directeur", "surveillant"] },
   { prefix: "/classes", roles: ["admin", "directeur"] },
   { prefix: "/affectations", roles: ["admin", "directeur"] },
-  { prefix: "/emploi-du-temps", roles: ["admin", "directeur", "enseignant"] },
-  { prefix: "/presences", roles: ["admin", "directeur", "enseignant"] },
+  { prefix: "/emploi-du-temps", roles: ["admin", "directeur", "enseignant", "surveillant"] },
+  { prefix: "/presences", roles: ["admin", "directeur", "enseignant", "surveillant"] },
   { prefix: "/notes", roles: ["admin", "directeur", "enseignant"] },
   { prefix: "/examens", roles: ["admin", "directeur", "enseignant"] },
   { prefix: "/bulletins", roles: ["admin", "directeur", "enseignant"] },
@@ -30,8 +30,8 @@ export const ROUTE_ACCESS: Array<{ prefix: string; roles: AppRole[] | "*" }> = [
   { prefix: "/transport", roles: ["admin", "directeur", "comptable"] },
   { prefix: "/cantine", roles: ["admin", "directeur", "comptable"] },
 
-  { prefix: "/annonces", roles: ["admin", "directeur", "enseignant"] },
-  { prefix: "/dashboard", roles: ["admin", "directeur", "enseignant", "comptable"] },
+  { prefix: "/annonces", roles: ["admin", "directeur", "enseignant", "surveillant"] },
+  { prefix: "/dashboard", roles: ["admin", "directeur", "enseignant", "comptable", "surveillant"] },
   { prefix: "/parent", roles: ["parent"] },
   { prefix: "/eleve", roles: ["eleve"] },
   { prefix: "/calendrier", roles: "*" },
@@ -56,7 +56,7 @@ export function homeForRoles(roles: AppRole[], isSuperAdmin: boolean): string {
   if (isSuperAdmin) return "/super-admin";
   if (roles.includes("admin") || roles.includes("directeur")) return "/dashboard";
   if (roles.includes("comptable")) return "/paiements";
-  if (roles.includes("enseignant")) return "/dashboard";
+  if (roles.includes("enseignant") || roles.includes("surveillant")) return "/dashboard";
   if (roles.includes("parent")) return "/parent";
   if (roles.includes("eleve")) return "/eleve";
   return "/dashboard";
