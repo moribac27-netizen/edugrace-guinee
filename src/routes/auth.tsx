@@ -11,6 +11,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { School, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { logLogin } from "@/lib/audit";
+import { resolveUserHome } from "@/lib/auth-redirect";
 
 
 const emptySignUp = { email: "", password: "", fullName: "", phone: "", schoolName: "", schoolAddress: "", schoolPhone: "" };
@@ -22,7 +23,7 @@ export const Route = createFileRoute("/auth")({
     const { data } = await supabase.auth.getUser();
     if (data.user) {
       if (search.plan) throw redirect({ to: "/souscription", search: { plan: search.plan } });
-      throw redirect({ to: "/dashboard" });
+      throw redirect({ to: await resolveUserHome() });
     }
   },
   head: () => ({ meta: [{ title: "Connexion — MBGEduGuinée" }] }),
@@ -38,17 +39,7 @@ function AuthPage() {
 
   const afterAuth = async () => {
     if (plan) return navigate({ to: "/souscription", search: { plan } });
-    const { data: user } = await supabase.auth.getUser();
-    if (user.user) {
-      const [{ data: roleRows }, { data: saRow }] = await Promise.all([
-        supabase.from("user_roles").select("role").eq("user_id", user.user.id),
-        supabase.from("super_admins").select("user_id").eq("user_id", user.user.id).maybeSingle(),
-      ]);
-      const roles = (roleRows ?? []).map((r: any) => r.role);
-      const { homeForRoles } = await import("@/lib/access");
-      return navigate({ to: homeForRoles(roles, !!saRow) });
-    }
-    navigate({ to: "/dashboard" });
+    return navigate({ to: await resolveUserHome(), replace: true });
   };
 
   const [unconfirmedEmail, setUnconfirmedEmail] = useState<string | null>(null);
@@ -148,7 +139,7 @@ function AuthPage() {
   }
 
   async function handleGoogle() {
-    const dest = plan ? `/souscription?plan=${encodeURIComponent(plan)}` : "/dashboard";
+    const dest = plan ? `/auth?plan=${encodeURIComponent(plan)}` : "/auth";
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin + dest,
     });
