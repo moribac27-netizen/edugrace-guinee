@@ -446,6 +446,7 @@ function NewBroadcastDialog({ uid }: { uid: string | null }) {
                   <SelectItem value="eleve">Élèves</SelectItem>
                   <SelectItem value="enseignant">Enseignants</SelectItem>
                   <SelectItem value="directeur">Directeurs</SelectItem>
+                  <SelectItem value="surveillant">Surveillants</SelectItem>
                   <SelectItem value="comptable">Comptables</SelectItem>
                 </SelectContent>
               </Select>

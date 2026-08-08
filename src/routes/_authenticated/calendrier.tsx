@@ -215,7 +215,7 @@ function buildMonthGrid(cursor: Date): Date[] {
   });
 }
 
-const ROLES = ["admin", "directeur", "enseignant", "parent", "eleve", "comptable"];
+const ROLES = ["admin", "directeur", "enseignant", "surveillant", "parent", "eleve", "comptable"];
 
 function NewEventDialog({ onCreated }: { onCreated: () => void }) {
   const [open, setOpen] = useState(false);

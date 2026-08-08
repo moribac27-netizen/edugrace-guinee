@@ -239,6 +239,7 @@ function Dashboard() {
   const roleLabel =
     role === "comptable" ? "Vue financière" :
     role === "enseignant" ? "Vue pédagogique" :
+    role === "surveillant" ? "Vue vie scolaire" :
     "Vue direction";
 
   return (
