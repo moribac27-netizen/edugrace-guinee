@@ -14,6 +14,16 @@ export function RoleGuard() {
 
   useEffect(() => {
     if (rolesLoading || saLoading) return;
+    // Compte sans rôle attribué : aucun espace ne lui correspond.
+    if (!isSuperAdmin && roles.length === 0) {
+      if (lastDeniedRef.current === "__no-role__") return;
+      lastDeniedRef.current = "__no-role__";
+      toast.error("Compte non rattaché", {
+        description: "Aucun rôle ne vous a encore été attribué. Contactez l'administrateur de votre établissement.",
+      });
+      void supabase.auth.signOut().then(() => navigate({ to: "/auth", replace: true }));
+      return;
+    }
     if (canAccess(pathname, roles, isSuperAdmin)) {
       lastDeniedRef.current = null;
       return;
