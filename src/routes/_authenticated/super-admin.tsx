@@ -603,6 +603,8 @@ function SuperAdminDashboard() {
         </DialogContent>
       </Dialog>
 
+      <SubscriptionPaymentRequests />
+
       {/* Edit school dialog */}
       <Dialog open={!!edit} onOpenChange={(o) => !o && setEdit(null)}>
         <DialogContent>
