@@ -30,6 +30,7 @@ import {
   Pencil, KeyRound, LogIn, Clock, HardDrive, ChevronUp, ChevronDown, Eye, Copy, Ban,
 } from "lucide-react";
 import { toast } from "sonner";
+import SubscriptionPaymentRequests from "@/components/SubscriptionPaymentRequests";
 
 export const Route = createFileRoute("/_authenticated/super-admin")({
   head: () => ({ meta: [
