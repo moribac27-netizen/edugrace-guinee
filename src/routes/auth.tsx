@@ -18,7 +18,8 @@ const emptySignUp = { email: "", password: "", fullName: "", phone: "", schoolNa
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  validateSearch: (s: Record<string, unknown>) => ({ plan: (s.plan as string) || undefined }),
+  validateSearch: (s: Record<string, unknown>): { plan?: string } =>
+    s.plan ? { plan: String(s.plan) } : {},
   beforeLoad: async ({ search }) => {
     const { data } = await supabase.auth.getUser();
     if (data.user) {

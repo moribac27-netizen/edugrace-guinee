@@ -2389,6 +2389,81 @@ export type Database = {
           },
         ]
       }
+      subscription_payment_requests: {
+        Row: {
+          amount: number
+          billing_cycle: string
+          created_at: string
+          currency: string
+          id: string
+          payer_name: string | null
+          payer_phone: string | null
+          plan_id: string
+          provider: string
+          rejection_reason: string | null
+          requested_by: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          school_id: string
+          status: string
+          transaction_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          billing_cycle?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          payer_name?: string | null
+          payer_phone?: string | null
+          plan_id: string
+          provider?: string
+          rejection_reason?: string | null
+          requested_by?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          school_id: string
+          status?: string
+          transaction_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          billing_cycle?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          payer_name?: string | null
+          payer_phone?: string | null
+          plan_id?: string
+          provider?: string
+          rejection_reason?: string | null
+          requested_by?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          school_id?: string
+          status?: string
+          transaction_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_payment_requests_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_payment_requests_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscription_plans: {
         Row: {
           code: string
@@ -3057,6 +3132,34 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "school_subscriptions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      review_subscription_payment_request: {
+        Args: { p_approve: boolean; p_reason?: string; p_request_id: string }
+        Returns: {
+          amount: number
+          billing_cycle: string
+          created_at: string
+          currency: string
+          id: string
+          payer_name: string | null
+          payer_phone: string | null
+          plan_id: string
+          provider: string
+          rejection_reason: string | null
+          requested_by: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          school_id: string
+          status: string
+          transaction_id: string | null
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "subscription_payment_requests"
           isOneToOne: true
           isSetofReturn: false
         }

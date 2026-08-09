@@ -104,40 +104,15 @@ function Landing() {
   }
 
   async function confirmRenew() {
-    if (!schoolId || !renewPlanId) return;
+    if (!renewPlanId) return;
     setRenewing(true);
     setRenewError(null);
     try {
-      const { error } = await (supabase as any).rpc("renew_or_change_subscription", {
-        p_school_id: schoolId,
-        p_new_plan_id: renewPlanId,
-        p_billing_cycle: renewCycle,
-      });
-      if (error) throw error;
-
-      toast.success("Abonnement mis à jour avec succès.");
+      const code = plans.find((p) => p.id === renewPlanId)?.code;
       setConfirmOpen(false);
       setRenewOpen(false);
-
-      // Re-fetch immédiat + léger polling pour refléter la mise à jour
-      const expected = renewPlanId;
-      await refreshSubscription(schoolId);
-      for (let i = 0; i < 3; i++) {
-        const sub = await new Promise<any>((r) =>
-          setTimeout(async () => r(await refreshSubscription(schoolId)), 1200),
-        );
-        if (sub?.plan?.code && plans.find((p) => p.id === expected)?.code === sub.plan.code) break;
-      }
-      setHistoryKey((k) => k + 1);
-    } catch (e: any) {
-      const offline = typeof navigator !== "undefined" && !navigator.onLine;
-      const msg = offline
-        ? "Connexion internet indisponible. Vérifiez votre réseau puis réessayez."
-        : /fetch|network|timeout|timed out|failed to fetch/i.test(e?.message ?? "")
-          ? "Le serveur ne répond pas (réseau ou délai dépassé). Veuillez réessayer."
-          : e?.message || "Impossible de mettre à jour l'abonnement.";
-      setRenewError(msg);
-      toast.error(msg, { action: { label: "Réessayer", onClick: () => confirmRenew() } });
+      toast.info("Réglez votre abonnement par Orange Money pour l'activer.");
+      navigate({ to: "/souscription", search: code ? { plan: code } : {} });
     } finally {
       setRenewing(false);
     }
