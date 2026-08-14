@@ -475,9 +475,18 @@ function Landing() {
                   </thead>
                   <tbody>
                     <tr className="border-t">
-                      <td className="p-4 text-muted-foreground">Prix mensuel</td>
+                      <td className="p-4 text-muted-foreground">{publicCycle === "yearly" ? "Prix annuel" : "Prix mensuel"}</td>
                       {plans.map((p) => (
-                        <td key={p.id} className="p-4 text-center font-semibold">{formatPrice(p.price_monthly)} {p.currency}</td>
+                        <td key={p.id} className="p-4 text-center font-semibold">
+                          {publicCycle === "yearly" ? (
+                            <div>
+                              <div>{formatPrice(getYearlyPrice(p))} {p.currency}</div>
+                              <div className="text-xs text-primary font-medium mt-1">2 mois offerts</div>
+                            </div>
+                          ) : (
+                            <span>{formatPrice(p.price_monthly)} {p.currency}</span>
+                          )}
+                        </td>
                       ))}
                     </tr>
                     <tr className="border-t">
