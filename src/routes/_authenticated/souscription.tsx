@@ -34,12 +34,8 @@ type PayRequest = {
 };
 
 export const Route = createFileRoute("/_authenticated/souscription")({
-  validateSearch: (s: Record<string, unknown>): { plan?: string; cycle?: "monthly" | "yearly" } => {
-    const out: { plan?: string; cycle?: "monthly" | "yearly" } = {};
-    if (s.plan) out.plan = String(s.plan);
-    if (s.cycle === "monthly" || s.cycle === "yearly") out.cycle = s.cycle;
-    return out;
-  },
+  validateSearch: (s: Record<string, unknown>): { plan?: string } =>
+    s.plan ? { plan: String(s.plan) } : {},
   head: () => ({
     meta: [
       { title: "Abonnement école — MBGEduGuinée" },
@@ -60,16 +56,14 @@ function fdate(v: string | null) {
 }
 
 function SubscriptionPage() {
-  const { plan: planParam, cycle: cycleParam } = useSearch({ from: "/_authenticated/souscription" });
+  const { plan: planParam } = useSearch({ from: "/_authenticated/souscription" });
   const navigate = useNavigate();
   const [plans, setPlans] = useState<Plan[]>([]);
   const [sub, setSub] = useState<Sub | null>(null);
   const [requests, setRequests] = useState<PayRequest[]>([]);
   const [schoolId, setSchoolId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
-  const [cycle, setCycle] = useState<"monthly" | "yearly">(
-    cycleParam === "yearly" || cycleParam === "monthly" ? cycleParam : "monthly",
-  );
+  const [cycle, setCycle] = useState<"monthly" | "yearly">("monthly");
   const [loading, setLoading] = useState(true);
 
   // Dialogue de paiement Orange Money
@@ -98,13 +92,7 @@ function SubscriptionPage() {
       .eq("school_id", prof.school_id).maybeSingle();
     if (s?.plan) s.plan.features = Array.isArray(s.plan.features) ? s.plan.features : [];
     setSub(s ?? null);
-    const effectiveCycle: "monthly" | "yearly" =
-      cycleParam === "yearly" || cycleParam === "monthly"
-        ? cycleParam
-        : s?.billing_cycle === "yearly" || s?.billing_cycle === "monthly"
-          ? s.billing_cycle
-          : "monthly";
-    setCycle(effectiveCycle);
+    if (s?.billing_cycle) setCycle(s.billing_cycle);
 
     const { data: reqs } = await (supabase as any)
       .from("subscription_payment_requests")

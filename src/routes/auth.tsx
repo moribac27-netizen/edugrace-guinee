@@ -18,19 +18,12 @@ const emptySignUp = { email: "", password: "", fullName: "", phone: "", schoolNa
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  validateSearch: (s: Record<string, unknown>): { plan?: string; cycle?: "monthly" | "yearly" } => {
-    const out: { plan?: string; cycle?: "monthly" | "yearly" } = {};
-    if (s.plan) out.plan = String(s.plan);
-    if (s.cycle === "monthly" || s.cycle === "yearly") out.cycle = s.cycle;
-    return out;
-  },
+  validateSearch: (s: Record<string, unknown>): { plan?: string } =>
+    s.plan ? { plan: String(s.plan) } : {},
   beforeLoad: async ({ search }) => {
     const { data } = await supabase.auth.getUser();
     if (data.user) {
-      const subSearch: { plan?: string; cycle?: "monthly" | "yearly" } = {};
-      if (search.plan) subSearch.plan = search.plan;
-      if (search.cycle) subSearch.cycle = search.cycle;
-      if (search.plan) throw redirect({ to: "/souscription", search: subSearch });
+      if (search.plan) throw redirect({ to: "/souscription", search: { plan: search.plan } });
       throw redirect({ to: await resolveUserHome() });
     }
   },
@@ -39,18 +32,14 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { plan, cycle } = useSearch({ from: "/auth" });
+  const { plan } = useSearch({ from: "/auth" });
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [signIn, setSignIn] = useState({ email: "", password: "" });
   const [signUp, setSignUp] = useState(emptySignUp);
 
   const afterAuth = async () => {
-    if (plan) {
-      const subSearch: { plan: string; cycle?: "monthly" | "yearly" } = { plan };
-      if (cycle) subSearch.cycle = cycle;
-      return navigate({ to: "/souscription", search: subSearch });
-    }
+    if (plan) return navigate({ to: "/souscription", search: { plan } });
     return navigate({ to: await resolveUserHome(), replace: true });
   };
 
