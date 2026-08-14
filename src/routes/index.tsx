@@ -78,6 +78,16 @@ function formatDate(v: string | null) {
   return new Date(v).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
 }
 
+const YEARLY_PRICES: Record<string, number> = {
+  basic: 1_000_000,
+  standard: 1_500_000,
+  premium: 2_000_000,
+};
+
+function getYearlyPrice(plan: Plan) {
+  return YEARLY_PRICES[plan.code] ?? plan.price_monthly * 10;
+}
+
 function Landing() {
   const navigate = useNavigate();
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -92,6 +102,7 @@ function Landing() {
   const [renewing, setRenewing] = useState(false);
   const [renewError, setRenewError] = useState<string | null>(null);
   const [historyKey, setHistoryKey] = useState(0);
+  const [publicCycle, setPublicCycle] = useState<"monthly" | "yearly">("monthly");
 
   async function refreshSubscription(sid: string) {
     const { data: sub } = await (supabase as any)
