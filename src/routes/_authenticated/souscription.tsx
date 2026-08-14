@@ -60,14 +60,16 @@ function fdate(v: string | null) {
 }
 
 function SubscriptionPage() {
-  const { plan: planParam } = useSearch({ from: "/_authenticated/souscription" });
+  const { plan: planParam, cycle: cycleParam } = useSearch({ from: "/_authenticated/souscription" });
   const navigate = useNavigate();
   const [plans, setPlans] = useState<Plan[]>([]);
   const [sub, setSub] = useState<Sub | null>(null);
   const [requests, setRequests] = useState<PayRequest[]>([]);
   const [schoolId, setSchoolId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
-  const [cycle, setCycle] = useState<"monthly" | "yearly">("monthly");
+  const [cycle, setCycle] = useState<"monthly" | "yearly">(
+    cycleParam === "yearly" || cycleParam === "monthly" ? cycleParam : "monthly",
+  );
   const [loading, setLoading] = useState(true);
 
   // Dialogue de paiement Orange Money
