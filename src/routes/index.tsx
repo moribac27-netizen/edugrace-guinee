@@ -78,6 +78,16 @@ function formatDate(v: string | null) {
   return new Date(v).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
 }
 
+const YEARLY_PRICES: Record<string, number> = {
+  basic: 1_000_000,
+  standard: 1_500_000,
+  premium: 2_000_000,
+};
+
+function getYearlyPrice(plan: Plan) {
+  return YEARLY_PRICES[plan.code] ?? plan.price_monthly * 10;
+}
+
 function Landing() {
   const navigate = useNavigate();
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -92,6 +102,7 @@ function Landing() {
   const [renewing, setRenewing] = useState(false);
   const [renewError, setRenewError] = useState<string | null>(null);
   const [historyKey, setHistoryKey] = useState(0);
+  const [publicCycle, setPublicCycle] = useState<"monthly" | "yearly">("monthly");
 
   async function refreshSubscription(sid: string) {
     const { data: sub } = await (supabase as any)
@@ -150,9 +161,9 @@ function Landing() {
 
   function handleChoose(planCode: string) {
     if (userId) {
-      navigate({ to: "/souscription", search: { plan: planCode } as any });
+      navigate({ to: "/souscription", search: { plan: planCode, cycle: publicCycle } as any });
     } else {
-      navigate({ to: "/auth", search: { plan: planCode } as any });
+      navigate({ to: "/auth", search: { plan: planCode, cycle: publicCycle } as any });
     }
   }
 
@@ -249,6 +260,38 @@ function Landing() {
             </div>
             <h2 className="font-display text-3xl md:text-4xl font-bold">Des tarifs adaptés à chaque école</h2>
             <p className="mt-4 text-muted-foreground">Sans engagement. Annulez à tout moment.</p>
+          </div>
+
+          {/* Sélecteur Mensuel / Annuel */}
+          <div className="flex justify-center mb-10">
+            <div className="inline-flex items-center gap-1 p-1 rounded-xl bg-muted border">
+              <button
+                type="button"
+                onClick={() => setPublicCycle("monthly")}
+                className={
+                  "px-4 py-2 rounded-lg text-sm font-medium transition-all " +
+                  (publicCycle === "monthly"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground")
+                }
+                aria-pressed={publicCycle === "monthly"}
+              >
+                Mensuel
+              </button>
+              <button
+                type="button"
+                onClick={() => setPublicCycle("yearly")}
+                className={
+                  "px-4 py-2 rounded-lg text-sm font-medium transition-all " +
+                  (publicCycle === "yearly"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground")
+                }
+                aria-pressed={publicCycle === "yearly"}
+              >
+                Annuel
+              </button>
+            </div>
           </div>
 
           {currentSub && (
@@ -382,11 +425,20 @@ function Landing() {
                 <h3 className="font-display text-2xl font-bold">{p.name}</h3>
                 {p.description && <p className="text-sm text-muted-foreground mt-2">{p.description}</p>}
                 <div className="mt-4 flex items-baseline gap-1">
-                  <span className="text-4xl font-bold">{formatPrice(p.price_monthly)}</span>
-                  <span className="text-muted-foreground">{p.currency}/mois</span>
+                  <span className="text-4xl font-bold">
+                    {publicCycle === "yearly" ? formatPrice(getYearlyPrice(p)) : formatPrice(p.price_monthly)}
+                  </span>
+                  <span className="text-muted-foreground">{p.currency}/{publicCycle === "yearly" ? "an" : "mois"}</span>
                 </div>
-                <div className="mt-2 text-xs inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent/20 text-accent-foreground">
-                  <Sparkles className="size-3" /> 30 jours gratuits
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <span className="text-xs inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent/20 text-accent-foreground">
+                    <Sparkles className="size-3" /> 30 jours gratuits
+                  </span>
+                  {publicCycle === "yearly" && (
+                    <span className="text-xs inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">
+                      <Sparkles className="size-3" /> 2 mois offerts
+                    </span>
+                  )}
                 </div>
                 <ul className="mt-6 space-y-2 text-sm">
                   {p.features.map((f) => (
@@ -423,9 +475,18 @@ function Landing() {
                   </thead>
                   <tbody>
                     <tr className="border-t">
-                      <td className="p-4 text-muted-foreground">Prix mensuel</td>
+                      <td className="p-4 text-muted-foreground">{publicCycle === "yearly" ? "Prix annuel" : "Prix mensuel"}</td>
                       {plans.map((p) => (
-                        <td key={p.id} className="p-4 text-center font-semibold">{formatPrice(p.price_monthly)} {p.currency}</td>
+                        <td key={p.id} className="p-4 text-center font-semibold">
+                          {publicCycle === "yearly" ? (
+                            <div>
+                              <div>{formatPrice(getYearlyPrice(p))} {p.currency}</div>
+                              <div className="text-xs text-primary font-medium mt-1">2 mois offerts</div>
+                            </div>
+                          ) : (
+                            <span>{formatPrice(p.price_monthly)} {p.currency}</span>
+                          )}
+                        </td>
                       ))}
                     </tr>
                     <tr className="border-t">
