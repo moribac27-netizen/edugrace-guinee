@@ -262,6 +262,38 @@ function Landing() {
             <p className="mt-4 text-muted-foreground">Sans engagement. Annulez à tout moment.</p>
           </div>
 
+          {/* Sélecteur Mensuel / Annuel */}
+          <div className="flex justify-center mb-10">
+            <div className="inline-flex items-center gap-1 p-1 rounded-xl bg-muted border">
+              <button
+                type="button"
+                onClick={() => setPublicCycle("monthly")}
+                className={
+                  "px-4 py-2 rounded-lg text-sm font-medium transition-all " +
+                  (publicCycle === "monthly"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground")
+                }
+                aria-pressed={publicCycle === "monthly"}
+              >
+                Mensuel
+              </button>
+              <button
+                type="button"
+                onClick={() => setPublicCycle("yearly")}
+                className={
+                  "px-4 py-2 rounded-lg text-sm font-medium transition-all " +
+                  (publicCycle === "yearly"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground")
+                }
+                aria-pressed={publicCycle === "yearly"}
+              >
+                Annuel
+              </button>
+            </div>
+          </div>
+
           {currentSub && (
             <div className="max-w-3xl mx-auto mb-10 p-5 rounded-xl border bg-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
