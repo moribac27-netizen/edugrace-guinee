@@ -161,9 +161,9 @@ function Landing() {
 
   function handleChoose(planCode: string) {
     if (userId) {
-      navigate({ to: "/souscription", search: { plan: planCode } as any });
+      navigate({ to: "/souscription", search: { plan: planCode, cycle: publicCycle } as any });
     } else {
-      navigate({ to: "/auth", search: { plan: planCode } as any });
+      navigate({ to: "/auth", search: { plan: planCode, cycle: publicCycle } as any });
     }
   }
 
