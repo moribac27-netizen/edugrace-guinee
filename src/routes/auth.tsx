@@ -39,14 +39,18 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { plan } = useSearch({ from: "/auth" });
+  const { plan, cycle } = useSearch({ from: "/auth" });
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [signIn, setSignIn] = useState({ email: "", password: "" });
   const [signUp, setSignUp] = useState(emptySignUp);
 
   const afterAuth = async () => {
-    if (plan) return navigate({ to: "/souscription", search: { plan } });
+    if (plan) {
+      const subSearch: { plan: string; cycle?: "monthly" | "yearly" } = { plan };
+      if (cycle) subSearch.cycle = cycle;
+      return navigate({ to: "/souscription", search: subSearch });
+    }
     return navigate({ to: await resolveUserHome(), replace: true });
   };
 
