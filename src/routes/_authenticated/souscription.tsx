@@ -58,7 +58,7 @@ function fdate(v: string | null) {
 }
 
 function SubscriptionPage() {
-  const { plan: planParam } = useSearch({ from: "/_authenticated/souscription" });
+  const { plan: planParam, cycle: cycleParam } = useSearch({ from: "/_authenticated/souscription" });
   const navigate = useNavigate();
   const [plans, setPlans] = useState<Plan[]>([]);
   const [sub, setSub] = useState<Sub | null>(null);
