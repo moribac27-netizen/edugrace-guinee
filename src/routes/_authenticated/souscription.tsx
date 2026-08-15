@@ -34,8 +34,10 @@ type PayRequest = {
 };
 
 export const Route = createFileRoute("/_authenticated/souscription")({
-  validateSearch: (s: Record<string, unknown>): { plan?: string } =>
-    s.plan ? { plan: String(s.plan) } : {},
+  validateSearch: (s: Record<string, unknown>): { plan?: string; cycle?: "monthly" | "yearly" } => ({
+    ...(s.plan ? { plan: String(s.plan) } : {}),
+    ...(s.cycle === "yearly" || s.cycle === "monthly" ? { cycle: s.cycle } : {}),
+  }),
   head: () => ({
     meta: [
       { title: "Abonnement école — MBGEduGuinée" },
