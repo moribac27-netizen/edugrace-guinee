@@ -18,12 +18,14 @@ const emptySignUp = { email: "", password: "", fullName: "", phone: "", schoolNa
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  validateSearch: (s: Record<string, unknown>): { plan?: string } =>
-    s.plan ? { plan: String(s.plan) } : {},
+  validateSearch: (s: Record<string, unknown>): { plan?: string; cycle?: "monthly" | "yearly" } => ({
+    ...(s.plan ? { plan: String(s.plan) } : {}),
+    ...(s.cycle === "yearly" || s.cycle === "monthly" ? { cycle: s.cycle } : {}),
+  }),
   beforeLoad: async ({ search }) => {
     const { data } = await supabase.auth.getUser();
     if (data.user) {
-      if (search.plan) throw redirect({ to: "/souscription", search: { plan: search.plan } });
+      if (search.plan) throw redirect({ to: "/souscription", search: { plan: search.plan, ...(search.cycle ? { cycle: search.cycle } : {}) } });
       throw redirect({ to: await resolveUserHome() });
     }
   },
@@ -32,14 +34,14 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { plan } = useSearch({ from: "/auth" });
+  const { plan, cycle } = useSearch({ from: "/auth" });
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [signIn, setSignIn] = useState({ email: "", password: "" });
   const [signUp, setSignUp] = useState(emptySignUp);
 
   const afterAuth = async () => {
-    if (plan) return navigate({ to: "/souscription", search: { plan } });
+    if (plan) return navigate({ to: "/souscription", search: { plan, ...(cycle ? { cycle } : {}) } });
     return navigate({ to: await resolveUserHome(), replace: true });
   };
 
@@ -140,7 +142,9 @@ function AuthPage() {
   }
 
   async function handleGoogle() {
-    const dest = plan ? `/auth?plan=${encodeURIComponent(plan)}` : "/auth";
+    const dest = plan
+      ? `/auth?plan=${encodeURIComponent(plan)}${cycle ? `&cycle=${cycle}` : ""}`
+      : "/auth";
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin + dest,
     });
