@@ -412,11 +412,20 @@ function Landing() {
                 <h3 className="font-display text-2xl font-bold">{p.name}</h3>
                 {p.description && <p className="text-sm text-muted-foreground mt-2">{p.description}</p>}
                 <div className="mt-4 flex items-baseline gap-1">
-                  <span className="text-4xl font-bold">{formatPrice(p.price_monthly)}</span>
-                  <span className="text-muted-foreground">{p.currency}/mois</span>
+                  <span className="text-4xl font-bold">
+                    {formatPrice(publicCycle === "yearly" ? (p.price_yearly ?? p.price_monthly * 12) : p.price_monthly)}
+                  </span>
+                  <span className="text-muted-foreground">{p.currency}/{publicCycle === "yearly" ? "an" : "mois"}</span>
                 </div>
-                <div className="mt-2 text-xs inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent/20 text-accent-foreground">
-                  <Sparkles className="size-3" /> 30 jours gratuits
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <div className="text-xs inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent/20 text-accent-foreground">
+                    <Sparkles className="size-3" /> 30 jours gratuits
+                  </div>
+                  {publicCycle === "yearly" && (
+                    <div className="text-xs inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">
+                      2 mois offerts
+                    </div>
+                  )}
                 </div>
                 <ul className="mt-6 space-y-2 text-sm">
                   {p.features.map((f) => (
