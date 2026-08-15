@@ -18,12 +18,14 @@ const emptySignUp = { email: "", password: "", fullName: "", phone: "", schoolNa
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  validateSearch: (s: Record<string, unknown>): { plan?: string } =>
-    s.plan ? { plan: String(s.plan) } : {},
+  validateSearch: (s: Record<string, unknown>): { plan?: string; cycle?: "monthly" | "yearly" } => ({
+    ...(s.plan ? { plan: String(s.plan) } : {}),
+    ...(s.cycle === "yearly" || s.cycle === "monthly" ? { cycle: s.cycle } : {}),
+  }),
   beforeLoad: async ({ search }) => {
     const { data } = await supabase.auth.getUser();
     if (data.user) {
-      if (search.plan) throw redirect({ to: "/souscription", search: { plan: search.plan } });
+      if (search.plan) throw redirect({ to: "/souscription", search: { plan: search.plan, ...(search.cycle ? { cycle: search.cycle } : {}) } });
       throw redirect({ to: await resolveUserHome() });
     }
   },
