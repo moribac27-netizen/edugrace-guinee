@@ -41,7 +41,7 @@ function AuthPage() {
   const [signUp, setSignUp] = useState(emptySignUp);
 
   const afterAuth = async () => {
-    if (plan) return navigate({ to: "/souscription", search: { plan } });
+    if (plan) return navigate({ to: "/souscription", search: { plan, ...(cycle ? { cycle } : {}) } });
     return navigate({ to: await resolveUserHome(), replace: true });
   };
 
