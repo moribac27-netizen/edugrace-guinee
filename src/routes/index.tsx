@@ -92,6 +92,7 @@ function Landing() {
   const [renewing, setRenewing] = useState(false);
   const [renewError, setRenewError] = useState<string | null>(null);
   const [historyKey, setHistoryKey] = useState(0);
+  const [publicCycle, setPublicCycle] = useState<"monthly" | "yearly">("monthly");
 
   async function refreshSubscription(sid: string) {
     const { data: sub } = await (supabase as any)
