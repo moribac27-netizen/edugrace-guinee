@@ -65,7 +65,7 @@ function SubscriptionPage() {
   const [requests, setRequests] = useState<PayRequest[]>([]);
   const [schoolId, setSchoolId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
-  const [cycle, setCycle] = useState<"monthly" | "yearly">("monthly");
+  const [cycle, setCycle] = useState<"monthly" | "yearly">(cycleParam ?? "monthly");
   const [loading, setLoading] = useState(true);
 
   // Dialogue de paiement Orange Money
