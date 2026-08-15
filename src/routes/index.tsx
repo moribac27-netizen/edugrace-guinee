@@ -249,6 +249,33 @@ function Landing() {
             </div>
             <h2 className="font-display text-3xl md:text-4xl font-bold">Des tarifs adaptés à chaque école</h2>
             <p className="mt-4 text-muted-foreground">Sans engagement. Annulez à tout moment.</p>
+
+            <div className="mt-8 flex justify-center">
+              <div className="inline-flex items-center p-1 rounded-full border bg-card shadow-sm" role="group" aria-label="Cycle de facturation">
+                {([
+                  { v: "monthly", label: "Mensuel" },
+                  { v: "yearly", label: "Annuel" },
+                ] as const).map((o) => (
+                  <button
+                    key={o.v}
+                    type="button"
+                    aria-pressed={publicCycle === o.v}
+                    onClick={() => setPublicCycle(o.v)}
+                    className={
+                      "px-5 sm:px-6 py-2 rounded-full text-sm font-medium transition-colors " +
+                      (publicCycle === o.v
+                        ? "bg-primary text-primary-foreground shadow"
+                        : "text-muted-foreground hover:text-foreground")
+                    }
+                  >
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {publicCycle === "yearly" && (
+              <p className="mt-3 text-sm text-primary font-medium">Facturation annuelle — 2 mois offerts</p>
+            )}
           </div>
 
           {currentSub && (
