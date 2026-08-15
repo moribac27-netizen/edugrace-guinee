@@ -55,6 +55,7 @@ type Plan = {
   name: string;
   description: string | null;
   price_monthly: number;
+  price_yearly?: number | null;
   currency: string;
   student_limit: number | null;
   features: string[];
