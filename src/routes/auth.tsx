@@ -142,7 +142,9 @@ function AuthPage() {
   }
 
   async function handleGoogle() {
-    const dest = plan ? `/auth?plan=${encodeURIComponent(plan)}` : "/auth";
+    const dest = plan
+      ? `/auth?plan=${encodeURIComponent(plan)}${cycle ? `&cycle=${cycle}` : ""}`
+      : "/auth";
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin + dest,
     });
