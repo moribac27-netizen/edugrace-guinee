@@ -94,7 +94,7 @@ function SubscriptionPage() {
       .eq("school_id", prof.school_id).maybeSingle();
     if (s?.plan) s.plan.features = Array.isArray(s.plan.features) ? s.plan.features : [];
     setSub(s ?? null);
-    if (s?.billing_cycle) setCycle(s.billing_cycle);
+    if (!cycleParam && s?.billing_cycle) setCycle(s.billing_cycle);
 
     const { data: reqs } = await (supabase as any)
       .from("subscription_payment_requests")
