@@ -1929,6 +1929,65 @@ export type Database = {
           },
         ]
       }
+      school_events: {
+        Row: {
+          contact: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          ends_at: string | null
+          event_type: string
+          id: string
+          image_url: string | null
+          location: string | null
+          published: boolean
+          school_id: string
+          starts_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          contact?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          ends_at?: string | null
+          event_type?: string
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          published?: boolean
+          school_id: string
+          starts_at: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          contact?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          ends_at?: string | null
+          event_type?: string
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          published?: boolean
+          school_id?: string
+          starts_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "school_events_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       school_subscriptions: {
         Row: {
           billing_cycle: string
@@ -3220,6 +3279,8 @@ export type Database = {
         | "eleve"
         | "comptable"
         | "surveillant"
+        | "directeur_etudes"
+        | "proviseur"
       contract_status: "actif" | "suspendu" | "termine"
       exam_type: "composition" | "devoir" | "controle" | "examen"
       expense_type:
@@ -3397,6 +3458,8 @@ export const Constants = {
         "eleve",
         "comptable",
         "surveillant",
+        "directeur_etudes",
+        "proviseur",
       ],
       contract_status: ["actif", "suspendu", "termine"],
       exam_type: ["composition", "devoir", "controle", "examen"],
