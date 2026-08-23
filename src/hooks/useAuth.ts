@@ -2,7 +2,28 @@ import { useEffect, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
-export type AppRole = "admin" | "directeur" | "comptable" | "enseignant" | "surveillant" | "parent" | "eleve";
+export type AppRole =
+  | "admin"
+  | "directeur"
+  | "directeur_etudes"
+  | "proviseur"
+  | "comptable"
+  | "enseignant"
+  | "surveillant"
+  | "parent"
+  | "eleve";
+
+export const ROLE_LABELS: Record<AppRole, string> = {
+  admin: "Administrateur",
+  directeur: "Directeur",
+  directeur_etudes: "Directeur des études",
+  proviseur: "Proviseur",
+  comptable: "Comptable",
+  enseignant: "Enseignant",
+  surveillant: "Surveillant",
+  parent: "Parent",
+  eleve: "Élève",
+};
 
 export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
