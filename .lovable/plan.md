@@ -1,70 +1,60 @@
-## Objectif
+# Nouvelles fonctionnalités MBGEduGuinée
 
-Ajouter les nouveaux modules demandés sans toucher aux modules existants (élèves, notes, paiements, comptabilité, bulletins, cartes, matières, présences, salaires, souscription, super-admin), puis finaliser pour la production.
+Cinq chantiers ajoutés sans toucher aux modules existants (écoles, abonnements, cloisonnement par école, super admin).
 
-Le périmètre est trop large pour une seule étape : je propose 6 lots livrés dans l'ordre. Chaque lot = migration base de données + pages + entrées de menu + permissions par rôle.
+## 1. Espace public des événements inter-écoles
 
----
+Nouveau module « Événements » où chaque école publie ses événements (titre, description, date de début/fin, lieu, image optionnelle, école organisatrice) et consulte ceux des autres établissements.
 
-## Lot 1 — Infirmerie
+- Nouvelle table dédiée aux événements partagés, avec l'école organisatrice, un indicateur « publié » et une image.
+- Règles d'accès : lecture pour tout utilisateur connecté de n'importe quelle école (uniquement les événements publiés) ; création, modification et suppression réservées à la direction de l'école organisatrice.
+- Page `/evenements` : fil des événements de toute la plateforme avec filtre « Mon école / Toutes les écoles », badge de l'école organisatrice, et formulaire de publication visible uniquement pour les rôles habilités.
+- Images stockées dans le bucket privé existant, sous le dossier de l'école.
 
-Nouvelles tables (isolées par école, avec règles d'accès) :
-- `medical_records` : dossier médical de l'élève (groupe sanguin, allergies, maladies chroniques, contact d'urgence)
-- `medical_visits` : visites à l'infirmerie (date, motif, diagnostic, suite donnée)
-- `treatments` : traitements prescrits (posologie, durée, statut)
-- `medicines` : stock de médicaments (quantité, seuil d'alerte, péremption)
-- `accidents` : accidents (lieu, gravité, témoins, mesures prises)
+## 2. Espace Directeur des études / Proviseur
 
-Page `/infirmerie` avec onglets Dossiers / Visites / Traitements / Médicaments / Accidents.
-Accès : admin, directeur, + rôle infirmier si souhaité (sinon admin/directeur seulement).
-Le parent et l'élève voient en lecture seule leurs propres visites depuis leur espace.
+Deux nouveaux rôles rattachés à une école : `directeur_etudes` et `proviseur`.
 
-## Lot 2 — Transport scolaire
+- Ajout des rôles à la liste des rôles applicatifs, à la carte des droits d'accès et au menu.
+- Tableau de bord pédagogique `/direction-etudes` : effectifs par classe, moyennes et taux de réussite par classe et par matière, alertes (classes sans emploi du temps, absences du jour, notes non saisies), accès direct aux emplois du temps, notes, bulletins, présences et à la messagerie enseignants.
+- Droits : lecture/écriture sur le pédagogique (classes, matières, emplois du temps, notes, examens, bulletins, présences, affectations, annonces), aucun accès aux finances ni aux paramètres d'abonnement.
+- Cloisonnement identique aux autres rôles (données limitées à l'école du profil).
 
-Tables : `buses`, `drivers`, `routes` (circuits + arrêts), `transport_subscriptions` (élève ↔ circuit, tarif, période), `transport_attendance` (montée/descente par jour).
-Page `/transport` avec onglets. Accès : admin, directeur, comptable (abonnements/facturation).
+## 3. Impression carte élève au format PVC
 
-## Lot 3 — Cantine
+La carte scolaire actuelle reste inchangée. On ajoute une option d'impression supplémentaire sur la même page.
 
-Tables : `canteen_menus` (menu par jour/semaine), `canteen_subscriptions`, `canteen_payments`, `canteen_consumption` (repas consommés par élève et par jour).
-Page `/cantine` avec onglets + statistiques de consommation. Accès : admin, directeur, comptable.
+- Sélecteur de format d'impression : « A4 (10 par page) » (actuel, par défaut) ou « PVC CR80 ».
+- Format PVC : une carte par page, 85,6 × 54 mm exact, avec fonds perdus 2 mm et repères de coupe, recto (photo, identité, école) et verso (règlement court, contact école, code de vérification).
+- Aucun nouvel onglet ni nouveau module.
 
-## Lot 4 — Communication
+## 4. Application installable (PWA)
 
-Extension du module messagerie existant, sans le refaire :
-- onglet **Circulaires** : table `circulars` (titre, contenu, pièce jointe, cibles par rôle/classe, accusé de lecture)
-- onglet **Emails** : envoi d'emails groupés via une fonction serveur (nécessite la configuration d'un domaine d'envoi — voir Questions)
-- Messages internes : déjà existants, on conserve.
+- Manifest d'application, icônes générées à partir du logo MBGEduGuinée (192, 512, maskable, apple-touch-icon), thème aux couleurs du design.
+- Service worker minimal pour rendre l'installation possible et gérer le mode hors-ligne basique de la coquille.
+- Bouton « Installer l'application » discret quand le navigateur le propose.
+- Prise en charge Android, desktop et iOS (ajout à l'écran d'accueil).
 
-## Lot 5 — Rapports unifiés
+## 5. En-tête école sur tous les documents imprimables
 
-Refonte de la page `/rapports` existante en un centre de rapports avec 8 rapports : Élèves, Enseignants, Classes, Paiements, Comptabilité, Bulletins, Présences, Salaires.
-Chaque rapport : filtres (période, classe, statut), aperçu tableau, export **PDF** et **Excel (.xlsx)**.
-Mise en place d'un générateur commun (une seule couche d'export réutilisée partout).
+Un composant d'en-tête unique réutilisé par tous les documents : logo de l'école, nom, adresse, téléphone, e-mail, site, année scolaire ; pied de page avec la mention légale de l'école.
 
-## Lot 6 — Dashboard, Audit, Sauvegarde, Finition
-
-**Dashboard** (sans changer la structure) : ajout des indicateurs Parents, Classes, Paiements du jour, Paiements du mois, Dépenses du mois, Solde actuel, et des blocs Dernières activités / Dernières inscriptions / Derniers paiements / Dernières notes, plus les notifications. Variantes par rôle : Admin/Directeur (complet), Comptable (financier), Enseignant (classes, notes, présences), Parent/Élève (déjà spécifiques).
-
-**Audit** : journalisation automatique des connexions, déconnexions, créations, modifications, suppressions, paiements, saisies de notes et impressions de bulletins, via un point d'entrée unique appelé dans chaque module. Affichage : utilisateur, action, module, date, heure, IP. Accès Super Admin + Admin école.
-
-**Sauvegarde** : le module existant est conservé ; ajout de la restauration, de la planification automatique et de l'export de données.
-
-**Finition** : validation de tous les formulaires (schémas Zod), vérification des règles d'accès, responsive téléphone/tablette, animations légères, optimisation des requêtes, correction des erreurs TypeScript, documentation technique (`DOCUMENTATION.md`).
-
----
+- Appliqué aux bulletins, cartes (A4 et PVC), reçus de paiement, fiches et exports PDF de la comptabilité et des rapports.
+- Toutes les valeurs sont lues dynamiquement depuis le profil de l'école connectée.
 
 ## Détails techniques
 
-- Chaque table du schéma public reçoit ses `GRANT` puis ses politiques d'accès basées sur `same_school()` / `has_role()` / `is_finance()` déjà en place — aucune modification des politiques existantes.
-- Les exports PDF réutilisent l'impression navigateur déjà utilisée pour les bulletins ; les exports Excel utilisent une bibliothèque xlsx côté navigateur.
-- L'audit passe par le helper `logActivity` existant, étendu, plus des déclencheurs base de données pour paiements et notes.
-- Les envois d'emails nécessitent une clé de service d'envoi (Resend) et un domaine vérifié.
+- Migration unique : table `school_events` (avec GRANT + RLS : lecture `authenticated` sur les événements publiés, écriture restreinte à `same_school` + rôles de direction) et ajout des valeurs `directeur_etudes` / `proviseur` à l'enum `app_role`.
+- `src/hooks/useAuth.ts`, `src/lib/access.ts`, `src/components/AppShell.tsx` : intégration des deux nouveaux rôles (aucune règle existante supprimée).
+- Nouvelles routes : `src/routes/_authenticated/evenements.tsx`, `src/routes/_authenticated/direction-etudes.tsx`.
+- Nouveau composant `src/components/print/SchoolLetterhead.tsx` + hook de chargement des infos école, branché dans `BulletinDocument.tsx`, `cartes.tsx`, `src/lib/reports.ts` (métadonnées PDF) et les reçus.
+- PWA : `public/manifest.webmanifest`, icônes générées, `<link>` dans `src/routes/__root.tsx`, enregistrement du service worker côté client uniquement.
 
----
+## Ordre de livraison
 
-## Questions avant de démarrer
-
-1. Faut-il créer un rôle **infirmier** dédié, ou l'infirmerie reste-t-elle réservée à admin/directeur ?
-2. Pour les emails groupés : disposez-vous d'un nom de domaine pour l'expéditeur, ou reporte-t-on cette partie ?
-3. Je démarre par le Lot 1 (Infirmerie) et j'enchaîne lot par lot, en validant avec vous à chaque étape — cela vous convient ?
+1. Migration base de données (rôles + table événements) — validation requise.
+2. Rôles et espace Direction des études.
+3. Module Événements inter-écoles.
+4. En-tête école unifié sur les documents.
+5. Impression PVC.
+6. PWA et icônes.
