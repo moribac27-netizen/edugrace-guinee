@@ -3157,6 +3157,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_direction: { Args: { _user_id: string }; Returns: boolean }
       is_finance: { Args: { _user_id: string }; Returns: boolean }
       is_parent_of_student: {
         Args: { _student_id: string; _uid: string }
