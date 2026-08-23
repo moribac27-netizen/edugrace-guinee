@@ -62,11 +62,11 @@ export function useRoles() {
   return { roles, loading };
 }
 
-const STAFF_ROLES: AppRole[] = ["admin", "directeur", "comptable", "enseignant", "surveillant"];
+const STAFF_ROLES: AppRole[] = ["admin", "directeur", "directeur_etudes", "proviseur", "comptable", "enseignant", "surveillant"];
 
 export function primaryRole(roles: AppRole[]): AppRole | null {
   if (roles.length === 0) return null;
-  for (const r of ["admin", "directeur", "comptable", "enseignant", "surveillant", "parent", "eleve"] as AppRole[]) {
+  for (const r of ["admin", "directeur", "proviseur", "directeur_etudes", "comptable", "enseignant", "surveillant", "parent", "eleve"] as AppRole[]) {
     if (roles.includes(r)) return r;
   }
   return roles[0];
