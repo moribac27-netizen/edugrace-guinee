@@ -1,10 +1,11 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { School } from "lucide-react";
 import { maxScoreForLevel } from "@/lib/grading";
 import { StudentPhoto } from "@/components/StudentPhoto";
 import { BulletinAnalytics } from "@/components/BulletinAnalytics";
+import { SchoolLetterhead, SchoolPrintFooter } from "@/components/print/SchoolLetterhead";
+import { useSchool } from "@/hooks/useSchool";
 
 export const BULLETIN_PERIODS = [
   { v: "T1", l: "1er Trimestre" },
@@ -128,25 +129,13 @@ export function BulletinDocument({ studentId, classId, period, paged = false }: 
 
   const inner = (
     <div className={`bulletin bg-white text-black ${paged ? "p-[12mm]" : "p-8 rounded-lg border shadow-sm max-w-4xl mx-auto"}`}>
-      {/* Header */}
-      <div className="flex items-center justify-between border-b-2 border-black pb-4 mb-4">
-        <div className="text-xs">
-          <div className="font-bold">RÉPUBLIQUE DE GUINÉE</div>
-          <div>Travail — Justice — Solidarité</div>
-          <div className="mt-1">Ministère de l'Éducation Nationale</div>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="size-14 rounded-full bg-black text-white flex items-center justify-center">
-            <School className="size-7" />
-          </div>
-          <div className="font-bold text-sm mt-1">EDUGUINÉE</div>
-        </div>
-        <div className="text-xs text-right">
-          <div className="font-bold">Année scolaire</div>
-          <div>{SCHOOL_YEAR}</div>
-          <div className="mt-1 font-bold">{periodLabel(period)}</div>
-        </div>
-      </div>
+      {/* En-tête officiel de l'école (dynamique, multi-tenant) */}
+      <SchoolLetterhead
+        school={school}
+        logoUrl={logoUrl}
+        title="Bulletin de notes"
+        subtitle={periodLabel(period)}
+      />
 
       <div className="text-center mb-4">
         <h2 className="font-bold text-xl uppercase">Bulletin de notes</h2>

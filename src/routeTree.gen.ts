@@ -36,6 +36,7 @@ import { Route as AuthenticatedEnseignantsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedEmploiDuTempsRouteImport } from './routes/_authenticated/emploi-du-temps'
 import { Route as AuthenticatedElevesRouteImport } from './routes/_authenticated/eleves'
 import { Route as AuthenticatedEleveRouteImport } from './routes/_authenticated/eleve'
+import { Route as AuthenticatedDirectionEtudesRouteImport } from './routes/_authenticated/direction-etudes'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedComptabiliteRouteImport } from './routes/_authenticated/comptabilite'
 import { Route as AuthenticatedClassesRouteImport } from './routes/_authenticated/classes'
@@ -185,6 +186,12 @@ const AuthenticatedEleveRoute = AuthenticatedEleveRouteImport.update({
   path: '/eleve',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDirectionEtudesRoute =
+  AuthenticatedDirectionEtudesRouteImport.update({
+    id: '/direction-etudes',
+    path: '/direction-etudes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -252,6 +259,7 @@ export interface FileRoutesByFullPath {
   '/classes': typeof AuthenticatedClassesRoute
   '/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/direction-etudes': typeof AuthenticatedDirectionEtudesRoute
   '/eleve': typeof AuthenticatedEleveRoute
   '/eleves': typeof AuthenticatedElevesRoute
   '/emploi-du-temps': typeof AuthenticatedEmploiDuTempsRoute
@@ -290,6 +298,7 @@ export interface FileRoutesByTo {
   '/classes': typeof AuthenticatedClassesRoute
   '/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/direction-etudes': typeof AuthenticatedDirectionEtudesRoute
   '/eleve': typeof AuthenticatedEleveRoute
   '/eleves': typeof AuthenticatedElevesRoute
   '/emploi-du-temps': typeof AuthenticatedEmploiDuTempsRoute
@@ -330,6 +339,7 @@ export interface FileRoutesById {
   '/_authenticated/classes': typeof AuthenticatedClassesRoute
   '/_authenticated/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/direction-etudes': typeof AuthenticatedDirectionEtudesRoute
   '/_authenticated/eleve': typeof AuthenticatedEleveRoute
   '/_authenticated/eleves': typeof AuthenticatedElevesRoute
   '/_authenticated/emploi-du-temps': typeof AuthenticatedEmploiDuTempsRoute
@@ -370,6 +380,7 @@ export interface FileRouteTypes {
     | '/classes'
     | '/comptabilite'
     | '/dashboard'
+    | '/direction-etudes'
     | '/eleve'
     | '/eleves'
     | '/emploi-du-temps'
@@ -408,6 +419,7 @@ export interface FileRouteTypes {
     | '/classes'
     | '/comptabilite'
     | '/dashboard'
+    | '/direction-etudes'
     | '/eleve'
     | '/eleves'
     | '/emploi-du-temps'
@@ -447,6 +459,7 @@ export interface FileRouteTypes {
     | '/_authenticated/classes'
     | '/_authenticated/comptabilite'
     | '/_authenticated/dashboard'
+    | '/_authenticated/direction-etudes'
     | '/_authenticated/eleve'
     | '/_authenticated/eleves'
     | '/_authenticated/emploi-du-temps'
@@ -671,6 +684,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEleveRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/direction-etudes': {
+      id: '/_authenticated/direction-etudes'
+      path: '/direction-etudes'
+      fullPath: '/direction-etudes'
+      preLoaderRoute: typeof AuthenticatedDirectionEtudesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -755,6 +775,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedClassesRoute: typeof AuthenticatedClassesRoute
   AuthenticatedComptabiliteRoute: typeof AuthenticatedComptabiliteRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDirectionEtudesRoute: typeof AuthenticatedDirectionEtudesRoute
   AuthenticatedEleveRoute: typeof AuthenticatedEleveRoute
   AuthenticatedElevesRoute: typeof AuthenticatedElevesRoute
   AuthenticatedEmploiDuTempsRoute: typeof AuthenticatedEmploiDuTempsRoute
@@ -791,6 +812,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedClassesRoute: AuthenticatedClassesRoute,
   AuthenticatedComptabiliteRoute: AuthenticatedComptabiliteRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDirectionEtudesRoute: AuthenticatedDirectionEtudesRoute,
   AuthenticatedEleveRoute: AuthenticatedEleveRoute,
   AuthenticatedElevesRoute: AuthenticatedElevesRoute,
   AuthenticatedEmploiDuTempsRoute: AuthenticatedEmploiDuTempsRoute,

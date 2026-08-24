@@ -18,6 +18,8 @@ import { logLogout } from "@/lib/audit";
 
 const STAFF_NAV = [
   { to: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
+  { to: "/direction-etudes", label: "Direction des études", icon: GraduationCap },
+  { to: "/evenements", label: "Événements", icon: CalendarDays },
   { to: "/eleves", label: "Élèves", icon: Users },
   { to: "/classes", label: "Classes", icon: BookOpen },
   { to: "/enseignants", label: "Enseignants", icon: GraduationCap },
