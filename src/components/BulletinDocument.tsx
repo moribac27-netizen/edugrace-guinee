@@ -1,10 +1,11 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { School } from "lucide-react";
 import { maxScoreForLevel } from "@/lib/grading";
 import { StudentPhoto } from "@/components/StudentPhoto";
 import { BulletinAnalytics } from "@/components/BulletinAnalytics";
+import { SchoolLetterhead, SchoolPrintFooter } from "@/components/print/SchoolLetterhead";
+import { useSchool } from "@/hooks/useSchool";
 
 export const BULLETIN_PERIODS = [
   { v: "T1", l: "1er Trimestre" },
