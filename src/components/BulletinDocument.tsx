@@ -64,6 +64,8 @@ interface Props {
  * Rendu unique du bulletin : identique à l'écran, à l'aperçu et au PDF A4.
  */
 export function BulletinDocument({ studentId, classId, period, paged = false }: Props) {
+  const { school, logoUrl } = useSchool();
+
   const { data: cls } = useQuery({
     queryKey: ["bd-class", classId],
     enabled: !!classId,
@@ -229,7 +231,9 @@ export function BulletinDocument({ studentId, classId, period, paged = false }: 
         </div>
       </div>
 
-      <div className="text-[10px] text-center mt-6 text-gray-600">
+      <SchoolPrintFooter school={school} />
+
+      <div className="text-[10px] text-center mt-2 text-gray-600">
         Bulletin généré par MBGEduGuinée — {new Date().toLocaleDateString("fr-FR")}
       </div>
     </div>
