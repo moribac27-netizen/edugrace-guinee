@@ -64,6 +64,8 @@ interface Props {
  * Rendu unique du bulletin : identique à l'écran, à l'aperçu et au PDF A4.
  */
 export function BulletinDocument({ studentId, classId, period, paged = false }: Props) {
+  const { school, logoUrl } = useSchool();
+
   const { data: cls } = useQuery({
     queryKey: ["bd-class", classId],
     enabled: !!classId,
