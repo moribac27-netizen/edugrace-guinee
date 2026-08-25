@@ -231,7 +231,9 @@ export function BulletinDocument({ studentId, classId, period, paged = false }: 
         </div>
       </div>
 
-      <div className="text-[10px] text-center mt-6 text-gray-600">
+      <SchoolPrintFooter school={school} />
+
+      <div className="text-[10px] text-center mt-2 text-gray-600">
         Bulletin généré par MBGEduGuinée — {new Date().toLocaleDateString("fr-FR")}
       </div>
     </div>
