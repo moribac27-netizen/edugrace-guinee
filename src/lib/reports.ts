@@ -48,10 +48,13 @@ export function exportExcel(filename: string, rows: any[], columns: ExportColumn
 export interface PdfMeta {
   schoolName?: string | null;
   schoolAddress?: string | null;
+  schoolContact?: string | null;
+  academicYear?: string | null;
   logoUrl?: string | null;
   subtitle?: string | null;
   accent?: string | null;
 }
+
 
 export function exportPDF(title: string, rows: any[], columns: ExportColumn[], meta: PdfMeta = {}) {
   const accent = meta.accent || "#1f6f5c";
@@ -82,6 +85,8 @@ export function exportPDF(title: string, rows: any[], columns: ExportColumn[], m
   <div style="flex:1">
     <div class="school">${esc(meta.schoolName || "MBGEduGuinée")}</div>
     ${meta.schoolAddress ? `<div class="addr">${esc(meta.schoolAddress)}</div>` : ""}
+    ${meta.schoolContact ? `<div class="addr">${esc(meta.schoolContact)}</div>` : ""}
+    ${meta.academicYear ? `<div class="addr">Année scolaire : ${esc(meta.academicYear)}</div>` : ""}
   </div>
   <div style="text-align:right">
     <h1>${esc(title)}</h1>
@@ -90,10 +95,11 @@ export function exportPDF(title: string, rows: any[], columns: ExportColumn[], m
 </header>
 <table>
   <thead><tr>${columns.map((c) => `<th>${esc(c.label)}</th>`).join("")}</tr></thead>
+
   <tbody>${rows
     .map((r) => `<tr>${columns.map((c) => `<td>${esc(cell(r, c))}</td>`).join("")}</tr>`)
     .join("")}</tbody>
-  <tfoot><tr><td colspan="${columns.length}">${rows.length} ligne(s) — MBGEduGuinée</td></tr></tfoot>
+  <tfoot><tr><td colspan="${columns.length}">${rows.length} ligne(s) — ${esc(meta.schoolName || "MBGEduGuinée")}${meta.schoolContact ? " — " + esc(meta.schoolContact) : ""} · Document généré par MBGEduGuinée</td></tr></tfoot>
 </table>
 <script>window.onload = function(){ setTimeout(function(){ window.print(); }, 350); };<\/script>
 </body></html>`;

@@ -17,6 +17,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Plus, Pencil, Trash2, Search, Inbox, FileSpreadsheet, Printer } from "lucide-react";
 import { toast } from "sonner";
 import { exportExcel, exportPDF, type ExportColumn } from "@/lib/reports";
+import { usePdfMeta } from "@/hooks/usePdfMeta";
 
 export type FieldType =
   | "text" | "number" | "date" | "time" | "datetime" | "textarea" | "select" | "checkbox";
@@ -97,9 +98,11 @@ export function CrudSection({
   emptyHint, filters, where, rowClassName,
 }: Props) {
   const qc = useQueryClient();
+  const pdfMeta = usePdfMeta();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
   const [search, setSearch] = useState("");
+
 
   const { data: rows = [], isLoading } = useQuery({
     queryKey,
@@ -160,7 +163,7 @@ export function CrudSection({
           <Button variant="outline" size="sm" className="gap-2" onClick={() => exportExcel(title, filtered, exportColumns, title)}>
             <FileSpreadsheet className="size-4" /> Excel
           </Button>
-          <Button variant="outline" size="sm" className="gap-2" onClick={() => exportPDF(title, filtered, exportColumns)}>
+          <Button variant="outline" size="sm" className="gap-2" onClick={() => exportPDF(title, filtered, exportColumns, pdfMeta)}>
             <Printer className="size-4" /> PDF
           </Button>
           {canWrite && (

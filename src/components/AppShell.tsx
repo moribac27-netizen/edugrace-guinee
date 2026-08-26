@@ -14,6 +14,7 @@ import { useSuperAdmin } from "@/hooks/useSuperAdmin";
 import { canAccess, homeForRoles } from "@/lib/access";
 import { NotificationsBell } from "@/components/NotificationsBell";
 import { logLogout } from "@/lib/audit";
+import { InstallPWA } from "@/components/InstallPWA";
 
 
 const STAFF_NAV = [
@@ -135,6 +136,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </nav>
 
         <div className="border-t border-sidebar-border p-4">
+          <InstallPWA className="mb-2" />
           <div className="text-xs text-sidebar-foreground/60 mb-2 truncate">{user?.email}</div>
           <Button variant="outline" size="sm" className="w-full justify-start gap-2 bg-transparent text-sidebar-foreground border-sidebar-border hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" onClick={handleSignOut}>
             <LogOut className="size-4" /> Se déconnecter
