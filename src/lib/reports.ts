@@ -48,10 +48,13 @@ export function exportExcel(filename: string, rows: any[], columns: ExportColumn
 export interface PdfMeta {
   schoolName?: string | null;
   schoolAddress?: string | null;
+  schoolContact?: string | null;
+  academicYear?: string | null;
   logoUrl?: string | null;
   subtitle?: string | null;
   accent?: string | null;
 }
+
 
 export function exportPDF(title: string, rows: any[], columns: ExportColumn[], meta: PdfMeta = {}) {
   const accent = meta.accent || "#1f6f5c";
