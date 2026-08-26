@@ -173,6 +173,10 @@ function CartesPage() {
         </DialogContent>
       </Dialog>
 
+      {printFormat === "cr80" && (
+        <style>{`@media print { @page { size: 85.6mm 54mm; margin: 0; } }`}</style>
+      )}
+
       <style>{`
         .cards-sheet {
           display: grid;
