@@ -11,6 +11,7 @@ import { Printer, FileSpreadsheet, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { maxScoreForLevel } from "@/lib/grading";
 import { exportExcel, exportPDF } from "@/lib/reports";
+import { usePdfMeta } from "@/hooks/usePdfMeta";
 
 
 export const Route = createFileRoute("/_authenticated/rapports")({
@@ -101,6 +102,7 @@ function ReportShell({
   loading?: boolean;
   extra?: React.ReactNode;
 }) {
+  const pdfMeta = usePdfMeta();
   return (
     <Card>
       <CardHeader className="print:hidden">
@@ -110,7 +112,7 @@ function ReportShell({
             <Button
               variant="outline"
               disabled={!rows.length}
-              onClick={() => exportPDF(title, rows, columns.map((c) => ({ key: c.key, label: c.label })))}
+              onClick={() => exportPDF(title, rows, columns.map((c) => ({ key: c.key, label: c.label })), pdfMeta)}
             >
               <Printer className="size-4 mr-2" /> PDF
             </Button>

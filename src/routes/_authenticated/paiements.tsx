@@ -566,13 +566,14 @@ function exportExcel(rows: any[], tab: "pending" | "validated" | "late") {
   XLSX.writeFile(wb, `paiements-${sheetName.toLowerCase().replace(/\s+/g, "-")}-${today}.xlsx`);
 }
 
-function exportPdf(rows: any[], tab: "pending" | "validated" | "late", school: any, lateStudents: any[]) {
+async function exportPdf(rows: any[], tab: "pending" | "validated" | "late", school: any, lateStudents: any[]) {
+  const signedLogo = await signIfPath(school?.logo_url);
   const w = window.open("", "_blank", "width=1000,height=800");
   if (!w) return;
   const title = tab === "late" ? "Liste des retards de paiement" : tab === "pending" ? "Paiements en attente" : "Registre des paiements validés";
   const schoolName = school?.name ?? "MBGEduGuinée";
   const schoolAddress = school?.address ?? "";
-  const logo = school?.logo_url ?? "";
+  const logo = signedLogo || "";
   const today = new Date().toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
 
   let head = "";
@@ -620,6 +621,9 @@ function exportPdf(rows: any[], tab: "pending" | "validated" | "late", school: a
   .num { text-align: right; font-variant-numeric: tabular-nums; }
   .mono { font-family: ui-monospace, monospace; font-size: 10px; }
   .total td { background: #f0f9f4; font-weight: 700; font-size: 12px; }
+  .watermark { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 0; }
+  .watermark img { width: 45%; max-width: 340px; opacity: .06; }
+  .content { position: relative; z-index: 1; }
   .foot { margin-top: 16px; font-size: 10px; color: #666; display: flex; justify-content: space-between; }
   .toolbar { position: fixed; top: 0; left: 0; right: 0; background: #2a5a3e; color: #fff; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; z-index: 9999; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
   .toolbar .t-title { font-size: 13px; font-weight: 600; }
@@ -635,6 +639,8 @@ function exportPdf(rows: any[], tab: "pending" | "validated" | "late", school: a
       <button onclick="window.print()">🖨️ Imprimer</button>
     </div>
   </div>
+  ${logo ? `<div class="watermark"><img src="${logo}" alt="" /></div>` : ""}
+  <div class="content">
   <div class="header">
     ${logo ? `<img src="${logo}" />` : ""}
     <div>
@@ -644,7 +650,8 @@ function exportPdf(rows: any[], tab: "pending" | "validated" | "late", school: a
   </div>
   <div class="title">${escapeHtml(title.toUpperCase())}</div>
   <table><thead>${head}</thead><tbody>${body || `<tr><td colspan="8" style="text-align:center;padding:20px;color:#888">Aucune donnée</td></tr>`}${totalRow}</tbody></table>
-  <div class="foot"><span>Édité le ${today}</span><span>${escapeHtml(schoolName)}</span></div>
+  <div class="foot"><span>Édité le ${today}</span><span>${escapeHtml(schoolName)}${schoolAddress ? " — " + escapeHtml(schoolAddress) : ""}</span></div>
+  </div>
 </body></html>`);
   w.document.close();
 }
