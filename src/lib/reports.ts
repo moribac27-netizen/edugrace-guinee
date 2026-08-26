@@ -99,7 +99,7 @@ export function exportPDF(title: string, rows: any[], columns: ExportColumn[], m
   <tbody>${rows
     .map((r) => `<tr>${columns.map((c) => `<td>${esc(cell(r, c))}</td>`).join("")}</tr>`)
     .join("")}</tbody>
-  <tfoot><tr><td colspan="${columns.length}">${rows.length} ligne(s) — MBGEduGuinée</td></tr></tfoot>
+  <tfoot><tr><td colspan="${columns.length}">${rows.length} ligne(s) — ${esc(meta.schoolName || "MBGEduGuinée")}${meta.schoolContact ? " — " + esc(meta.schoolContact) : ""} · Document généré par MBGEduGuinée</td></tr></tfoot>
 </table>
 <script>window.onload = function(){ setTimeout(function(){ window.print(); }, 350); };<\/script>
 </body></html>`;
