@@ -25,6 +25,7 @@ function CartesPage() {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [photoOpen, setPhotoOpen] = useState<any>(null);
+  const [printFormat, setPrintFormat] = useState<"a4" | "cr80">("a4");
 
   const { data: school } = useQuery({
     queryKey: ["my-school-card"],
@@ -74,7 +75,19 @@ function CartesPage() {
           <h1 className="font-display text-3xl font-bold flex items-center gap-2"><IdCard className="size-7" /> Cartes scolaires</h1>
           <p className="text-muted-foreground mt-1">Générez et imprimez les cartes des élèves (format carte de crédit, 10 par page A4).</p>
         </div>
-        <Button onClick={handlePrint} className="gap-2"><Printer className="size-4" /> Imprimer ({toPrint.length})</Button>
+        <div className="flex items-end gap-3">
+          <div className="min-w-[220px]">
+            <Label>Format d'impression</Label>
+            <Select value={printFormat} onValueChange={(v) => setPrintFormat(v as "a4" | "cr80")}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="a4">A4 — 10 cartes par page (par défaut)</SelectItem>
+                <SelectItem value="cr80">PVC CR80 — 85,6 × 54 mm (imprimante à cartes)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Button onClick={handlePrint} className="gap-2"><Printer className="size-4" /> Imprimer ({toPrint.length})</Button>
+        </div>
       </div>
 
       <Card className="no-print">
@@ -126,7 +139,13 @@ function CartesPage() {
       </Card>
 
       {/* Printable sheet */}
-      <div className="cards-sheet">
+      {printFormat === "cr80" && (
+        <p className="text-xs text-muted-foreground no-print">
+          Format PVC CR80 : une carte par page, sans marge. Dans la boîte de dialogue d'impression, choisissez l'imprimante à cartes,
+          désactivez « Ajuster à la page » (échelle 100 %) et les en-têtes/pieds de page du navigateur.
+        </p>
+      )}
+      <div className={`cards-sheet ${printFormat === "cr80" ? "cards-sheet--cr80" : ""}`}>
         {toPrint.map((s: any) => (
           <SchoolCard key={s.id} student={s} school={school} logoUrl={logoUrl} />
         ))}
@@ -167,6 +186,17 @@ function CartesPage() {
           .cards-sheet { gap: 4mm; padding: 0; background: white; }
           .school-card { break-inside: avoid; page-break-inside: avoid; }
           @page { size: A4; margin: 8mm; }
+        }
+        .cards-sheet--cr80 { grid-template-columns: repeat(1, minmax(0, 1fr)); justify-items: center; }
+        @media print {
+          .cards-sheet--cr80 { display: block; gap: 0; padding: 0; }
+          .cards-sheet--cr80 .school-card {
+            width: 85.6mm; height: 54mm; margin: 0;
+            border: none; border-radius: 0; box-shadow: none;
+            break-after: page; page-break-after: always;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;
+          }
+          .cards-sheet--cr80 .school-card:last-child { break-after: auto; page-break-after: auto; }
         }
       `}</style>
     </div>
