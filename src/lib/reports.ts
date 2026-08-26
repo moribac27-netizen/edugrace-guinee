@@ -85,6 +85,8 @@ export function exportPDF(title: string, rows: any[], columns: ExportColumn[], m
   <div style="flex:1">
     <div class="school">${esc(meta.schoolName || "MBGEduGuinée")}</div>
     ${meta.schoolAddress ? `<div class="addr">${esc(meta.schoolAddress)}</div>` : ""}
+    ${meta.schoolContact ? `<div class="addr">${esc(meta.schoolContact)}</div>` : ""}
+    ${meta.academicYear ? `<div class="addr">Année scolaire : ${esc(meta.academicYear)}</div>` : ""}
   </div>
   <div style="text-align:right">
     <h1>${esc(title)}</h1>
@@ -93,6 +95,7 @@ export function exportPDF(title: string, rows: any[], columns: ExportColumn[], m
 </header>
 <table>
   <thead><tr>${columns.map((c) => `<th>${esc(c.label)}</th>`).join("")}</tr></thead>
+
   <tbody>${rows
     .map((r) => `<tr>${columns.map((c) => `<td>${esc(cell(r, c))}</td>`).join("")}</tr>`)
     .join("")}</tbody>
