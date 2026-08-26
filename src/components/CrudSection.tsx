@@ -98,9 +98,11 @@ export function CrudSection({
   emptyHint, filters, where, rowClassName,
 }: Props) {
   const qc = useQueryClient();
+  const pdfMeta = usePdfMeta();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
   const [search, setSearch] = useState("");
+
 
   const { data: rows = [], isLoading } = useQuery({
     queryKey,
