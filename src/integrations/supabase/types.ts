@@ -1531,6 +1531,276 @@ export type Database = {
         }
         Relationships: []
       }
+      nursery_children: {
+        Row: {
+          allergies: string | null
+          created_at: string
+          id: string
+          medical_notes: string | null
+          nap_needed: boolean
+          pickup_person: string | null
+          pickup_phone: string | null
+          school_id: string
+          section_id: string | null
+          special_notes: string | null
+          student_id: string
+          toilet_trained: boolean
+          updated_at: string
+        }
+        Insert: {
+          allergies?: string | null
+          created_at?: string
+          id?: string
+          medical_notes?: string | null
+          nap_needed?: boolean
+          pickup_person?: string | null
+          pickup_phone?: string | null
+          school_id: string
+          section_id?: string | null
+          special_notes?: string | null
+          student_id: string
+          toilet_trained?: boolean
+          updated_at?: string
+        }
+        Update: {
+          allergies?: string | null
+          created_at?: string
+          id?: string
+          medical_notes?: string | null
+          nap_needed?: boolean
+          pickup_person?: string | null
+          pickup_phone?: string | null
+          school_id?: string
+          section_id?: string | null
+          special_notes?: string | null
+          student_id?: string
+          toilet_trained?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nursery_children_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "nursery_sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nursery_children_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: true
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nursery_competencies: {
+        Row: {
+          created_at: string
+          display_order: number
+          domain: string
+          id: string
+          label: string
+          school_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          domain: string
+          id?: string
+          label: string
+          school_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          domain?: string
+          id?: string
+          label?: string
+          school_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      nursery_daily_logs: {
+        Row: {
+          activities: string | null
+          created_at: string
+          created_by: string | null
+          date: string
+          id: string
+          incidents: string | null
+          meal: string | null
+          mood: string | null
+          nap: string | null
+          parent_comment: string | null
+          school_id: string
+          section_id: string | null
+          student_id: string
+          toilet: string | null
+          updated_at: string
+        }
+        Insert: {
+          activities?: string | null
+          created_at?: string
+          created_by?: string | null
+          date?: string
+          id?: string
+          incidents?: string | null
+          meal?: string | null
+          mood?: string | null
+          nap?: string | null
+          parent_comment?: string | null
+          school_id: string
+          section_id?: string | null
+          student_id: string
+          toilet?: string | null
+          updated_at?: string
+        }
+        Update: {
+          activities?: string | null
+          created_at?: string
+          created_by?: string | null
+          date?: string
+          id?: string
+          incidents?: string | null
+          meal?: string | null
+          mood?: string | null
+          nap?: string | null
+          parent_comment?: string | null
+          school_id?: string
+          section_id?: string | null
+          student_id?: string
+          toilet?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nursery_daily_logs_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "nursery_sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nursery_daily_logs_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nursery_evaluations: {
+        Row: {
+          comment: string | null
+          competency_id: string
+          created_at: string
+          evaluated_by: string | null
+          id: string
+          level: string
+          period: string
+          school_id: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          comment?: string | null
+          competency_id: string
+          created_at?: string
+          evaluated_by?: string | null
+          id?: string
+          level?: string
+          period?: string
+          school_id: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          comment?: string | null
+          competency_id?: string
+          created_at?: string
+          evaluated_by?: string | null
+          id?: string
+          level?: string
+          period?: string
+          school_id?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nursery_evaluations_competency_id_fkey"
+            columns: ["competency_id"]
+            isOneToOne: false
+            referencedRelation: "nursery_competencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nursery_evaluations_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nursery_sections: {
+        Row: {
+          age_range: string | null
+          capacity: number | null
+          class_id: string | null
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          school_id: string
+          teacher_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          age_range?: string | null
+          capacity?: number | null
+          class_id?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          school_id: string
+          teacher_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          age_range?: string | null
+          capacity?: number | null
+          class_id?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          school_id?: string
+          teacher_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nursery_sections_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nursery_sections_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
