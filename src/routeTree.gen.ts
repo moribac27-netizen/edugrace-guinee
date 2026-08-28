@@ -28,6 +28,7 @@ import { Route as AuthenticatedPaiementsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
 import { Route as AuthenticatedMessagerieRouteImport } from './routes/_authenticated/messagerie'
 import { Route as AuthenticatedMatieresRouteImport } from './routes/_authenticated/matieres'
+import { Route as AuthenticatedMaternelleRouteImport } from './routes/_authenticated/maternelle'
 import { Route as AuthenticatedJournalRouteImport } from './routes/_authenticated/journal'
 import { Route as AuthenticatedInfirmerieRouteImport } from './routes/_authenticated/infirmerie'
 import { Route as AuthenticatedExamensRouteImport } from './routes/_authenticated/examens'
@@ -142,6 +143,11 @@ const AuthenticatedMessagerieRoute = AuthenticatedMessagerieRouteImport.update({
 const AuthenticatedMatieresRoute = AuthenticatedMatieresRouteImport.update({
   id: '/matieres',
   path: '/matieres',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMaternelleRoute = AuthenticatedMaternelleRouteImport.update({
+  id: '/maternelle',
+  path: '/maternelle',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedJournalRoute = AuthenticatedJournalRouteImport.update({
@@ -268,6 +274,7 @@ export interface FileRoutesByFullPath {
   '/examens': typeof AuthenticatedExamensRoute
   '/infirmerie': typeof AuthenticatedInfirmerieRoute
   '/journal': typeof AuthenticatedJournalRoute
+  '/maternelle': typeof AuthenticatedMaternelleRoute
   '/matieres': typeof AuthenticatedMatieresRoute
   '/messagerie': typeof AuthenticatedMessagerieRoute
   '/notes': typeof AuthenticatedNotesRoute
@@ -307,6 +314,7 @@ export interface FileRoutesByTo {
   '/examens': typeof AuthenticatedExamensRoute
   '/infirmerie': typeof AuthenticatedInfirmerieRoute
   '/journal': typeof AuthenticatedJournalRoute
+  '/maternelle': typeof AuthenticatedMaternelleRoute
   '/matieres': typeof AuthenticatedMatieresRoute
   '/messagerie': typeof AuthenticatedMessagerieRoute
   '/notes': typeof AuthenticatedNotesRoute
@@ -348,6 +356,7 @@ export interface FileRoutesById {
   '/_authenticated/examens': typeof AuthenticatedExamensRoute
   '/_authenticated/infirmerie': typeof AuthenticatedInfirmerieRoute
   '/_authenticated/journal': typeof AuthenticatedJournalRoute
+  '/_authenticated/maternelle': typeof AuthenticatedMaternelleRoute
   '/_authenticated/matieres': typeof AuthenticatedMatieresRoute
   '/_authenticated/messagerie': typeof AuthenticatedMessagerieRoute
   '/_authenticated/notes': typeof AuthenticatedNotesRoute
@@ -389,6 +398,7 @@ export interface FileRouteTypes {
     | '/examens'
     | '/infirmerie'
     | '/journal'
+    | '/maternelle'
     | '/matieres'
     | '/messagerie'
     | '/notes'
@@ -428,6 +438,7 @@ export interface FileRouteTypes {
     | '/examens'
     | '/infirmerie'
     | '/journal'
+    | '/maternelle'
     | '/matieres'
     | '/messagerie'
     | '/notes'
@@ -468,6 +479,7 @@ export interface FileRouteTypes {
     | '/_authenticated/examens'
     | '/_authenticated/infirmerie'
     | '/_authenticated/journal'
+    | '/_authenticated/maternelle'
     | '/_authenticated/matieres'
     | '/_authenticated/messagerie'
     | '/_authenticated/notes'
@@ -628,6 +640,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMatieresRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/maternelle': {
+      id: '/_authenticated/maternelle'
+      path: '/maternelle'
+      fullPath: '/maternelle'
+      preLoaderRoute: typeof AuthenticatedMaternelleRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/journal': {
       id: '/_authenticated/journal'
       path: '/journal'
@@ -784,6 +803,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedExamensRoute: typeof AuthenticatedExamensRoute
   AuthenticatedInfirmerieRoute: typeof AuthenticatedInfirmerieRoute
   AuthenticatedJournalRoute: typeof AuthenticatedJournalRoute
+  AuthenticatedMaternelleRoute: typeof AuthenticatedMaternelleRoute
   AuthenticatedMatieresRoute: typeof AuthenticatedMatieresRoute
   AuthenticatedMessagerieRoute: typeof AuthenticatedMessagerieRoute
   AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
@@ -821,6 +841,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedExamensRoute: AuthenticatedExamensRoute,
   AuthenticatedInfirmerieRoute: AuthenticatedInfirmerieRoute,
   AuthenticatedJournalRoute: AuthenticatedJournalRoute,
+  AuthenticatedMaternelleRoute: AuthenticatedMaternelleRoute,
   AuthenticatedMatieresRoute: AuthenticatedMatieresRoute,
   AuthenticatedMessagerieRoute: AuthenticatedMessagerieRoute,
   AuthenticatedNotesRoute: AuthenticatedNotesRoute,

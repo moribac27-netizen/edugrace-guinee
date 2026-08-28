@@ -22,6 +22,7 @@ const STAFF_NAV = [
   { to: "/direction-etudes", label: "Direction des études", icon: GraduationCap },
   { to: "/evenements", label: "Événements", icon: CalendarDays },
   { to: "/eleves", label: "Élèves", icon: Users },
+  { to: "/maternelle", label: "Maternelle", icon: Baby },
   { to: "/classes", label: "Classes", icon: BookOpen },
   { to: "/enseignants", label: "Enseignants", icon: GraduationCap },
   { to: "/matieres", label: "Matières", icon: BookMarked },
