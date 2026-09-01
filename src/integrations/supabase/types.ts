@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.17"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -1602,6 +1602,7 @@ export type Database = {
           id: string
           label: string
           school_id: string
+          teacher_id: string | null
           updated_at: string
         }
         Insert: {
@@ -1611,6 +1612,7 @@ export type Database = {
           id?: string
           label: string
           school_id: string
+          teacher_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -1620,16 +1622,27 @@ export type Database = {
           id?: string
           label?: string
           school_id?: string
+          teacher_id?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "nursery_competencies_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       nursery_daily_logs: {
         Row: {
           activities: string | null
+          attendance: string | null
           created_at: string
           created_by: string | null
           date: string
+          hygiene: string | null
           id: string
           incidents: string | null
           meal: string | null
@@ -1644,9 +1657,11 @@ export type Database = {
         }
         Insert: {
           activities?: string | null
+          attendance?: string | null
           created_at?: string
           created_by?: string | null
           date?: string
+          hygiene?: string | null
           id?: string
           incidents?: string | null
           meal?: string | null
@@ -1661,9 +1676,11 @@ export type Database = {
         }
         Update: {
           activities?: string | null
+          attendance?: string | null
           created_at?: string
           created_by?: string | null
           date?: string
+          hygiene?: string | null
           id?: string
           incidents?: string | null
           meal?: string | null
@@ -1743,6 +1760,66 @@ export type Database = {
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nursery_schedule_slots: {
+        Row: {
+          activity: string
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          label: string | null
+          notes: string | null
+          school_id: string
+          section_id: string | null
+          start_time: string
+          teacher_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          activity?: string
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          label?: string | null
+          notes?: string | null
+          school_id: string
+          section_id?: string | null
+          start_time?: string
+          teacher_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          activity?: string
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          label?: string | null
+          notes?: string | null
+          school_id?: string
+          section_id?: string | null
+          start_time?: string
+          teacher_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nursery_schedule_slots_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "nursery_sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nursery_schedule_slots_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
             referencedColumns: ["id"]
           },
         ]
@@ -3503,6 +3580,7 @@ export type Database = {
           school_id: string
         }[]
       }
+      school_write_blocked: { Args: { _school_id: string }; Returns: boolean }
       student_recipient_users: {
         Args: { _student_id: string }
         Returns: {
