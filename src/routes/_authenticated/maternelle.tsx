@@ -72,6 +72,34 @@ const PERIODS = [
   { value: "Trimestre 2", label: "Trimestre 2" },
   { value: "Trimestre 3", label: "Trimestre 3" },
 ];
+const ATTENDANCE = [
+  { value: "present", label: "Présent" },
+  { value: "absent", label: "Absent" },
+  { value: "retard", label: "Retard" },
+];
+const HYGIENE = [
+  { value: "sec", label: "Sec" },
+  { value: "accident", label: "Accident" },
+  { value: "apprentissage", label: "En apprentissage" },
+];
+const ACTIVITIES = [
+  { value: "accueil", label: "Accueil" },
+  { value: "motricite", label: "Motricité" },
+  { value: "ateliers", label: "Ateliers" },
+  { value: "collation", label: "Collation" },
+  { value: "repas", label: "Repas" },
+  { value: "sieste", label: "Sieste" },
+  { value: "jeux", label: "Jeux libres" },
+  { value: "sortie", label: "Sortie" },
+];
+const DAYS = [
+  { value: "1", label: "Lundi" },
+  { value: "2", label: "Mardi" },
+  { value: "3", label: "Mercredi" },
+  { value: "4", label: "Jeudi" },
+  { value: "5", label: "Vendredi" },
+  { value: "6", label: "Samedi" },
+];
 
 const label = (opts: { value: string; label: string }[], v: any) =>
   opts.find((o) => o.value === v)?.label ?? v ?? "—";
