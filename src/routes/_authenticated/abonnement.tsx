@@ -52,8 +52,14 @@ function AbonnementPage() {
 
   async function apply(plan: Plan) {
     setSaving(true);
+    const { data: sid } = await supabase.rpc("current_school_id");
+    if (!sid) {
+      setSaving(false);
+      setConfirm(null);
+      return toast.error("Établissement non identifié.");
+    }
     const { error } = await (supabase as any).rpc("renew_or_change_subscription", {
-      p_school_id: null,
+      p_school_id: sid,
       p_new_plan_id: plan.id,
       p_billing_cycle: cycle,
     });

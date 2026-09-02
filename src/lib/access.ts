@@ -13,6 +13,7 @@ export const ROUTE_ACCESS: Array<{ prefix: string; roles: AppRole[] | "*" }> = [
   { prefix: "/parametres", roles: ["admin", "directeur"] },
   { prefix: "/personnalisation-recu", roles: ["admin", "directeur", "comptable"] },
   { prefix: "/souscription", roles: ["admin", "directeur"] },
+  { prefix: "/abonnement", roles: "*" },
   { prefix: "/comptabilite", roles: ["admin", "directeur", "comptable"] },
   { prefix: "/salaires", roles: ["admin", "directeur", "comptable"] },
   { prefix: "/paiements", roles: ["admin", "directeur", "comptable"] },
