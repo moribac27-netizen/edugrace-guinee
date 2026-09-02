@@ -1,16 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CrudSection } from "@/components/CrudSection";
 import { useStudentOptions, useClassOptions, useTableOptions } from "@/hooks/useOptions";
 import { useRoles } from "@/hooks/useAuth";
 import { useSuperAdmin } from "@/hooks/useSuperAdmin";
+import { usePdfMeta } from "@/hooks/usePdfMeta";
 import { fmtDate } from "@/lib/reports";
-import { Baby } from "lucide-react";
+import { printNurseryBulletin, printDailyLog, dailyLogMessage } from "@/lib/nursery-print";
+import { toast } from "sonner";
+import { Baby, FileText, Printer, Share2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/maternelle")({
   head: () => ({
