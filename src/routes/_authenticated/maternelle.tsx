@@ -1,16 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CrudSection } from "@/components/CrudSection";
 import { useStudentOptions, useClassOptions, useTableOptions } from "@/hooks/useOptions";
 import { useRoles } from "@/hooks/useAuth";
 import { useSuperAdmin } from "@/hooks/useSuperAdmin";
+import { usePdfMeta } from "@/hooks/usePdfMeta";
 import { fmtDate } from "@/lib/reports";
-import { Baby } from "lucide-react";
+import { printNurseryBulletin, printDailyLog, dailyLogMessage } from "@/lib/nursery-print";
+import { toast } from "sonner";
+import { Baby, FileText, Printer, Share2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/maternelle")({
   head: () => ({
@@ -65,6 +71,34 @@ const PERIODS = [
   { value: "Trimestre 1", label: "Trimestre 1" },
   { value: "Trimestre 2", label: "Trimestre 2" },
   { value: "Trimestre 3", label: "Trimestre 3" },
+];
+const ATTENDANCE = [
+  { value: "present", label: "Présent" },
+  { value: "absent", label: "Absent" },
+  { value: "retard", label: "Retard" },
+];
+const HYGIENE = [
+  { value: "sec", label: "Sec" },
+  { value: "accident", label: "Accident" },
+  { value: "apprentissage", label: "En apprentissage" },
+];
+const ACTIVITIES = [
+  { value: "accueil", label: "Accueil" },
+  { value: "motricite", label: "Motricité" },
+  { value: "ateliers", label: "Ateliers" },
+  { value: "collation", label: "Collation" },
+  { value: "repas", label: "Repas" },
+  { value: "sieste", label: "Sieste" },
+  { value: "jeux", label: "Jeux libres" },
+  { value: "sortie", label: "Sortie" },
+];
+const DAYS = [
+  { value: "1", label: "Lundi" },
+  { value: "2", label: "Mardi" },
+  { value: "3", label: "Mercredi" },
+  { value: "4", label: "Jeudi" },
+  { value: "5", label: "Vendredi" },
+  { value: "6", label: "Samedi" },
 ];
 
 const label = (opts: { value: string; label: string }[], v: any) =>

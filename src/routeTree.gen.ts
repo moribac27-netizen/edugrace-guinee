@@ -48,6 +48,7 @@ import { Route as AuthenticatedBulletinsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedBibliothequeRouteImport } from './routes/_authenticated/bibliotheque'
 import { Route as AuthenticatedAnnoncesRouteImport } from './routes/_authenticated/annonces'
 import { Route as AuthenticatedAffectationsRouteImport } from './routes/_authenticated/affectations'
+import { Route as AuthenticatedAbonnementRouteImport } from './routes/_authenticated/abonnement'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -251,10 +252,16 @@ const AuthenticatedAffectationsRoute =
     path: '/affectations',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAbonnementRoute = AuthenticatedAbonnementRouteImport.update({
+  id: '/abonnement',
+  path: '/abonnement',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/abonnement': typeof AuthenticatedAbonnementRoute
   '/affectations': typeof AuthenticatedAffectationsRoute
   '/annonces': typeof AuthenticatedAnnoncesRoute
   '/bibliotheque': typeof AuthenticatedBibliothequeRoute
@@ -295,6 +302,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/abonnement': typeof AuthenticatedAbonnementRoute
   '/affectations': typeof AuthenticatedAffectationsRoute
   '/annonces': typeof AuthenticatedAnnoncesRoute
   '/bibliotheque': typeof AuthenticatedBibliothequeRoute
@@ -337,6 +345,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/abonnement': typeof AuthenticatedAbonnementRoute
   '/_authenticated/affectations': typeof AuthenticatedAffectationsRoute
   '/_authenticated/annonces': typeof AuthenticatedAnnoncesRoute
   '/_authenticated/bibliotheque': typeof AuthenticatedBibliothequeRoute
@@ -379,6 +388,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/abonnement'
     | '/affectations'
     | '/annonces'
     | '/bibliotheque'
@@ -419,6 +429,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/abonnement'
     | '/affectations'
     | '/annonces'
     | '/bibliotheque'
@@ -460,6 +471,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/abonnement'
     | '/_authenticated/affectations'
     | '/_authenticated/annonces'
     | '/_authenticated/bibliotheque'
@@ -780,10 +792,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAffectationsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/abonnement': {
+      id: '/_authenticated/abonnement'
+      path: '/abonnement'
+      fullPath: '/abonnement'
+      preLoaderRoute: typeof AuthenticatedAbonnementRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAbonnementRoute: typeof AuthenticatedAbonnementRoute
   AuthenticatedAffectationsRoute: typeof AuthenticatedAffectationsRoute
   AuthenticatedAnnoncesRoute: typeof AuthenticatedAnnoncesRoute
   AuthenticatedBibliothequeRoute: typeof AuthenticatedBibliothequeRoute
@@ -822,6 +842,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAbonnementRoute: AuthenticatedAbonnementRoute,
   AuthenticatedAffectationsRoute: AuthenticatedAffectationsRoute,
   AuthenticatedAnnoncesRoute: AuthenticatedAnnoncesRoute,
   AuthenticatedBibliothequeRoute: AuthenticatedBibliothequeRoute,
