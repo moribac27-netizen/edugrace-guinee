@@ -352,8 +352,203 @@ function Maternelle() {
               { key: "comment", label: "Commentaire", render: (r) => r.comment || "—" },
             ]}
           />
+          <BulletinExportCard pdfMeta={pdfMeta} studentOptions={studentOptions} />
+        </TabsContent>
+
+        <TabsContent value="planning" className="mt-4">
+          <CrudSection
+            table="nursery_schedule_slots"
+            title="Emploi du temps maternelle"
+            singular="créneau"
+            queryKey={["nursery-schedule"]}
+            select="*, nursery_sections(name), teachers(full_name)"
+            orderBy={{ column: "start_time" }}
+            canWrite={canWrite}
+            searchKeys={["label", "notes"]}
+            emptyHint="Organisez la journée par activités : accueil, motricité, ateliers, repas, sieste, sortie."
+            fields={[
+              { name: "section_id", label: "Section", type: "select", options: sectionOptions },
+              { name: "day_of_week", label: "Jour", type: "select", options: DAYS, required: true, default: "1", parse: (v) => Number(v), serialize: (v) => String(v ?? 1) },
+              { name: "start_time", label: "Début", type: "time", required: true, default: "08:00" },
+              { name: "end_time", label: "Fin", type: "time", required: true, default: "09:00" },
+              { name: "activity", label: "Activité", type: "select", options: ACTIVITIES, required: true, default: "accueil" },
+              { name: "label", label: "Intitulé précis", placeholder: "ex. Atelier peinture", full: true },
+              { name: "teacher_id", label: "Monitrice", type: "select", options: teacherOptions },
+              { name: "notes", label: "Notes", type: "textarea", full: true },
+            ]}
+            columns={[
+              { key: "day", label: "Jour", render: (r) => label(DAYS, String(r.day_of_week)), exportFormat: (r) => label(DAYS, String(r.day_of_week)) },
+              { key: "time", label: "Horaire", render: (r) => `${String(r.start_time).slice(0, 5)} – ${String(r.end_time).slice(0, 5)}`, exportFormat: (r) => `${String(r.start_time).slice(0, 5)} – ${String(r.end_time).slice(0, 5)}` },
+              { key: "activity", label: "Activité", render: (r) => label(ACTIVITIES, r.activity), exportFormat: (r) => label(ACTIVITIES, r.activity) },
+              { key: "label", label: "Intitulé", render: (r) => r.label || "—" },
+              { key: "section", label: "Section", render: (r) => r.nursery_sections?.name ?? "—", exportFormat: (r) => r.nursery_sections?.name ?? "" },
+              { key: "teacher", label: "Monitrice", render: (r) => r.teachers?.full_name ?? "—", exportFormat: (r) => r.teachers?.full_name ?? "" },
+            ]}
+          />
         </TabsContent>
       </Tabs>
     </div>
   );
 }
+
+/** A4 — Export du bulletin maternelle (pictogrammes / couleurs, pas de notes chiffrées). */
+function BulletinExportCard({ pdfMeta, studentOptions }: { pdfMeta: any; studentOptions: { value: string; label: string }[] }) {
+  const [studentId, setStudentId] = useState("");
+  const [period, setPeriod] = useState("Trimestre 1");
+
+  async function handlePrint() {
+    if (!studentId) return toast.error("Sélectionnez un enfant.");
+    const { data, error } = await supabase
+      .from("nursery_evaluations" as any)
+      .select("level, comment, students(full_name), nursery_competencies(label, domain), nursery_children:student_id(id)")
+      .eq("student_id", studentId)
+      .eq("period", period);
+    if (error) return toast.error("Impossible de charger les évaluations.");
+    const rows = (data ?? []) as any[];
+    if (rows.length === 0) return toast.error("Aucune évaluation pour cette période.");
+    const { data: child } = await supabase
+      .from("nursery_children" as any)
+      .select("nursery_sections(name)")
+      .eq("student_id", studentId)
+      .maybeSingle();
+    const ok = printNurseryBulletin({
+      meta: pdfMeta,
+      childName: rows[0]?.students?.full_name ?? studentOptions.find((o) => o.value === studentId)?.label ?? "—",
+      sectionName: (child as any)?.nursery_sections?.name ?? null,
+      period,
+      rows,
+    });
+    if (!ok) toast.error("Autorisez les fenêtres pop-up pour imprimer.");
+  }
+
+  return (
+    <Card className="mt-6">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base"><FileText className="size-4" /> Bulletin maternelle</CardTitle>
+        <CardDescription>Export PDF illustré par niveaux (Acquis / En cours / À travailler), avec le logo de l'école.</CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-3 sm:grid-cols-[1fr_200px_auto] sm:items-end">
+        <div className="space-y-1.5">
+          <Label>Enfant</Label>
+          <Select value={studentId} onValueChange={setStudentId}>
+            <SelectTrigger><SelectValue placeholder="Choisir un enfant" /></SelectTrigger>
+            <SelectContent>
+              {studentOptions.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-1.5">
+          <Label>Période</Label>
+          <Select value={period} onValueChange={setPeriod}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {PERIODS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <Button onClick={handlePrint} className="gap-2"><Printer className="size-4" /> Imprimer</Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+/** A5 — Communication parents : PDF ou message texte du suivi quotidien. */
+function DailyLogExportCard({ pdfMeta, studentOptions }: { pdfMeta: any; studentOptions: { value: string; label: string }[] }) {
+  const [studentId, setStudentId] = useState("");
+  const [date, setDate] = useState(today());
+
+  async function loadLog() {
+    if (!studentId) {
+      toast.error("Sélectionnez un enfant.");
+      return null;
+    }
+    const { data } = await supabase
+      .from("nursery_daily_logs" as any)
+      .select("*, students(full_name), nursery_sections(name)")
+      .eq("student_id", studentId)
+      .eq("date", date)
+      .maybeSingle();
+    if (!data) {
+      toast.error("Aucun suivi enregistré pour cette date.");
+      return null;
+    }
+    const r = data as any;
+    const items = [
+      { label: "Présence", value: label(ATTENDANCE, r.attendance) },
+      { label: "Humeur", value: label(MOODS, r.mood) },
+      { label: "Repas", value: label(SCALE, r.meal) },
+      { label: "Sieste", value: label(NAPS, r.nap) },
+      { label: "Propreté du jour", value: label(HYGIENE, r.hygiene) },
+      { label: "Propreté", value: label(TOILET, r.toilet) },
+      { label: "Activités", value: r.activities || "—" },
+      { label: "Incidents / soins", value: r.incidents || "—" },
+    ];
+    return {
+      childName: r.students?.full_name ?? "—",
+      sectionName: r.nursery_sections?.name ?? null,
+      items,
+      parentComment: r.parent_comment as string | null,
+    };
+  }
+
+  async function handlePrint() {
+    const log = await loadLog();
+    if (!log) return;
+    const ok = printDailyLog({
+      meta: pdfMeta,
+      childName: log.childName,
+      sectionName: log.sectionName,
+      date: fmtDate(date),
+      items: log.items,
+      parentComment: log.parentComment,
+    });
+    if (!ok) toast.error("Autorisez les fenêtres pop-up pour imprimer.");
+  }
+
+  async function handleShare() {
+    const log = await loadLog();
+    if (!log) return;
+    const msg = dailyLogMessage(log.childName, fmtDate(date), log.items, log.parentComment);
+    try {
+      if (navigator.share) await navigator.share({ text: msg });
+      else {
+        await navigator.clipboard.writeText(msg);
+        toast.success("Message copié — collez-le dans WhatsApp ou SMS.");
+      }
+    } catch {
+      /* partage annulé */
+    }
+  }
+
+  return (
+    <Card className="mt-6">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base"><Share2 className="size-4" /> Communication parents</CardTitle>
+        <CardDescription>Envoyez le suivi du jour aux parents en PDF ou sous forme de message.</CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-3 sm:grid-cols-[1fr_180px_auto_auto] sm:items-end">
+        <div className="space-y-1.5">
+          <Label>Enfant</Label>
+          <Select value={studentId} onValueChange={setStudentId}>
+            <SelectTrigger><SelectValue placeholder="Choisir un enfant" /></SelectTrigger>
+            <SelectContent>
+              {studentOptions.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-1.5">
+          <Label>Date</Label>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+          />
+        </div>
+        <Button variant="outline" onClick={handlePrint} className="gap-2"><Printer className="size-4" /> PDF</Button>
+        <Button onClick={handleShare} className="gap-2"><Share2 className="size-4" /> Message</Button>
+      </CardContent>
+    </Card>
+  );
+}
+
