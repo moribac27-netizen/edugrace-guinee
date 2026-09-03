@@ -118,6 +118,7 @@ function Maternelle() {
     isSuperAdmin ||
     roles.some((r) => ["admin", "directeur", "directeur_etudes", "proviseur", "enseignant"].includes(r));
 
+  const pdfMeta = usePdfMeta();
   const { options: studentOptions } = useStudentOptions();
   const { options: classOptions } = useClassOptions();
   const { options: teacherOptions } = useTableOptions("teachers", "full_name");
@@ -196,6 +197,7 @@ function Maternelle() {
           <TabsTrigger value="suivi">Suivi quotidien</TabsTrigger>
           <TabsTrigger value="competences">Compétences</TabsTrigger>
           <TabsTrigger value="evaluations">Évaluations</TabsTrigger>
+          <TabsTrigger value="planning">Emploi du temps</TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-4">
