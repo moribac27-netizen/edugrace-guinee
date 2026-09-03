@@ -279,9 +279,11 @@ function Maternelle() {
               { name: "student_id", label: "Enfant", type: "select", options: studentOptions, required: true },
               { name: "section_id", label: "Section", type: "select", options: sectionOptions },
               { name: "date", label: "Date", type: "date", required: true, default: today() },
+              { name: "attendance", label: "Présence", type: "select", options: ATTENDANCE, default: "present" },
               { name: "mood", label: "Humeur", type: "select", options: MOODS },
               { name: "meal", label: "Repas", type: "select", options: SCALE },
               { name: "nap", label: "Sieste", type: "select", options: NAPS },
+              { name: "hygiene", label: "Propreté du jour", type: "select", options: HYGIENE },
               { name: "toilet", label: "Propreté", type: "select", options: TOILET },
               { name: "activities", label: "Activités de la journée", type: "textarea", full: true },
               { name: "incidents", label: "Incidents / soins", type: "textarea", full: true },
@@ -290,13 +292,17 @@ function Maternelle() {
             columns={[
               { key: "date", label: "Date", render: (r) => fmtDate(r.date), exportFormat: (r) => fmtDate(r.date) },
               { key: "student", label: "Enfant", render: studentName, exportFormat: studentName },
+              { key: "attendance", label: "Présence", render: (r) => label(ATTENDANCE, r.attendance), exportFormat: (r) => label(ATTENDANCE, r.attendance) },
               { key: "mood", label: "Humeur", render: (r) => label(MOODS, r.mood), exportFormat: (r) => label(MOODS, r.mood) },
               { key: "meal", label: "Repas", render: (r) => label(SCALE, r.meal), exportFormat: (r) => label(SCALE, r.meal) },
               { key: "nap", label: "Sieste", render: (r) => label(NAPS, r.nap), exportFormat: (r) => label(NAPS, r.nap) },
+              { key: "hygiene", label: "Propreté du jour", render: (r) => label(HYGIENE, r.hygiene), exportFormat: (r) => label(HYGIENE, r.hygiene) },
               { key: "parent_comment", label: "Message aux parents", render: (r) => r.parent_comment || "—" },
             ]}
           />
+          <DailyLogExportCard pdfMeta={pdfMeta} studentOptions={studentOptions} />
         </TabsContent>
+
 
         <TabsContent value="competences" className="mt-4">
           <CrudSection
