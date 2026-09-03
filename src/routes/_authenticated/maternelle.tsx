@@ -304,6 +304,7 @@ function Maternelle() {
             title="Référentiel de compétences"
             singular="compétence"
             queryKey={["nursery-competencies"]}
+            select="*, teachers(full_name)"
             orderBy={{ column: "display_order" }}
             canWrite={canWrite}
             searchKeys={["label", "domain"]}
@@ -311,12 +312,15 @@ function Maternelle() {
             fields={[
               { name: "domain", label: "Domaine", type: "select", options: DOMAINS, required: true, default: "langage" },
               { name: "label", label: "Compétence", required: true, placeholder: "ex. Reconnaît son prénom écrit", full: true },
+              { name: "teacher_id", label: "Monitrice responsable", type: "select", options: teacherOptions },
               { name: "display_order", label: "Ordre d'affichage", type: "number", default: 0 },
             ]}
             columns={[
               { key: "domain", label: "Domaine", render: (r) => label(DOMAINS, r.domain), exportFormat: (r) => label(DOMAINS, r.domain) },
               { key: "label", label: "Compétence" },
+              { key: "teacher", label: "Monitrice", render: (r) => r.teachers?.full_name ?? "—", exportFormat: (r) => r.teachers?.full_name ?? "" },
               { key: "display_order", label: "Ordre" },
+
             ]}
           />
         </TabsContent>
