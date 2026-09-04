@@ -7,6 +7,7 @@ export const PEDAGOGIC_DIRECTION: AppRole[] = ["directeur_etudes", "proviseur"];
 // "*" means all authenticated users. Super admin bypasses all rules.
 export const ROUTE_ACCESS: Array<{ prefix: string; roles: AppRole[] | "*" }> = [
   { prefix: "/super-admin", roles: [] }, // super admin only
+  { prefix: "/directeur", roles: ["admin"] },
   { prefix: "/plans", roles: ["admin"] },
   { prefix: "/sauvegarde", roles: ["admin", "directeur"] },
   { prefix: "/journal", roles: ["admin", "directeur"] },
