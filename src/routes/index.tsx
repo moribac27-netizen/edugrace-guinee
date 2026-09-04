@@ -485,11 +485,16 @@ function Landing() {
                   </thead>
                   <tbody>
                     <tr className="border-t">
-                      <td className="p-4 text-muted-foreground">Prix mensuel</td>
+                      <td className="p-4 text-muted-foreground">Tarif</td>
                       {plans.map((p) => (
-                        <td key={p.id} className="p-4 text-center font-semibold">{formatPrice(p.price_monthly)} {p.currency}</td>
+                        <td key={p.id} className="p-4 text-center font-semibold">
+                          {(p as any).billing_model === "per_student"
+                            ? `${formatPrice(Number((p as any).price_per_student ?? 0))} ${p.currency} / élève / an`
+                            : `${formatPrice(p.price_monthly)} ${p.currency} / mois`}
+                        </td>
                       ))}
                     </tr>
+
                     <tr className="border-t">
                       <td className="p-4 text-muted-foreground">Limite d'élèves</td>
                       {plans.map((p) => (
