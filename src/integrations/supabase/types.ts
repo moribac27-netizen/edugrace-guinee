@@ -2612,6 +2612,78 @@ export type Database = {
           },
         ]
       }
+      student_plan_payments: {
+        Row: {
+          academic_year: string
+          amount: number
+          created_at: string
+          id: string
+          notes: string | null
+          paid_at: string
+          paid_by: string | null
+          payment_method: string | null
+          payment_mode: string
+          receipt_number: string | null
+          reference: string | null
+          school_id: string
+          school_share: number
+          status: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          academic_year: string
+          amount?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string
+          paid_by?: string | null
+          payment_method?: string | null
+          payment_mode?: string
+          receipt_number?: string | null
+          reference?: string | null
+          school_id: string
+          school_share?: number
+          status?: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          academic_year?: string
+          amount?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string
+          paid_by?: string | null
+          payment_method?: string | null
+          payment_mode?: string
+          receipt_number?: string | null
+          reference?: string | null
+          school_id?: string
+          school_share?: number
+          status?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_plan_payments_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_plan_payments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       students: {
         Row: {
           address: string | null
@@ -2872,6 +2944,8 @@ export type Database = {
       }
       subscription_plans: {
         Row: {
+          access_threshold_students: number
+          billing_model: string
           code: string
           created_at: string
           currency: string
@@ -2883,11 +2957,15 @@ export type Database = {
           is_popular: boolean
           name: string
           price_monthly: number
+          price_per_student: number
           price_yearly: number
+          school_share_per_student: number
           student_limit: number | null
           updated_at: string
         }
         Insert: {
+          access_threshold_students?: number
+          billing_model?: string
           code: string
           created_at?: string
           currency?: string
@@ -2899,11 +2977,15 @@ export type Database = {
           is_popular?: boolean
           name: string
           price_monthly?: number
+          price_per_student?: number
           price_yearly?: number
+          school_share_per_student?: number
           student_limit?: number | null
           updated_at?: string
         }
         Update: {
+          access_threshold_students?: number
+          billing_model?: string
           code?: string
           created_at?: string
           currency?: string
@@ -2915,7 +2997,9 @@ export type Database = {
           is_popular?: boolean
           name?: string
           price_monthly?: number
+          price_per_student?: number
           price_yearly?: number
+          school_share_per_student?: number
           student_limit?: number | null
           updated_at?: string
         }
@@ -3572,6 +3656,16 @@ export type Database = {
         }
       }
       same_school: { Args: { _school_id: string }; Returns: boolean }
+      school_academic_year: { Args: { _school_id: string }; Returns: string }
+      school_billing_model: { Args: { _school_id: string }; Returns: string }
+      school_paid_students_count: {
+        Args: { _school_id: string }
+        Returns: number
+      }
+      school_per_student_threshold: {
+        Args: { _school_id: string }
+        Returns: number
+      }
       school_storage_usage: {
         Args: never
         Returns: {
@@ -3581,6 +3675,7 @@ export type Database = {
         }[]
       }
       school_write_blocked: { Args: { _school_id: string }; Returns: boolean }
+      student_plan_paid: { Args: { _student_id: string }; Returns: boolean }
       student_recipient_users: {
         Args: { _student_id: string }
         Returns: {
