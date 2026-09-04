@@ -406,27 +406,48 @@ function Landing() {
             {loading && Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="p-8 rounded-2xl border bg-card animate-pulse h-96" />
             ))}
-            {!loading && plans.map((p) => (
+            {!loading && plans.map((p) => {
+              const perStudent = (p as any).billing_model === "per_student";
+              const unit = Number((p as any).price_per_student ?? 0);
+              const share = Number((p as any).school_share_per_student ?? 0);
+              const threshold = Number((p as any).access_threshold_students ?? 20);
+              return (
               <div key={p.id} className={"p-8 rounded-2xl border bg-card relative " + (p.is_popular ? "border-primary shadow-lg ring-1 ring-primary/20" : "")}>
                 {p.is_popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-medium">Recommandé</div>}
                 <h3 className="font-display text-2xl font-bold">{p.name}</h3>
                 {p.description && <p className="text-sm text-muted-foreground mt-2">{p.description}</p>}
                 <div className="mt-4 flex items-baseline gap-1">
                   <span className="text-4xl font-bold">
-                    {formatPrice(publicCycle === "yearly" ? (p.price_yearly ?? p.price_monthly * 12) : p.price_monthly)}
+                    {formatPrice(perStudent ? unit : (publicCycle === "yearly" ? (p.price_yearly ?? p.price_monthly * 12) : p.price_monthly))}
                   </span>
-                  <span className="text-muted-foreground">{p.currency}/{publicCycle === "yearly" ? "an" : "mois"}</span>
+                  <span className="text-muted-foreground">
+                    {p.currency}{perStudent ? " / élève / an" : `/${publicCycle === "yearly" ? "an" : "mois"}`}
+                  </span>
                 </div>
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <div className="text-xs inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent/20 text-accent-foreground">
-                    <Sparkles className="size-3" /> 30 jours gratuits
+                {perStudent ? (
+                  <div className="mt-4 space-y-2 text-sm text-muted-foreground">
+                    <p>
+                      Chaque élève doit régler {formatPrice(unit)} {p.currency}/an. Deux options : paiement individuel
+                      par l'élève ou le parent directement sur la plateforme, ou paiement groupé par l'école pour les
+                      élèves dont elle a déjà collecté l'argent.
+                    </p>
+                    <p>
+                      Votre école reçoit {formatPrice(share)} {p.currency} par élève payé, quel que soit le mode.
+                      L'accès complet est activé dès que {threshold} élèves ont payé.
+                    </p>
                   </div>
-                  {publicCycle === "yearly" && (
-                    <div className="text-xs inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">
-                      2 mois offerts
+                ) : (
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <div className="text-xs inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent/20 text-accent-foreground">
+                      <Sparkles className="size-3" /> 30 jours gratuits
                     </div>
-                  )}
-                </div>
+                    {publicCycle === "yearly" && (
+                      <div className="text-xs inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">
+                        2 mois offerts
+                      </div>
+                    )}
+                  </div>
+                )}
                 <ul className="mt-6 space-y-2 text-sm">
                   {p.features.map((f) => (
                     <li key={f} className="flex gap-2"><Check className="size-4 text-primary mt-0.5 shrink-0" />{f}</li>
@@ -440,7 +461,9 @@ function Landing() {
                   Choisir {p.name}
                 </Button>
               </div>
-            ))}
+              );
+            })}
+
           </div>
 
           {/* Comparison table */}
