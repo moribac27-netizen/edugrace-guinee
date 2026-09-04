@@ -8,6 +8,13 @@
       "when": 1788262117530,
       "tag": "0000_nursery_extensions_and_subscription_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788533217792,
+      "tag": "0001_per_student_billing",
+      "breakpoints": true
     }
   ]
 }
