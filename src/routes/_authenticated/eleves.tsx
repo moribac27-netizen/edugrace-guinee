@@ -118,7 +118,7 @@ function ElevesPage() {
                       </TableCell>
                     )}
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" title="Aperçu du bulletin" disabled={!s.class_id} onClick={() => setPreviewStudent(s)}><Eye className="size-4" /></Button>
+                      <Button variant="ghost" size="icon" title="Aperçu du bulletin" disabled={!s.class_id || (planInfo.isPerStudent && !paidIds.has(s.id))} onClick={() => setPreviewStudent(s)}><Eye className="size-4" /></Button>
                       <Button variant="ghost" size="icon" onClick={() => { setEditing(s); setOpen(true); }}><Pencil className="size-4" /></Button>
                       <Button variant="ghost" size="icon" onClick={() => handleDelete(s.id)}><Trash2 className="size-4 text-destructive" /></Button>
                     </TableCell>
