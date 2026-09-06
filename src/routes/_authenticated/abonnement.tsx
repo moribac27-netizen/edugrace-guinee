@@ -13,6 +13,7 @@ import { AlertTriangle, Check, Loader2, ShieldCheck, Smartphone } from "lucide-r
 import { toast } from "sonner";
 import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus";
 import { formatGNF } from "@/lib/orange-money";
+import { usePerStudentPlan } from "@/hooks/usePerStudentPlan";
 
 export const Route = createFileRoute("/_authenticated/abonnement")({
   head: () => ({
@@ -37,6 +38,7 @@ type Plan = {
 function AbonnementPage() {
   const navigate = useNavigate();
   const { subscription, isExpired, loading, refetch } = useSubscriptionStatus();
+  const { info: planInfo } = usePerStudentPlan();
   const [plans, setPlans] = useState<Plan[]>([]);
   const [cycle, setCycle] = useState<"monthly" | "yearly">("monthly");
   const [confirm, setConfirm] = useState<Plan | null>(null);
@@ -74,8 +76,33 @@ function AbonnementPage() {
     navigate({ to: "/dashboard" });
   }
 
+  const cotisationBlocked = planInfo.isPerStudent && !planInfo.unlocked;
+
   return (
     <div className="max-w-6xl space-y-8">
+      {cotisationBlocked && (
+        <Card className="border-primary/40 bg-primary/5">
+          <CardHeader>
+            <CardTitle className="text-base">
+              {planInfo.paidCount}/{planInfo.threshold} élèves ont payé leur cotisation
+            </CardTitle>
+            <CardDescription className="text-foreground/80">
+              Votre établissement est au mode de facturation par élève. L'accès complet s'ouvrira dès que{" "}
+              {planInfo.threshold} élèves auront réglé leur cotisation annuelle de {formatGNF(planInfo.unitPrice)}.
+              Il en manque {Math.max(0, planInfo.threshold - planInfo.paidCount)}.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="h-2 rounded-full bg-muted overflow-hidden">
+              <div
+                className="h-full bg-primary"
+                style={{ width: `${Math.min(100, Math.round((planInfo.paidCount / Math.max(1, planInfo.threshold)) * 100))}%` }}
+              />
+            </div>
+            <Button asChild variant="outline"><Link to="/cotisations">Encaisser les cotisations</Link></Button>
+          </CardContent>
+        </Card>
+      )}
       <Card className="border-destructive/40 bg-destructive/5">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-destructive">
