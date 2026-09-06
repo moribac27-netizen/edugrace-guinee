@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { StudentPhoto } from "@/components/StudentPhoto";
 import { StudentPhotoUpload } from "@/components/StudentPhotoUpload";
 import { BulletinPreviewDialog } from "@/components/BulletinPreviewDialog";
+import { usePerStudentPlan, usePaidStudentIds } from "@/hooks/usePerStudentPlan";
 
 
 export const Route = createFileRoute("/_authenticated/eleves")({
@@ -42,6 +43,9 @@ function ElevesPage() {
       return data;
     },
   });
+  const { info: planInfo } = usePerStudentPlan();
+  const { paidIds } = usePaidStudentIds(planInfo.schoolId, planInfo.academicYear, planInfo.isPerStudent);
+
   const { data: classes = [] } = useQuery({
     queryKey: ["classes"],
     queryFn: async () => (await supabase.from("classes").select("id, name, level").order("name")).data ?? [],
@@ -90,12 +94,13 @@ function ElevesPage() {
                   <TableHead>Classe</TableHead>
                   <TableHead>Parent</TableHead>
                   <TableHead>Statut</TableHead>
+                  {planInfo.isPerStudent && <TableHead>Cotisation</TableHead>}
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.length === 0 && (
-                  <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Aucun élève</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={planInfo.isPerStudent ? 8 : 7} className="text-center py-8 text-muted-foreground">Aucun élève</TableCell></TableRow>
                 )}
                 {filtered.map((s: any) => (
                   <TableRow key={s.id}>
@@ -105,6 +110,13 @@ function ElevesPage() {
                     <TableCell>{s.classes?.name ?? <span className="text-muted-foreground">—</span>}</TableCell>
                     <TableCell><div className="text-sm">{s.parent_name}</div><div className="text-xs text-muted-foreground">{s.parent_phone}</div></TableCell>
                     <TableCell><Badge variant={s.status === "actif" ? "default" : "secondary"}>{s.status}</Badge></TableCell>
+                    {planInfo.isPerStudent && (
+                      <TableCell>
+                        {paidIds.has(s.id)
+                          ? <Badge>Payée</Badge>
+                          : <Badge variant="destructive">Non payée</Badge>}
+                      </TableCell>
+                    )}
                     <TableCell className="text-right">
                       <Button variant="ghost" size="icon" title="Aperçu du bulletin" disabled={!s.class_id} onClick={() => setPreviewStudent(s)}><Eye className="size-4" /></Button>
                       <Button variant="ghost" size="icon" onClick={() => { setEditing(s); setOpen(true); }}><Pencil className="size-4" /></Button>
