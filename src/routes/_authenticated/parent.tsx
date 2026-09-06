@@ -12,6 +12,7 @@ import { maxScoreForLevel } from "@/lib/grading";
 import { StudentPhoto } from "@/components/StudentPhoto";
 import { BulletinAnalytics } from "@/components/BulletinAnalytics";
 import { BulletinPreviewDialog } from "@/components/BulletinPreviewDialog";
+import { CotisationCard } from "@/components/CotisationCard";
 
 export const Route = createFileRoute("/_authenticated/parent")({
   head: () => ({ meta: [{ title: "Espace Parent — MBGEduGuinée" }] }),
@@ -194,6 +195,15 @@ function ChildDetails({ student }: { student: any }) {
         <StatCard icon={<UserCheck className="size-4" />} label="Absences" value={String(absents)} sub={`${retards} retards`} />
         <StatCard icon={<CreditCard className="size-4" />} label="Total payé (GNF)" value={fmt(totalDue)} />
         <StatCard icon={<FileText className="size-4" />} label="Classe" value={student.classes?.name ?? "—"} />
+      </div>
+
+      <div className="mt-4">
+        <CotisationCard
+          studentId={student.id}
+          studentName={student.full_name}
+          matricule={student.matricule}
+          className={student.classes?.name ?? null}
+        />
       </div>
 
       <Tabs defaultValue="notes" className="mt-2">
