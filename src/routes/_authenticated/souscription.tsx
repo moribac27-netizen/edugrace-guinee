@@ -13,6 +13,7 @@ import {
 import { Check, Sparkles, Smartphone, Copy, Loader2, Clock, XCircle, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { logActivity } from "@/lib/audit";
+import { PerStudentPlanOffer } from "@/components/PerStudentPlanOffer";
 import { ORANGE_MONEY, orangeMoneyUssdLink, formatGNF } from "@/lib/orange-money";
 
 type Plan = {
@@ -86,7 +87,9 @@ function SubscriptionPage() {
 
     const { data: pl } = await (supabase as any)
       .from("subscription_plans").select("*").eq("is_active", true).order("display_order");
-    setPlans((pl ?? []).map((p: any) => ({ ...p, features: Array.isArray(p.features) ? p.features : [] })));
+    setPlans((pl ?? [])
+      .filter((p: any) => p.billing_model !== "per_student")
+      .map((p: any) => ({ ...p, features: Array.isArray(p.features) ? p.features : [] })));
 
     const { data: s } = await (supabase as any)
       .from("school_subscriptions")
@@ -206,6 +209,8 @@ function SubscriptionPage() {
           )}
         </CardContent>
       </Card>
+
+      <PerStudentPlanOffer schoolId={schoolId} currentPlanId={currentPlan?.id ?? null} onChanged={load} />
 
       {/* Coordonnées Orange Money */}
       <Card className="border-primary/30">
