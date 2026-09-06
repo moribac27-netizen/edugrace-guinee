@@ -129,10 +129,13 @@ function Landing() {
         .eq("is_active", true)
         .order("display_order", { ascending: true });
       setPlans(
-        (data ?? []).map((p: any) => ({
-          ...p,
-          features: Array.isArray(p.features) ? p.features : [],
-        })),
+        (data ?? [])
+          // La page publique n'affiche que les offres à prix fixe (Basic, Standard).
+          .filter((p: any) => p.billing_model !== "per_student")
+          .map((p: any) => ({
+            ...p,
+            features: Array.isArray(p.features) ? p.features : [],
+          })),
       );
       setLoading(false);
     })();

@@ -11,6 +11,7 @@ import { maxScoreForLevel } from "@/lib/grading";
 import { StudentPhoto } from "@/components/StudentPhoto";
 import { BulletinAnalytics } from "@/components/BulletinAnalytics";
 import { BulletinPreviewDialog } from "@/components/BulletinPreviewDialog";
+import { CotisationCard } from "@/components/CotisationCard";
 
 export const Route = createFileRoute("/_authenticated/eleve")({
   head: () => ({ meta: [{ title: "Espace Élève — MBGEduGuinée" }] }),
@@ -100,6 +101,13 @@ function StudentDashboard({ student }: { student: any }) {
           <p className="text-muted-foreground">{student.matricule} · {student.classes?.name ?? "—"}</p>
         </div>
       </div>
+
+      <CotisationCard
+        studentId={student.id}
+        studentName={student.full_name}
+        matricule={student.matricule}
+        className={student.classes?.name ?? null}
+      />
 
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
