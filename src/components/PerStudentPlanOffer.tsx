@@ -10,6 +10,11 @@ import {
 import { ChevronDown, Coins, Loader2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { formatGNF } from "@/lib/orange-money";
+import {
+  DEFAULT_PER_STUDENT_THRESHOLD,
+  DEFAULT_PER_STUDENT_UNIT_PRICE_GNF,
+  PER_STUDENT_SCHOOL_SHARE_GNF,
+} from "@/lib/pricing";
 
 interface Props {
   schoolId: string | null;
@@ -42,9 +47,9 @@ export function PerStudentPlanOffer({ schoolId, currentPlanId, onChanged }: Prop
 
   if (!plan) return null;
 
-  const unit = Number(plan.price_per_student ?? 100000);
-  const share = Number(plan.school_share_per_student ?? 10000);
-  const threshold = Number(plan.access_threshold_students ?? 20);
+  const unit = Number(plan.price_per_student ?? DEFAULT_PER_STUDENT_UNIT_PRICE_GNF);
+  const share = Number(plan.school_share_per_student ?? PER_STUDENT_SCHOOL_SHARE_GNF);
+  const threshold = Number(plan.access_threshold_students ?? DEFAULT_PER_STUDENT_THRESHOLD);
   const isCurrent = currentPlanId === plan.id;
 
   async function apply() {

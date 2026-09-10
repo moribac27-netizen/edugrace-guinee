@@ -15,6 +15,8 @@ import { usePerStudentPlan } from "@/hooks/usePerStudentPlan";
 import { usePdfMeta } from "@/hooks/usePdfMeta";
 import { formatGNF, ORANGE_MONEY, orangeMoneyUssdLink } from "@/lib/orange-money";
 import { newCotisationReceiptNumber, printCotisationReceipt } from "@/lib/cotisation-print";
+import { logActivity } from "@/lib/audit";
+import { registerStudentPayment } from "@/lib/cotisation";
 
 interface Props {
   studentId: string;
@@ -73,28 +75,37 @@ export function CotisationCard({ studentId, studentName, matricule, className }:
     if (!info.schoolId) return toast.error("Établissement non identifié.");
     setSaving(true);
     const { data: u } = await supabase.auth.getUser();
-    const row = {
-      school_id: info.schoolId,
-      student_id: studentId,
-      academic_year: info.academicYear,
+    const res = await registerStudentPayment({
+      studentId,
+      schoolId: info.schoolId,
+      academicYear: info.academicYear,
       amount: info.unitPrice,
-      school_share: info.schoolShare,
-      status: "paye",
-      payment_mode: "individuel",
-      payment_method: "orange_money",
+      schoolShare: info.schoolShare,
       reference: reference || null,
-      receipt_number: newCotisationReceiptNumber(info.academicYear),
-      paid_by: u.user?.id ?? null,
-    };
-    const { data, error } = await (supabase as any)
-      .from("student_plan_payments").insert(row).select().maybeSingle();
+      paidBy: u.user?.id ?? null,
+    });
     setSaving(false);
-    if (error) return toast.error("Enregistrement impossible", { description: error.message });
+    if (res.status === "error") {
+      toast.error("Enregistrement impossible", { description: res.error });
+      return;
+    }
+
+    if (res.status === "already_paid") {
+      setOpen(false);
+      setReference("");
+      toast.info("Paiement déjà enregistré");
+      receipt(res.row);
+      return;
+    }
+
+    // created or updated
     setOpen(false);
     setReference("");
     toast.success("Cotisation enregistrée");
     await refetch();
-    if (data) receipt(data);
+    if (res.row) receipt(res.row);
+    // log activity for audit
+    void logActivity({ action: "create", entity_type: "student_plan_payment", entity_id: res.row?.id ?? null, metadata: { mode: "individuel", reference } });
   }
 
   return (

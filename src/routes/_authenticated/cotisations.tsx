@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { usePerStudentPlan, usePaidStudentIds } from "@/hooks/usePerStudentPlan";
 import { usePdfMeta } from "@/hooks/usePdfMeta";
 import { formatGNF } from "@/lib/orange-money";
+import { PER_STUDENT_SCHOOL_SHARE_GNF } from "@/lib/pricing";
 import { newCotisationReceiptNumber, printCotisationReceipt } from "@/lib/cotisation-print";
 
 export const Route = createFileRoute("/_authenticated/cotisations")({
@@ -136,6 +137,7 @@ function CotisationsPage() {
   }
 
   const progress = Math.min(100, Math.round((info.paidCount / Math.max(1, info.threshold)) * 100));
+  const schoolShare = Number(info.schoolShare ?? PER_STUDENT_SCHOOL_SHARE_GNF);
 
   return (
     <div className="space-y-6 max-w-6xl">
@@ -164,7 +166,7 @@ function CotisationsPage() {
           <CardContent>
             <div className="text-3xl font-bold">{formatGNF(info.schoolRevenue)}</div>
             <p className="text-xs text-muted-foreground mt-2">
-              {info.paidCount} élève(s) × {formatGNF(info.schoolShare)}
+              {info.paidCount} élève(s) × {formatGNF(schoolShare)}
             </p>
           </CardContent>
         </Card>

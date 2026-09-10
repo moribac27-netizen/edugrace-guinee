@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS public.student_plan_payments (
   student_id uuid NOT NULL REFERENCES public.students(id) ON DELETE CASCADE,
   academic_year text NOT NULL,
   amount numeric NOT NULL DEFAULT 100000,
-  school_share numeric NOT NULL DEFAULT 10000,
+  school_share numeric NOT NULL DEFAULT 15000,
   status text NOT NULL DEFAULT 'paye',
   payment_mode text NOT NULL DEFAULT 'individuel',
   payment_method text,

@@ -46,9 +46,11 @@ function AbonnementPage() {
 
   useEffect(() => {
     (async () => {
-      const { data } = await (supabase as any)
+            const { data } = await (supabase as any)
         .from("subscription_plans").select("*").eq("is_active", true).order("display_order");
-      setPlans((data ?? []).map((p: any) => ({ ...p, features: Array.isArray(p.features) ? p.features : [] })));
+      setPlans((data ?? [])
+        .filter((p: any) => p.billing_model !== "per_student")
+        .map((p: any) => ({ ...p, features: Array.isArray(p.features) ? p.features : [] })));
     })();
   }, []);
 

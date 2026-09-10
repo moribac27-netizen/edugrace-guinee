@@ -19,7 +19,7 @@ const EMPTY: PerStudentPlanInfo = {
   isPerStudent: false,
   planName: null,
   unitPrice: 100000,
-  schoolShare: 10000,
+  schoolShare: 15000,
   threshold: 20,
   academicYear: "",
   paidCount: 0,
@@ -56,7 +56,7 @@ export function usePerStudentPlan() {
       const isPerStudent = plan?.billing_model === "per_student";
       const paidCount = Number(countRes.data ?? 0);
       const threshold = Number(plan?.access_threshold_students ?? 20);
-      const schoolShare = Number(plan?.school_share_per_student ?? 10000);
+      const schoolShare = Number(plan?.school_share_per_student ?? 15000);
 
       return {
         schoolId,
